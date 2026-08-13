@@ -11,7 +11,7 @@ const sizes: Record<Size, string> = {
   lg: 'h-14 px-6 text-base',
 }
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   size?: Size
   error?: boolean
 }

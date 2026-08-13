@@ -11,7 +11,7 @@ const sizes: Record<Size, string> = {
   lg: 'h-14 pl-6 pr-12 text-base',
 }
 
-export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   size?: Size
   error?: boolean
   options: Array<{ value: string; label: string }>

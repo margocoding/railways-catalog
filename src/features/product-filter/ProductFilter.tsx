@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi'
 import type { ProductCondition } from '../../entities/product/model/types'
+import { Input } from '../../shared/ui/Input'
+import { Select } from '../../shared/ui/Select'
 
 interface ProductFilterProps {
   onFilterChange: (filters: FilterState) => void
@@ -67,6 +69,26 @@ export function ProductFilter({ onFilterChange }: ProductFilterProps) {
   )
 }
 
+const conditionOptions = [
+  { value: 'all', label: 'Все' },
+  { value: 'new', label: 'Новый' },
+  { value: 'used', label: 'Б/У' },
+  { value: 'service', label: 'Услуга' },
+]
+
+const stockOptions = [
+  { value: 'all', label: 'Все' },
+  { value: 'in-stock', label: 'В наличии' },
+  { value: 'on-order', label: 'Под заказ' },
+]
+
+const sortOptions = [
+  { value: 'name', label: 'По названию' },
+  { value: 'price-asc', label: 'Цена: по возрастанию' },
+  { value: 'price-desc', label: 'Цена: по убыванию' },
+  { value: 'popular', label: 'По популярности' },
+]
+
 function FilterContent({ filters, handleChange }: { 
   filters: FilterState
   handleChange: (key: keyof FilterState, value: string) => void 
@@ -76,10 +98,9 @@ function FilterContent({ filters, handleChange }: {
       {/* Search */}
       <div className="relative">
         <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--muted-foreground))]" />
-        <input
-          type="text"
+        <Input
           placeholder="Поиск по названию, артикулу, ГОСТу"
-          className="w-full pl-10 pr-4 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
+          className="w-full pl-10"
           value={filters.search}
           onChange={(e) => handleChange('search', e.target.value)}
         />
@@ -89,38 +110,31 @@ function FilterContent({ filters, handleChange }: {
         {/* Condition */}
         <div>
           <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Состояние</label>
-          <select
-            className="w-full px-3 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none text-sm"
+          <Select
+            size="sm"
+            options={conditionOptions}
             value={filters.condition}
             onChange={(e) => handleChange('condition', e.target.value)}
-          >
-            <option value="all">Все</option>
-            <option value="new">Новый</option>
-            <option value="used">Б/У</option>
-            <option value="service">Услуга</option>
-          </select>
+          />
         </div>
         
         {/* Stock */}
         <div>
           <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Наличие</label>
-          <select
-            className="w-full px-3 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none text-sm"
+          <Select
+            size="sm"
+            options={stockOptions}
             value={filters.stock}
             onChange={(e) => handleChange('stock', e.target.value)}
-          >
-            <option value="all">Все</option>
-            <option value="in-stock">В наличии</option>
-            <option value="on-order">Под заказ</option>
-          </select>
+          />
         </div>
         
         {/* Price From */}
         <div>
           <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Цена от, ₽</label>
-          <input
+          <Input
             type="number"
-            className="w-full px-3 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none text-sm"
+            size="sm"
             value={filters.priceFrom}
             onChange={(e) => handleChange('priceFrom', e.target.value)}
           />
@@ -129,9 +143,9 @@ function FilterContent({ filters, handleChange }: {
         {/* Price To */}
         <div>
           <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Цена до, ₽</label>
-          <input
+          <Input
             type="number"
-            className="w-full px-3 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none text-sm"
+            size="sm"
             value={filters.priceTo}
             onChange={(e) => handleChange('priceTo', e.target.value)}
           />
@@ -141,16 +155,12 @@ function FilterContent({ filters, handleChange }: {
       {/* Sort */}
       <div className="flex items-center gap-4 pt-2 border-t border-[hsl(var(--border))]">
         <label className="text-xs text-[hsl(var(--muted-foreground))]">Сортировка:</label>
-        <select
-          className="px-3 py-2 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none text-sm"
+        <Select
+          size="sm"
+          options={sortOptions}
           value={filters.sort}
           onChange={(e) => handleChange('sort', e.target.value)}
-        >
-          <option value="name">По названию</option>
-          <option value="price-asc">Цена: по возрастанию</option>
-          <option value="price-desc">Цена: по убыванию</option>
-          <option value="popular">По популярности</option>
-        </select>
+        />
       </div>
     </div>
   )
