@@ -35,7 +35,7 @@ export function Hero() {
             {/* H1 */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
               Материалы ВСП для железных дорог{' '}
-              <span className="bg-accent-gradient bg-clip-text text-transparent">
+              <span className="bg-accent-gradient ">
                 России и СНГ
               </span>
             </h1>
@@ -75,7 +75,7 @@ export function Hero() {
                 { value: '48ч', label: 'отгрузка' },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-2xl md:text-3xl font-black bg-accent-gradient bg-clip-text text-transparent">
+                  <div className="text-2xl md:text-3xl font-black bg-accent-gradient bg-clip-text">
                     {stat.value}
                   </div>
                   <div className="text-sm text-[hsl(var(--muted-foreground))]">{stat.label}</div>
