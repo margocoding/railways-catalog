@@ -4,7 +4,7 @@ type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'
+  'inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'
 
 const variants: Record<Variant, string> = {
   primary: 'bg-accent-gradient text-white shadow-lg shadow-primary/20 hover:shadow-primary/40',
