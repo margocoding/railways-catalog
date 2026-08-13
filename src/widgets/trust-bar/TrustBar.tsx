@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 export function TrustBar() {
   return (
     <section className="py-6 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]/50">

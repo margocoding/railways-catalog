@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion'
-import { FiMenu, FiSearch, FiPhone, FiX } from 'react-icons/fi'
+import { FiMenu, FiSearch, FiPhone } from 'react-icons/fi'
 import { CATEGORIES } from '../../entities/category/model/types'
 
 export function Header() {
