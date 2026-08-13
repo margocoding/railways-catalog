@@ -1,5 +1,4 @@
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { SectionHeading } from '../../shared/ui/SectionHeading'
 import { DeliveryMethods } from '../../widgets/delivery-methods/DeliveryMethods'
 import { DeliverySteps } from '../../widgets/delivery-steps/DeliverySteps'
 import { DeliveryCTA } from '../../widgets/delivery-cta/DeliveryCTA'
@@ -8,26 +7,24 @@ import { Layout } from '../../widgets/Layout'
 export function DeliveryPage() {
   return (
     <Layout>
-      <div className="py-8 md:py-12">
-        <div className="container mx-auto px-4">
-          {/* Хлебные крошки + H1 + интро */}
-          <Breadcrumbs items={[
-            { label: 'Главная', href: '/' },
-            { label: 'Доставка' }
-          ]} />
-          
-          <SectionHeading variant="h1" className="mb-4">Доставка</SectionHeading>
-          
-          <p className="text-lg text-muted-foreground mb-8 max-w-3xl">
-            Доставляем материалы ВСП по всей России и СНГ — железнодорожным и автомобильным транспортом, 
-            прямо на объект или ваш склад.
-          </p>
+      <div className="container mx-auto px-4 py-8">
+        {/* Хлебные крошки + H1 + интро */}
+        <Breadcrumbs items={[
+          { label: 'Главная', href: '/' },
+          { label: 'Доставка' }
+        ]} />
+        
+        <h1 className="text-3xl font-black mb-2">Доставка</h1>
+        <p className="text-[hsl(var(--muted-foreground))] mb-8 max-w-3xl">
+          Доставляем материалы ВСП по всей России и СНГ — железнодорожным и автомобильным транспортом, 
+          прямо на объект или ваш склад.
+        </p>
 
-          {/* Способы доставки */}
-          <DeliveryMethods />
+        {/* Способы доставки */}
+        <DeliveryMethods />
 
-          {/* Как происходит доставка */}
-          <DeliverySteps />
+        {/* Как происходит доставка */}
+        <DeliverySteps />
 
           {/* Преимущества */}
           <section className="py-12 md:py-16">
@@ -47,12 +44,12 @@ export function DeliveryPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          </section>
+            ))}
+          </div>
+        </section>
 
-          {/* CTA с формой */}
-          <DeliveryCTA />
-        </div>
+        {/* CTA с формой */}
+        <DeliveryCTA />
       </div>
     </Layout>
   )
