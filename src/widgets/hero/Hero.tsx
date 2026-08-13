@@ -1,7 +1,21 @@
 import { motion } from 'framer-motion'
-import { CATEGORIES } from '../../entities/category/model/types'
+import { sections, products } from '../../entities/product/model/mockData'
+
+// Helper function to count products in a section
+function getProductsCount(sectionId: string): number {
+  return products.filter(p => p.sectionId === sectionId).length
+}
 
 export function Hero() {
+  // Get top 4 sections by product count (most popular)
+  const topSections = [...sections]
+    .map(section => ({
+      ...section,
+      productCount: getProductsCount(section.id),
+    }))
+    .sort((a, b) => b.productCount - a.productCount)
+    .slice(0, 4)
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ background: 'var(--hero-gradient)' }}>
       {/* Decorative rails pattern */}
@@ -84,17 +98,17 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Right tiles */}
+          {/* Right tiles - Top 4 sections by product count */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="grid grid-cols-2 gap-4"
           >
-            {CATEGORIES.slice(0, 4).map((cat, i) => (
+            {topSections.map((section, i) => (
               <motion.a
-                key={cat.slug}
-                href={`/catalog/${cat.slug}`}
+                key={section.slug}
+                href={`/catalog/${section.slug}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.1 }}
@@ -103,11 +117,11 @@ export function Hero() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))/10] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative">
-                  <div className="text-3xl mb-2">{cat.icon}</div>
-                  <div className="font-bold">{cat.title}</div>
-                  <div className="text-xs text-[hsl(var(--muted-foreground))] mb-2">{cat.description}</div>
+                  <div className="text-3xl mb-2">{section.icon || '📦'}</div>
+                  <div className="font-bold">{section.name}</div>
+                  <div className="text-xs text-[hsl(var(--muted-foreground))] mb-2">{section.description}</div>
                   <div className="text-sm font-medium text-[hsl(var(--primary))] flex items-center gap-1">
-                    {cat.count} позиций →
+                    {section.productCount} позиций →
                   </div>
                 </div>
               </motion.a>
