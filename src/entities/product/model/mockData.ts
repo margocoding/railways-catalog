@@ -1,13 +1,13 @@
 import type { Product, Section, Category } from './types'
 
 export const sections: Section[] = [
-  { id: 'rails', name: 'Рельсы', slug: 'rails' },
-  { id: 'sleepers', name: 'Шпалы и плиты', slug: 'sleepers' },
-  { id: 'fasteners', name: 'Крепёж', slug: 'fasteners' },
-  { id: 'shoes', name: 'Башмаки', slug: 'shoes' },
-  { id: 'buffers', name: 'Упоры тупиковые', slug: 'buffers' },
-  { id: 'metal', name: 'Металлоизделия', slug: 'metal' },
-  { id: 'tools', name: 'Путевой инструмент', slug: 'tools' },
+  { id: 'rails', name: 'Рельсы', slug: 'rails', description: 'Железнодорожные, крановые и узкоколейные рельсы всех типов' },
+  { id: 'sleepers', name: 'Шпалы и плиты', slug: 'sleepers', description: 'Деревянные, железобетонные шпалы и подрельсовые плиты' },
+  { id: 'fasteners', name: 'Крепёж', slug: 'fasteners', description: 'Рельсовый крепёж: болты, гайки, накладки, скрепления' },
+  { id: 'shoes', name: 'Башмаки', slug: 'shoes', description: 'Тормозные и подкладочные башмаки для железнодорожных вагонов' },
+  { id: 'buffers', name: 'Упоры тупиковые', slug: 'buffers', description: 'Тупиковые упоры для защиты концов путей' },
+  { id: 'metal', name: 'Металлоизделия', slug: 'metal', description: 'Металлоизделия по чертежам заказчика' },
+  { id: 'tools', name: 'Путевой инструмент', slug: 'tools', description: 'Путевой инструмент: ручной и механизированный' },
 ]
 
 export const categories: Category[] = [
