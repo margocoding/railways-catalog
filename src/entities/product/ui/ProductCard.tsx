@@ -1,6 +1,7 @@
 import { formatPrice, getConditionBadgeColor, getConditionLabel } from '../../../shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
 import { FiShoppingCart } from 'react-icons/fi'
+import { Link } from 'react-router'
 
 interface ProductCardProps {
   product: Product
@@ -8,7 +9,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <div className="group bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] overflow-hidden hover:border-[hsl(var(--primary))/0.5] transition-all duration-300 hover:shadow-lg">
+    <Link 
+      to={`/catalog/${product.sectionId}/${product.categoryId}/${product.id}`}
+      className="group bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] overflow-hidden hover:border-[hsl(var(--primary))/0.5] transition-all duration-300 hover:shadow-lg block"
+    >
       {/* Image */}
       <div className="aspect-[4/3] bg-[hsl(var(--muted))] relative overflow-hidden">
         <img 
@@ -52,6 +56,6 @@ export function ProductCard({ product }: ProductCardProps) {
           Запросить КП
         </button>
       </div>
-    </div>
+    </Link>
   )
 }
