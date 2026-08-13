@@ -1,0 +1,208 @@
+import { Layout } from '../../widgets/Layout'
+import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { SERVICES } from '../../entities/service/model/mocks'
+import type { Service } from '../../entities/service/model/mocks'
+import { FiCheck, FiPhone, FiMail } from 'react-icons/fi'
+
+export function ServicesPage() {
+  const breadcrumbs = [
+    { label: 'Главная', href: '/' },
+    { label: 'Услуги', href: undefined },
+  ]
+
+  return (
+    <Layout>
+      <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs items={breadcrumbs} />
+        
+        <h1 className="text-3xl font-black mb-2">Услуги</h1>
+        <p className="text-[hsl(var(--muted-foreground))] mb-8">
+          Не только поставка, но и обработка и монтаж
+        </p>
+
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {SERVICES.map((service) => (
+            <ServiceCard key={service.slug} service={service} />
+          ))}
+        </div>
+
+        {/* How we work */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Как мы работаем</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StepCard 
+              number="01" 
+              title="Заявка" 
+              description="Оставляете заявку на сайте или по телефону" 
+            />
+            <StepCard 
+              number="02" 
+              title="Расчёт" 
+              description="Рассчитываем стоимость и сроки" 
+            />
+            <StepCard 
+              number="03" 
+              title="Договор" 
+              description="Заключаем договор, выставляем счёт" 
+            />
+            <StepCard 
+              number="04" 
+              title="Выполнение" 
+              description="Выполняем работы, отгружаем результат" 
+            />
+          </div>
+        </div>
+
+        {/* CTA Form */}
+        <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 md:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Заказать услугу</h2>
+              <p className="text-[hsl(var(--muted-foreground))] mb-6">
+                Оставьте заявку — перезвоним в течение 15 минут
+              </p>
+              <ul className="space-y-3 text-sm text-[hsl(var(--muted-foreground))]">
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
+                  Бесплатный расчёт стоимости
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
+                  Консультация специалиста
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
+                  Гибкие условия оплаты
+                </li>
+              </ul>
+            </div>
+            
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="text"
+                placeholder="Ваше имя"
+                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
+              />
+              <input
+                type="tel"
+                placeholder="Телефон"
+                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
+              />
+              <select className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors">
+                <option value="">Выберите услугу</option>
+                {SERVICES.map((s) => (
+                  <option key={s.slug} value={s.slug}>{s.title}</option>
+                ))}
+              </select>
+              <button 
+                type="submit"
+                className="w-full py-3 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              >
+                <FiPhone className="w-5 h-5" />
+                Заказать услугу
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  )
+}
+
+function ServiceCard({ service }: { service: Service }) {
+  return (
+    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 hover:border-[hsl(var(--primary))/0.5] transition-all duration-300">
+      <div className="text-4xl mb-4">{service.icon}</div>
+      <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+      <p className="text-[hsl(var(--muted-foreground))] mb-4">{service.description}</p>
+      
+      <ul className="space-y-2 text-sm text-[hsl(var(--muted-foreground))] mb-6">
+        {service.slug === 'cutting' && (
+          <>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Резка ж/д и крановых рельсов
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Точность ±1 мм
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Любая длина под заказ
+            </li>
+          </>
+        )}
+        {service.slug === 'drilling' && (
+          <>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Отверстия любого диаметра
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              По чертежу заказчика
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Сверление без перегрева
+            </li>
+          </>
+        )}
+        {service.slug === 'grinding' && (
+          <>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Устранение износа головки
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Восстановление профиля
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Продление срока службы
+            </li>
+          </>
+        )}
+        {service.slug === 'dismantling' && (
+          <>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Полный комплекс работ
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Собственная техника
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
+              Работы по всей России
+            </li>
+          </>
+        )}
+      </ul>
+      
+      <button className="w-full py-3 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+        <FiPhone className="w-5 h-5" />
+        Заказать услугу
+      </button>
+    </div>
+  )
+}
+
+function StepCard({ number, title, description }: { number: string; title: string; description: string }) {
+  return (
+    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 text-center">
+      <div className="text-4xl font-black text-[hsl(var(--primary))] mb-2">{number}</div>
+      <h4 className="font-bold mb-2">{title}</h4>
+      <p className="text-sm text-[hsl(var(--muted-foreground))]">{description}</p>
+    </div>
+  )
+}
