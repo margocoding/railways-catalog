@@ -29,25 +29,6 @@ export function DeliveryPage() {
           {/* Как происходит доставка */}
           <DeliverySteps />
 
-          {/* География - блок с картой-заглушкой */}
-          <section className="py-12 md:py-16">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Работаем по всей России и СНГ</h2>
-              <div className="rounded-xl border border-border bg-card overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center">
-                  <div className="text-center p-6">
-                    <div className="text-5xl mb-4">🗺️</div>
-                    <h3 className="text-xl font-bold mb-2">Интерактивная карта</h3>
-                    <p className="text-muted-foreground">
-                      Здесь будет отображена карта регионов нашей работы<br />
-                      Россия, Беларусь, Казахстан и другие страны СНГ
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Преимущества */}
           <section className="py-12 md:py-16">
             <div className="container mx-auto px-4">
