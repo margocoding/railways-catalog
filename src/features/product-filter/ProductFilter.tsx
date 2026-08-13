@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi'
-import type { ProductCondition } from '../../product/model/types'
+import type { ProductCondition } from '../../entities/product/model/types'
 
 interface ProductFilterProps {
   onFilterChange: (filters: FilterState) => void

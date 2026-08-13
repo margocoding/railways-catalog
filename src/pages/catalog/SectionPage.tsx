@@ -1,13 +1,13 @@
-import { useParams } from 'react-router-dom'
-import { Layout } from '../../widgets/Layout'
-import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { CatalogSidebar } from '../../widgets/sidebar-catalog/CatalogSidebar'
-import { CatalogGrid } from '../../widgets/catalog-grid/CatalogGrid'
+import { useMemo, useState } from 'react'
+import { useParams } from 'react-router'
+import { getSectionBySlug, products } from '../../entities/product/model/mockData'
+import type { ProductCondition } from '../../entities/product/model/types'
 import { ProductFilter } from '../../features/product-filter/ProductFilter'
-import { products, sections, categories } from '../../entities/product/model/mockData'
-import type { Product, ProductCondition } from '../../entities/product/model/types'
-import { getSectionBySlug, getCategoryBreadcrumbs, getSectionName } from '../../shared/lib/catalog-helpers'
-import { useState, useMemo } from 'react'
+import { getCategoryBreadcrumbs } from '../../shared/lib/catalog-helpers'
+import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { CatalogGrid } from '../../widgets/catalog-grid/CatalogGrid'
+import { Layout } from '../../widgets/Layout'
+import { CatalogSidebar } from '../../widgets/sidebar-catalog/CatalogSidebar'
 
 interface FilterState {
   search: string

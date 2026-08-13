@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import { Layout } from './widgets/Layout'
 import { Hero } from './widgets/hero/Hero'
 import { TrustBar } from './widgets/trust-bar/TrustBar'

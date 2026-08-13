@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import { Layout } from '../../widgets/Layout'
+import { FiClock, FiMail, FiMapPin, FiMessageCircle, FiPhone, FiSend } from 'react-icons/fi'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { FiPhone, FiMail, FiClock, FiMessageCircle, FiMapPin, FiSend } from 'react-icons/fi'
+import { Layout } from '../../widgets/Layout'
 
 export function ContactsPage() {
   const breadcrumbs = [
@@ -56,16 +55,6 @@ export function ContactsPage() {
             address="г. Екатеринбург, промзона 5, склад 12"
             metro="Ж/д ветка"
           />
-        </div>
-
-        {/* Map Placeholder */}
-        <div className="mb-12">
-          <div className="aspect-video bg-[hsl(var(--muted))] rounded-xl border border-[hsl(var(--border))] flex items-center justify-center">
-            <div className="text-center">
-              <FiMapPin className="w-12 h-12 mx-auto mb-4 text-[hsl(var(--muted-foreground))]" />
-              <p className="text-[hsl(var(--muted-foreground))]">Здесь будет Яндекс.Карта</p>
-            </div>
-          </div>
         </div>
 
         {/* Requisites */}

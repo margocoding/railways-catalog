@@ -1,5 +1,6 @@
-import { ProductCard } from '../../../entities/product/ui/ProductCard'
-import type { Product } from '../../../entities/product/model/types'
+import type { Product } from "../../entities/product/model/types"
+import { ProductCard } from "../../entities/product/ui/ProductCard"
+
 
 interface CatalogGridProps {
   products: Product[]

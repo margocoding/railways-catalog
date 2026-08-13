@@ -7,7 +7,7 @@ interface CatalogSidebarProps {
 
 export function CatalogSidebar({ activeSection }: CatalogSidebarProps) {
   return (
-    <aside className="w-full lg:w-64 flex-shrink-0">
+    <aside className="w-full lg:w-64 flex-shrink-0 z-10">
       <nav className="sticky top-20 space-y-1">
         {sections.map((section) => (
           <SidebarSection 
@@ -25,7 +25,7 @@ function SidebarSection({ section, isActive }: { section: Section; isActive: boo
   const sectionCategories = categories.filter(c => c.sectionId === section.id)
   
   return (
-    <div className="relative group">
+    <div className="relative group z-10">
       {/* Desktop hover menu */}
       <a
         href={`/catalog/${section.slug}`}
