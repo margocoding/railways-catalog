@@ -1,21 +1,77 @@
-```
-# Dependencies
-node_modules/
-
 # Build artifacts
 dist/
 build/
-*.tsbuildinfo
+*.css
+*.js
+*.html
+*.svg
+*.webp
 
-# Environment variables
+# Dependencies
+node_modules/
+
+# Environment
 .env
 .env.local
 *.env.*
 
-# Logs
-*.log
+# Editors
+.vscode/
+.idea/
 
-# Coverage
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
+
+# Compression
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
 coverage/
-.nyc_output/
-```
+htmlcov/
+.coverage
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
