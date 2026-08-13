@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'vike-react-router'
 
 interface HeaderProps {
   children?: React.ReactNode
@@ -10,7 +9,7 @@ export function Layout({ children }: HeaderProps) {
     <div className="min-h-screen flex flex-col bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
       <header className="sticky top-0 z-50 border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]/95 backdrop-blur">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-accent-gradient flex items-center justify-center">
               <span className="text-white font-black text-xl">ЖД</span>
             </div>
@@ -18,15 +17,15 @@ export function Layout({ children }: HeaderProps) {
               <h1 className="font-bold text-lg leading-tight">ЖЕЛДОРКАТАЛОГ</h1>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">B2B портал</p>
             </div>
-          </Link>
+          </a>
           
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/catalog" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Каталог</Link>
-            <Link to="/services" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Услуги</Link>
-            <Link to="/delivery" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Доставка</Link>
-            <Link to="/price" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Прайс</Link>
-            <Link to="/about" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">О компании</Link>
-            <Link to="/contacts" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Контакты</Link>
+            <a href="/catalog" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Каталог</a>
+            <a href="/services" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Услуги</a>
+            <a href="/delivery" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Доставка</a>
+            <a href="/price" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Прайс</a>
+            <a href="/about" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">О компании</a>
+            <a href="/contacts" className="hover:text-[hsl(var(--primary))] transition-colors font-medium">Контакты</a>
           </nav>
           
           <a href="tel:+78000000000" className="font-bold hover:text-[hsl(var(--primary))] transition-colors">
@@ -57,20 +56,20 @@ export function Layout({ children }: HeaderProps) {
             <div>
               <h4 className="font-bold mb-4">Каталог</h4>
               <ul className="space-y-2 text-sm text-[hsl(var(--muted-foreground))]">
-                <li><Link to="/catalog/rails" className="hover:text-[hsl(var(--primary))]">Рельсы</Link></li>
-                <li><Link to="/catalog/sleepers" className="hover:text-[hsl(var(--primary))]">Шпалы и плиты</Link></li>
-                <li><Link to="/catalog/fasteners" className="hover:text-[hsl(var(--primary))]">Крепёж</Link></li>
-                <li><Link to="/catalog/shoes" className="hover:text-[hsl(var(--primary))]">Башмаки</Link></li>
+                <li><a href="/catalog/rails" className="hover:text-[hsl(var(--primary))]">Рельсы</a></li>
+                <li><a href="/catalog/sleepers" className="hover:text-[hsl(var(--primary))]">Шпалы и плиты</a></li>
+                <li><a href="/catalog/fasteners" className="hover:text-[hsl(var(--primary))]">Крепёж</a></li>
+                <li><a href="/catalog/shoes" className="hover:text-[hsl(var(--primary))]">Башмаки</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-bold mb-4">Информация</h4>
               <ul className="space-y-2 text-sm text-[hsl(var(--muted-foreground))]">
-                <li><Link to="/delivery" className="hover:text-[hsl(var(--primary))]">Доставка</Link></li>
-                <li><Link to="/price" className="hover:text-[hsl(var(--primary))]">Прайс-лист</Link></li>
-                <li><Link to="/about" className="hover:text-[hsl(var(--primary))]">О компании</Link></li>
-                <li><Link to="/contacts" className="hover:text-[hsl(var(--primary))]">Контакты</Link></li>
+                <li><a href="/delivery" className="hover:text-[hsl(var(--primary))]">Доставка</a></li>
+                <li><a href="/price" className="hover:text-[hsl(var(--primary))]">Прайс-лист</a></li>
+                <li><a href="/about" className="hover:text-[hsl(var(--primary))]">О компании</a></li>
+                <li><a href="/contacts" className="hover:text-[hsl(var(--primary))]">Контакты</a></li>
               </ul>
             </div>
             

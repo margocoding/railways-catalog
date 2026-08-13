@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { PageContextProvider } from './PageContextProvider'
 import type { Context } from './types'
