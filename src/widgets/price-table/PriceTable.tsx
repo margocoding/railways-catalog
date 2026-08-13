@@ -1,4 +1,3 @@
-import { Button } from '../../shared/ui/Button'
 import { Badge } from '../../shared/ui/Badge'
 
 interface PriceItem {

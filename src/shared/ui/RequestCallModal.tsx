@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FiPhone, FiX } from 'react-icons/fi'
+import { FiPhone } from 'react-icons/fi'
 import { Dialog } from './Dialog'
 import { Input } from './Input'
 import { Textarea } from './Textarea'

@@ -1,77 +1,53 @@
-# Build artifacts
-dist/
-build/
-*.css
-*.js
-*.html
-*.svg
-*.webp
-
+```gitignore
 # Dependencies
 node_modules/
 
-# Environment
+# Build artifacts
+dist/
+build/
+.next/
+.nuxt/
+public/dist/
+*.bundle.js
+*.min.js
+*.css.map
+
+# Environment variables
 .env
 .env.local
-*.env.*
+.env.*
+!.env.example
 
-# Editors
-.vscode/
-.idea/
-
-# Logs and temp files
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
 *.tmp
-*.swp
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Compiled files
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
-
-# System files
+*.temp
 .DS_Store
 Thumbs.db
 
-# Testing and coverage
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage
 coverage/
-htmlcov/
-.coverage
-.mypy_cache/
-.pytest_cache/
-target/
-.gradle/
+.nyc_output/
+istanbul/
+.html
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+```

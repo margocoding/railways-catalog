@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FiMenu, FiSearch, FiPhone, FiX } from 'react-icons/fi'
+import { FiMenu, FiSearch, FiPhone } from 'react-icons/fi'
 import { CATEGORIES } from '../../entities/category/model/types'
 import { Drawer } from '../../shared/ui/Drawer'
 import { Button } from '../../shared/ui/Button'
