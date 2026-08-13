@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react'
-import { Layout } from '../../widgets/Layout'
-import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { CatalogSidebar } from '../../widgets/sidebar-catalog/CatalogSidebar'
-import { CatalogGrid } from '../../widgets/catalog-grid/CatalogGrid'
-import { ProductFilter } from '../../features/product-filter/ProductFilter'
+import { useMemo, useState } from 'react'
 import { products } from '../../entities/product/model/mockData'
-import type { Product, ProductCondition } from '../../entities/product/model/types'
+import type { ProductCondition } from '../../entities/product/model/types'
+import { ProductFilter } from '../../features/product-filter/ProductFilter'
 import { getCategoryBreadcrumbs } from '../../shared/lib/catalog-helpers'
+import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { CatalogGrid } from '../../widgets/catalog-grid/CatalogGrid'
+import { Layout } from '../../widgets/Layout'
+import { CatalogSidebar } from '../../widgets/sidebar-catalog/CatalogSidebar'
 
 interface FilterState {
   search: string

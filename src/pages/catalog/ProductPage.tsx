@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { Layout } from '../../widgets/Layout'
-import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { FiFileText, FiPlus, FiSettings, FiShoppingCart, FiTruck } from 'react-icons/fi'
+import { Link, useParams } from 'react-router'
+import { categories, products } from '../../entities/product/model/mockData'
 import { ProductCard } from '../../entities/product/ui/ProductCard'
-import { products, categories } from '../../entities/product/model/mockData'
-import type { Product } from '../../entities/product/model/types'
-import { getProductBreadcrumbs, formatPrice, getConditionBadgeColor, getConditionLabel } from '../../shared/lib/catalog-helpers'
-import { FiShoppingCart, FiPlus, FiTruck, FiFileText, FiSettings } from 'react-icons/fi'
+import { formatPrice, getConditionBadgeColor, getConditionLabel, getProductBreadcrumbs } from '../../shared/lib/catalog-helpers'
+import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { Layout } from '../../widgets/Layout'
 
 export function ProductPage() {
   const { slug } = useParams<{ slug: string }>()

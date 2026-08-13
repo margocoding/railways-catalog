@@ -1,6 +1,6 @@
-import { Layout } from '../../widgets/Layout'
+import { FiDownload, FiPhone } from 'react-icons/fi'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { FiPhone, FiMail, FiClock, FiMessageCircle, FiMapPin, FiDownload, FiCheck } from 'react-icons/fi'
+import { Layout } from '../../widgets/Layout'
 
 export function AboutPage() {
   const breadcrumbs = [

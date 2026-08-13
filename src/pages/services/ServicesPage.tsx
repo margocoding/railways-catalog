@@ -1,8 +1,8 @@
-import { Layout } from '../../widgets/Layout'
-import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { SERVICES } from '../../entities/service/model/mocks'
+import { FiCheck, FiPhone } from 'react-icons/fi'
 import type { Service } from '../../entities/service/model/mocks'
-import { FiCheck, FiPhone, FiMail } from 'react-icons/fi'
+import { SERVICES } from '../../entities/service/model/mocks'
+import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { Layout } from '../../widgets/Layout'
 
 export function ServicesPage() {
   const breadcrumbs = [
