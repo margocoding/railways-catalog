@@ -1,11 +1,12 @@
 import { FiTruck, FiPackage } from 'react-icons/fi'
+import { TbTrain } from 'react-icons/tb'
 import { Card, CardContent, CardHeader } from '../../shared/ui/Card'
 import { IconBox } from '../../shared/ui/IconBox'
 
 export function DeliveryMethods() {
   const methods = [
     {
-      icon: <FiTruck className="w-6 h-6" />,
+      icon: <TbTrain className="w-6 h-6" />,
       title: 'Ж/Д доставка',
       description: 'Вагонами и контейнерами, оптимально для крупных партий рельсов и шпал',
     },
