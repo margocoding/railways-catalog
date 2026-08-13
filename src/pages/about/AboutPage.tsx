@@ -1,4 +1,7 @@
-import { FiDownload, FiPhone } from 'react-icons/fi'
+import { CertificateCard } from '@/shared/ui/CertificateCard'
+import { DirectionCard } from '@/shared/ui/DirectionCard'
+import { StatCard } from '@/shared/ui/StatCard'
+import { FiPhone } from 'react-icons/fi'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
 import { Layout } from '../../widgets/Layout'
 
@@ -55,7 +58,7 @@ export function AboutPage() {
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-6">Чем занимаемся</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <DirectionCard 
+            <DirectionCard
               icon="🛤️"
               title="Поставка ВСП"
               description="Комплексные поставки верхнего строения пути: рельсы, шпалы, крепёж"
@@ -122,34 +125,6 @@ export function AboutPage() {
   )
 }
 
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 text-center">
-      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2">{value}</div>
-      <div className="text-sm text-[hsl(var(--muted-foreground))]">{label}</div>
-    </div>
-  )
-}
 
-function DirectionCard({ icon, title, description }: { icon: string; title: string; description: string }) {
-  return (
-    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="font-bold mb-2">{title}</h3>
-      <p className="text-sm text-[hsl(var(--muted-foreground))]">{description}</p>
-    </div>
-  )
-}
 
-function CertificateCard({ title, type }: { title: string; type: string }) {
-  return (
-    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-4 text-center hover:border-[hsl(var(--primary))/0.5] transition-colors">
-      <div className="w-12 h-12 mx-auto mb-3 rounded-lg bg-[hsl(var(--muted))] flex items-center justify-center">
-        <FiDownload className="w-6 h-6 text-[hsl(var(--muted-foreground))]" />
-      </div>
-      <div className="font-bold text-sm mb-1">{title}</div>
-      <div className="text-xs text-[hsl(var(--muted-foreground))] mb-3">{type}</div>
-      <button className="text-xs text-[hsl(var(--primary))] hover:underline">Скачать PDF</button>
-    </div>
-  )
-}
+

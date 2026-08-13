@@ -7,7 +7,7 @@ export function DeliveryCTA() {
   return (
     <section className="py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <Card className="bg-gradient-to-br from-muted/50 to-muted/30 border-primary/20">
+        <Card >
           <CardContent className="p-6 md:p-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               <div>

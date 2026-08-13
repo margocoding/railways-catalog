@@ -3,6 +3,7 @@ import { FiMenu, FiSearch, FiPhone } from 'react-icons/fi'
 import { CATEGORIES } from '../../entities/category/model/types'
 import { Drawer } from '../../shared/ui/Drawer'
 import { Button } from '../../shared/ui/Button'
+import { Link } from 'react-router'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -41,16 +42,17 @@ export function Header() {
             <FiPhone className="w-4 h-4" />
             8 (800) 000-00-00
           </a>
-          <a
-            href="/contacts"
-            className="px-4 py-2 bg-accent-gradient rounded-lg font-bold text-sm text-white hover:opacity-90 transition-opacity min-h-[44px]"
+          <Link
+            to="/contacts"
           >
-            Запросить КП
-          </a>
+            <Button>
+              Запросить КП
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile menu button */}
-        <button 
+        <button
           className="lg:hidden p-2 min-h-[44px] min-w-[44px]"
           onClick={() => setMobileMenuOpen(true)}
           aria-label="Открыть меню"
@@ -60,8 +62,8 @@ export function Header() {
       </div>
 
       {/* Mobile Drawer */}
-      <Drawer 
-        open={mobileMenuOpen} 
+      <Drawer
+        open={mobileMenuOpen}
         onOpenChange={setMobileMenuOpen}
         title="Меню"
         side="right"
