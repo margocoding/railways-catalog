@@ -12,6 +12,8 @@ import { ProductPage } from './pages/catalog/ProductPage'
 import { ServicesPage } from './pages/services/ServicesPage'
 import { AboutPage } from './pages/about/AboutPage'
 import { ContactsPage } from './pages/contacts/ContactsPage'
+import { DeliveryPage } from './pages/delivery/DeliveryPage'
+import { PricePage } from './pages/price/PricePage'
 
 function HomePage() {
   return (
@@ -38,6 +40,8 @@ function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
+        <Route path="/delivery" element={<DeliveryPage />} />
+        <Route path="/price" element={<PricePage />} />
       </Routes>
     </BrowserRouter>
   )
