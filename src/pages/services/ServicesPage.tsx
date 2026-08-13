@@ -2,6 +2,9 @@ import { FiCheck, FiPhone } from 'react-icons/fi'
 import type { Service } from '../../entities/service/model/mocks'
 import { SERVICES } from '../../entities/service/model/mocks'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { Button } from '../../shared/ui/Button'
+import { Input } from '../../shared/ui/Input'
+import { Select } from '../../shared/ui/Select'
 import { Layout } from '../../widgets/Layout'
 
 export function ServicesPage() {
@@ -9,6 +12,8 @@ export function ServicesPage() {
     { label: 'Главная', href: '/' },
     { label: 'Услуги', href: undefined },
   ]
+  
+  const serviceOptions = SERVICES.map((s) => ({ value: s.slug, label: s.title }))
 
   return (
     <Layout>
@@ -79,34 +84,17 @@ export function ServicesPage() {
             </div>
             
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Ваше имя"
-                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
+              <Input placeholder="Ваше имя" size="lg" />
+              <Input type="tel" placeholder="Телефон" size="lg" />
+              <Input type="email" placeholder="Email" size="lg" />
+              <Select 
+                size="lg" 
+                options={[{ value: '', label: 'Выберите услугу' }, ...serviceOptions]} 
               />
-              <input
-                type="tel"
-                placeholder="Телефон"
-                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
-              />
-              <select className="w-full px-4 py-3 bg-[hsl(var(--muted))] rounded-lg border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors">
-                <option value="">Выберите услугу</option>
-                {SERVICES.map((s) => (
-                  <option key={s.slug} value={s.slug}>{s.title}</option>
-                ))}
-              </select>
-              <button 
-                type="submit"
-                className="w-full py-3 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
+              <Button variant="primary" size="lg" className="w-full">
                 <FiPhone className="w-5 h-5" />
                 Заказать услугу
-              </button>
+              </Button>
             </form>
           </div>
         </div>
