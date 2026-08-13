@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --background: 220 15% 6%;
+  --foreground: 210 20% 96%;
+  --card: 220 15% 10%;
+  --primary: 0 75% 52%;
+  --accent: 8 85% 55%;
+  --muted: 220 10% 18%;
+  --muted-foreground: 215 10% 65%;
+  --border: 220 10% 22%;
+  --radius: 0.75rem;
+
+  --hero-gradient: linear-gradient(135deg, hsl(220 15% 5%) 0%, hsl(220 10% 9%) 40%, hsl(0 30% 14%) 100%);
+  --card-gradient: linear-gradient(180deg, hsl(220 10% 13%) 0%, hsl(220 10% 9%) 100%);
+  --accent-gradient: linear-gradient(135deg, hsl(0 75% 52%) 0%, hsl(10 80% 55%) 100%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bg-card-gradient {
+  background: var(--card-gradient);
+}
+
+.bg-accent-gradient {
+  background: var(--accent-gradient);
+}
+
+.border-primary\/50:hover {
+  border-color: hsl(var(--primary) / 0.5);
+}
