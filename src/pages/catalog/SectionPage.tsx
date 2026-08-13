@@ -108,13 +108,7 @@ export function SectionPage() {
         
         <h1 className="text-3xl font-black mb-2">{section.name}</h1>
         <p className="text-[hsl(var(--muted-foreground))] mb-8">
-          {section.id === 'rails' && 'Железнодорожные, крановые и узкоколейные рельсы всех типов'}
-          {section.id === 'sleepers' && 'Деревянные, железобетонные шпалы и подрельсовые плиты'}
-          {section.id === 'fasteners' && 'Рельсовый крепёж: болты, гайки, накладки, скрепления'}
-          {section.id === 'shoes' && 'Тормозные и подкладочные башмаки для железнодорожных вагонов'}
-          {section.id === 'buffers' && 'Тупиковые упоры для защиты концов путей'}
-          {section.id === 'metal' && 'Металлоизделия по чертежам заказчика'}
-          {section.id === 'tools' && 'Путевой инструмент: ручной и механизированный'}
+          {section.description}
         </p>
 
         <div className="flex flex-col lg:flex-row gap-6">

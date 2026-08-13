@@ -1,4 +1,8 @@
 import { motion } from 'framer-motion'
+import { Button } from '@/shared/ui/Button'
+import { Input } from '@/shared/ui/Input'
+import { Textarea } from '@/shared/ui/Textarea'
+import { FormField } from '@/shared/ui/FormField'
 
 export function QuoteCTA() {
   return (
@@ -21,34 +25,23 @@ export function QuoteCTA() {
 
           <form className="bg-[hsl(var(--card))] p-6 rounded-xl border border-[hsl(var(--border))]" onSubmit={(e) => e.preventDefault()}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="Имя"
-                className="px-4 py-3 rounded-lg bg-[hsl(var(--background))] border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
-              />
-              <input
-                type="tel"
-                placeholder="Телефон"
-                className="px-4 py-3 rounded-lg bg-[hsl(var(--background))] border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="px-4 py-3 rounded-lg bg-[hsl(var(--background))] border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors md:col-span-2"
-              />
-              <textarea
-                placeholder="Комментарий (опционально)"
-                rows={3}
-                className="px-4 py-3 rounded-lg bg-[hsl(var(--background))] border border-[hsl(var(--border))] focus:border-[hsl(var(--primary))] outline-none transition-colors md:col-span-2 resize-none"
-              />
+              <FormField>
+                <Input placeholder="Имя" />
+              </FormField>
+              <FormField>
+                <Input type="tel" placeholder="Телефон" />
+              </FormField>
+              <FormField className="md:col-span-2">
+                <Input type="email" placeholder="Email" />
+              </FormField>
+              <FormField className="md:col-span-2">
+                <Textarea placeholder="Комментарий (опционально)" rows={3} />
+              </FormField>
             </div>
 
-            <button
-              type="submit"
-              className="w-full py-3 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity"
-            >
+            <Button type="submit" variant="primary" size="md" className="w-full">
               Отправить заявку
-            </button>
+            </Button>
 
             <p className="text-xs text-[hsl(var(--muted-foreground))] text-center mt-4">
               Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности

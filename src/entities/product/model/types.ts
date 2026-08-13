@@ -32,6 +32,7 @@ export interface Section {
   name: string
   slug: string
   icon?: string
+  description?: string
 }
 
 export interface Lead {
