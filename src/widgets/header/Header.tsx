@@ -11,7 +11,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur bg-[hsl(var(--background))/80] border-b border-[hsl(var(--border))]">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="container mx-auto px-10 h-16 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-accent-gradient flex items-center justify-center">

@@ -6,7 +6,6 @@ const CATEGORIES_LIST = [
   { slug: '/catalog/rails', name: 'Рельсы железнодорожные', icon: '🛤️' },
   { slug: '/catalog/rails#crane', name: 'Рельсы крановые', icon: '🏗️' },
   { slug: '/catalog/rails#narrow', name: 'Рельсы узкоколейные', icon: '🚂' },
-  { slug: '/catalog/sleepers#wood', name: 'Шпалы деревянные', icon: '🪵' },
   { slug: '/catalog/sleepers#concrete', name: 'Шпалы железобетонные', icon: '🟫' },
   { slug: '/catalog/switches', name: 'Стрелочные переводы', icon: '➡️' },
   { slug: '/catalog/switches-parts', name: 'Детали стрелочных переводов', icon: '🔧' },
