@@ -15,7 +15,8 @@ export function ServicesTeaser() {
           <p className="text-[hsl(var(--muted-foreground))]">Не только поставка, но и обработка</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Services List - Vertical layout instead of grid */}
+        <div className="max-w-4xl mx-auto space-y-4 mb-12">
           {SERVICES.map((service, i) => (
             <motion.div
               key={service.slug}
@@ -26,13 +27,20 @@ export function ServicesTeaser() {
             >
               <a
                 href={`/services#${service.slug}`}
-                className="block p-6 rounded-xl border border-[hsl(var(--border))] bg-card-gradient hover:border-[hsl(var(--primary))/50] hover:translate-y-[-4px] transition-all h-full group"
+                className="block p-6 rounded-xl border border-[hsl(var(--border))] bg-card-gradient hover:border-[hsl(var(--primary))/50] transition-all group"
               >
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="font-bold text-lg mb-2">{service.title}</h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))]">{service.description}</p>
-                <div className="text-sm font-medium text-[hsl(var(--primary))] mt-4 group-hover:gap-2 transition-all">
-                  Подробнее →
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="text-4xl flex-shrink-0">{service.icon}</div>
+                  <div className="flex-grow">
+                    <h3 className="font-bold text-lg mb-1">{service.title}</h3>
+                    <p className="text-sm text-[hsl(var(--muted-foreground))]">{service.description}</p>
+                  </div>
+                  <div className="text-sm font-medium text-[hsl(var(--primary))] flex items-center gap-1 flex-shrink-0">
+                    Подробнее
+                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </a>
             </motion.div>
@@ -42,7 +50,7 @@ export function ServicesTeaser() {
         <div className="text-center">
           <a
             href="/services"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold border border-[hsl(var(--border))] hover:border-[hsl(var(--primary))/50] transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent-gradient rounded-xl font-bold text-white hover:opacity-90 transition-opacity"
           >
             Все услуги →
           </a>
