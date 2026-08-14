@@ -1,25 +1,24 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
-import { Layout } from './widgets/Layout'
-import { Hero } from './widgets/hero/Hero'
-import { TrustBar } from './widgets/trust-bar/TrustBar'
-import { Advantages } from './widgets/advantages/Advantages'
-import { ServicesTeaser } from './widgets/services-teaser/ServicesTeaser'
-import { QuoteCTA } from './widgets/quote-cta/QuoteCTA'
-import { CatalogPage } from './pages/catalog/CatalogPage'
-import { SectionPage } from './pages/catalog/SectionPage'
-import { ProductPage } from './pages/catalog/ProductPage'
-import { ServicesPage } from './pages/services/ServicesPage'
+import { BrowserRouter, Route, Routes } from 'react-router'
 import { AboutPage } from './pages/about/AboutPage'
+import { CatalogPage } from './pages/catalog/CatalogPage'
+import { ProductPage } from './pages/catalog/ProductPage'
+import { SectionPage } from './pages/catalog/SectionPage'
 import { ContactsPage } from './pages/contacts/ContactsPage'
 import { DeliveryPage } from './pages/delivery/DeliveryPage'
 import { PricePage } from './pages/price/PricePage'
-import { HomeCategoriesSidebar } from './widgets/home-categories-sidebar/HomeCategoriesSidebar'
+import { ServicesPage } from './pages/services/ServicesPage'
+import { Layout } from './widgets/Layout'
+import { Advantages } from './widgets/advantages/Advantages'
+import { Hero } from './widgets/hero/Hero'
+import { QuoteCTA } from './widgets/quote-cta/QuoteCTA'
+import { ServicesTeaser } from './widgets/services-teaser/ServicesTeaser'
+import { TrustBar } from './widgets/trust-bar/TrustBar'
 
 function HomePage() {
   return (
     <Layout>
       <Hero />
-      <HomeCategoriesSidebar />
+      {/* <HomeCategoriesSidebar /> */}
       <TrustBar />
       <Advantages />
       <ServicesTeaser />

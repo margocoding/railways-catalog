@@ -26,7 +26,7 @@ export function Hero() {
         </svg>
       </div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-10 py-20 relative z-10">
         <div className="max-w-3xl">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -47,7 +47,7 @@ export function Hero() {
             {/* H1 */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight text-white">
               Материалы ВСП для железных дорог{' '}
-              <span className="bg-accent-gradient bg-clip-text text-transparent">
+              <span className="bg-accent-gradient bg-clip-text text-white">
                 России и СНГ
               </span>
             </h1>
@@ -87,7 +87,7 @@ export function Hero() {
                 { value: '48ч', label: 'отгрузка' },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-2xl md:text-3xl font-black bg-accent-gradient bg-clip-text text-transparent">
+                  <div className="text-2xl md:text-3xl font-black bg-accent-gradient bg-clip-text text-white">
                     {stat.value}
                   </div>
                   <div className="text-sm text-[hsl(var(--muted-foreground))]">{stat.label}</div>
