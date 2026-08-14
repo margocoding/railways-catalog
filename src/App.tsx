@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import { Layout } from './widgets/Layout'
 import { Hero } from './widgets/hero/Hero'
 import { TrustBar } from './widgets/trust-bar/TrustBar'
-import { CategoryGrid } from './widgets/category-grid/CategoryGrid'
 import { Advantages } from './widgets/advantages/Advantages'
 import { ServicesTeaser } from './widgets/services-teaser/ServicesTeaser'
 import { QuoteCTA } from './widgets/quote-cta/QuoteCTA'
@@ -14,13 +13,14 @@ import { AboutPage } from './pages/about/AboutPage'
 import { ContactsPage } from './pages/contacts/ContactsPage'
 import { DeliveryPage } from './pages/delivery/DeliveryPage'
 import { PricePage } from './pages/price/PricePage'
+import { HomeCategoriesSidebar } from './widgets/home-categories-sidebar/HomeCategoriesSidebar'
 
 function HomePage() {
   return (
     <Layout>
       <Hero />
+      <HomeCategoriesSidebar />
       <TrustBar />
-      <CategoryGrid />
       <Advantages />
       <ServicesTeaser />
       <QuoteCTA />

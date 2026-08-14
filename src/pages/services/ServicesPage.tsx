@@ -25,10 +25,10 @@ export function ServicesPage() {
           Не только поставка, но и обработка и монтаж
         </p>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {/* Services List - Vertical layout instead of grid */}
+        <div className="space-y-4 mb-12">
           {SERVICES.map((service) => (
-            <ServiceCard key={service.slug} service={service} />
+            <ServiceListItem key={service.slug} service={service} />
           ))}
         </div>
 
@@ -103,84 +103,94 @@ export function ServicesPage() {
   )
 }
 
-function ServiceCard({ service }: { service: Service }) {
+function ServiceListItem({ service }: { service: Service }) {
   return (
     <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 hover:border-[hsl(var(--primary))/0.5] transition-all duration-300">
-      <div className="text-4xl mb-4">{service.icon}</div>
-      <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-      <p className="text-[hsl(var(--muted-foreground))] mb-4">{service.description}</p>
-      
-      <ul className="space-y-2 text-sm text-[hsl(var(--muted-foreground))] mb-6">
-        {service.slug === 'cutting' && (
-          <>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Резка ж/д и крановых рельсов
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Точность ±1 мм
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Любая длина под заказ
-            </li>
-          </>
-        )}
-        {service.slug === 'drilling' && (
-          <>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Отверстия любого диаметра
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              По чертежу заказчика
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Сверление без перегрева
-            </li>
-          </>
-        )}
-        {service.slug === 'grinding' && (
-          <>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Устранение износа головки
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Восстановление профиля
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Продление срока службы
-            </li>
-          </>
-        )}
-        {service.slug === 'dismantling' && (
-          <>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Полный комплекс работ
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Собственная техника
-            </li>
-            <li className="flex items-start gap-2">
-              <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] mt-0.5 flex-shrink-0" />
-              Работы по всей России
-            </li>
-          </>
-        )}
-      </ul>
-      
-      <button className="w-full py-3 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-        <FiPhone className="w-5 h-5" />
-        Заказать услугу
-      </button>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        {/* Icon */}
+        <div className="text-4xl flex-shrink-0">{service.icon}</div>
+        
+        {/* Content */}
+        <div className="flex-grow">
+          <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+          <p className="text-[hsl(var(--muted-foreground))] mb-3">{service.description}</p>
+          
+          <ul className="space-y-1 text-sm text-[hsl(var(--muted-foreground))]">
+            {service.slug === 'cutting' && (
+              <>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Резка ж/д и крановых рельсов
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Точность ±1 мм
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Любая длина под заказ
+                </li>
+              </>
+            )}
+            {service.slug === 'drilling' && (
+              <>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Отверстия любого диаметра
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  По чертежу заказчика
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Сверление без перегрева
+                </li>
+              </>
+            )}
+            {service.slug === 'grinding' && (
+              <>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Устранение износа головки
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Восстановление профиля
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Продление срока службы
+                </li>
+              </>
+            )}
+            {service.slug === 'dismantling' && (
+              <>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Полный комплекс работ
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Собственная техника
+                </li>
+                <li className="flex items-center gap-2">
+                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+                  Работы по всей России
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+        
+        {/* Button */}
+        <div className="flex-shrink-0">
+          <button className="w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <FiPhone className="w-5 h-5" />
+            Заказать
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
