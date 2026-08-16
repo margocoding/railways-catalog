@@ -94,7 +94,7 @@ export function Hero() {
               </motion.div>
 
               {/* H1 - Reduced size and moved right */}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 leading-tight text-white">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 leading-tight text-white max-w-2xl">
                 Материалы ВСП для железных дорог{' '}
                 <span className="bg-accent-gradient bg-clip-text text-white">
                   России и СНГ
@@ -102,15 +102,15 @@ export function Hero() {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg text-[hsl(var(--muted-foreground))] mb-8 max-w-xl text-gray-300">
+              <p className="text-base md:text-lg text-[hsl(var(--muted-foreground))] mb-6 max-w-xl text-gray-300">
                 Рельсы, шпалы, крепёж и башмаки с собственных складов. Поставки от 1 тонны с полным пакетом документов.
               </p>
 
               {/* CTA buttons */}
-              <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex flex-wrap gap-4 mb-6">
                 <a 
                   href="/catalog" 
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-accent-gradient rounded-xl font-bold text-white shadow-lg shadow-[hsl(var(--primary))/30] hover:shadow-[hsl(var(--primary))/50] transition-all hover:scale-105 text-lg"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent-gradient rounded-xl font-bold text-white shadow-lg shadow-[hsl(var(--primary))/30] hover:shadow-[hsl(var(--primary))/50] transition-all hover:scale-105 text-base md:text-lg"
                 >
                   Открыть каталог
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@ export function Hero() {
                 </a>
                 <a 
                   href="/price" 
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-[hsl(var(--primary))] rounded-xl font-bold text-white shadow-lg shadow-[hsl(var(--primary))/30] hover:shadow-[hsl(var(--primary))/50] transition-all hover:scale-105 text-lg"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[hsl(var(--primary))] rounded-xl font-bold text-white shadow-lg shadow-[hsl(var(--primary))/30] hover:shadow-[hsl(var(--primary))/50] transition-all hover:scale-105 text-base md:text-lg"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
