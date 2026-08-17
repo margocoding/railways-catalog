@@ -185,10 +185,10 @@ function ServiceListItem({ service }: { service: Service }) {
           
           {/* Button */}
           <div className="flex-shrink-0">
-            <button className="w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <Link to={`/services/${service.slug}`} className="block w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-center">
               <FiPhone className="w-5 h-5" />
               Заказать
-            </button>
+            </Link>
           </div>
         </div>
       </div>
