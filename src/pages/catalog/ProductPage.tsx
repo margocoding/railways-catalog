@@ -10,6 +10,7 @@ import { Link, useParams } from 'react-router'
 
 import { products } from '../../entities/product/model/mockData'
 import { ProductCard } from '../../entities/product/ui/ProductCard'
+import { useCart } from '../../entities/cart/model/use-cart'
 import {
   formatPrice,
   getCategoryName,
@@ -39,6 +40,8 @@ export function ProductPage() {
   const [railType, setRailType] = useState('Р-65')
   const [railLength, setRailLength] = useState('12.5')
 
+  const { addToCart } = useCart()
+
   const product = products.find(
       (item) =>
           item.slug === productSlug &&
@@ -54,6 +57,10 @@ export function ProductPage() {
           </div>
         </Layout>
     )
+  }
+
+  const handleAddToCart = () => {
+    addToCart(product, 1)
   }
 
   const breadcrumbs = getProductBreadcrumbs(product)
@@ -168,11 +175,12 @@ export function ProductPage() {
               <div className="mb-6 flex flex-col gap-3 sm:flex-row">
                 <button
                     type="button"
+                    onClick={handleAddToCart}
                     className="flex-1 rounded-lg bg-accent-gradient py-3 font-bold text-white transition-opacity hover:opacity-90"
                 >
                 <span className="flex items-center justify-center gap-2">
                   <FiShoppingCart className="h-5 w-5" />
-                  Запросить КП
+                  Добавить в корзину
                 </span>
                 </button>
 
@@ -408,11 +416,11 @@ export function ProductPage() {
 
           {similarProducts.length > 0 && (
               <div>
-                <h3 className="mb-4 text-xl font-bold">
+                <h3 className="mb-6 text-xl font-bold">
                   Похожие товары
                 </h3>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="space-y-4">
                   {similarProducts.map((item) => (
                       <ProductCard
                           key={item.id}
