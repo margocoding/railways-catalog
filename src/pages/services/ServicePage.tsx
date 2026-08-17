@@ -1,6 +1,5 @@
 import { useParams } from 'react-router'
 import { FiCheck, FiPhone, FiArrowLeft } from 'react-icons/fi'
-import type { Service } from '../../entities/service/model/mocks'
 import { SERVICES } from '../../entities/service/model/mocks'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
 import { Button } from '../../shared/ui/Button'
