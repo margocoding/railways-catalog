@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { FiMenu, FiSearch, FiPhone, FiChevronRight } from 'react-icons/fi'
+import { FiMenu, FiSearch, FiPhone, FiChevronRight, FiShoppingCart } from 'react-icons/fi'
 import { CATEGORIES, SUBCATEGORIES } from '../../entities/category/model/types'
 import { Drawer } from '../../shared/ui/Drawer'
 import { Button } from '../../shared/ui/Button'
 import { Link } from 'react-router'
+import { useCart } from '../../features/cart/lib/useCart'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [catalogAccordionOpen, setCatalogAccordionOpen] = useState(false)
+  const { itemCount } = useCart()
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur bg-[hsl(var(--background))/80] border-b border-[hsl(var(--border))]">
@@ -42,9 +44,15 @@ export function Header() {
             <FiPhone className="w-4 h-4" />
             8 (800) 000-00-00
           </a>
-          <Link
-            to="/contacts"
-          >
+          <Link to="/cart" className="relative p-2 hover:bg-[hsl(var(--muted))] rounded-lg transition-colors min-h-[44px] min-w-[44px]">
+            <FiShoppingCart className="w-5 h-5" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-[hsl(var(--primary))] text-white text-xs rounded-full flex items-center justify-center font-bold">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+          <Link to="/contacts">
             <Button>
               Запросить КП
             </Button>
@@ -131,7 +139,7 @@ function CatalogMegaMenu() {
     >
       <button 
         className="text-sm font-medium hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1 min-h-[44px]"
-        onMouseEnter={() => setActiveCategory('main')}
+        
       >
         Каталог
       </button>
