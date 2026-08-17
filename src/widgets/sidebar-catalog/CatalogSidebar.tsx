@@ -3,9 +3,10 @@ import type { Section } from '../../entities/product/model/types'
 
 interface CatalogSidebarProps {
   activeSection?: string
+  activeCategory?: string
 }
 
-export function CatalogSidebar({ activeSection }: CatalogSidebarProps) {
+export function CatalogSidebar({ activeSection, activeCategory }: CatalogSidebarProps) {
   return (
     <aside className="w-full lg:w-64 flex-shrink-0 z-10">
       <nav className="sticky top-20 space-y-1">
@@ -14,6 +15,7 @@ export function CatalogSidebar({ activeSection }: CatalogSidebarProps) {
             key={section.id} 
             section={section}
             isActive={activeSection === section.slug}
+            activeCategory={activeCategory}
           />
         ))}
       </nav>
@@ -21,7 +23,7 @@ export function CatalogSidebar({ activeSection }: CatalogSidebarProps) {
   )
 }
 
-function SidebarSection({ section, isActive }: { section: Section; isActive: boolean }) {
+function SidebarSection({ section, isActive, activeCategory }: { section: Section; isActive: boolean; activeCategory?: string }) {
   const sectionCategories = categories.filter(c => c.sectionId === section.id)
   
   return (
@@ -48,11 +50,16 @@ function SidebarSection({ section, isActive }: { section: Section; isActive: boo
         <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] shadow-xl overflow-hidden">
           {sectionCategories.map((category) => {
             const subCategories = categories.filter(c => c.parentId === category.id)
+            const isCategoryActive = activeCategory === category.slug
             return (
               <div key={category.id}>
                 <a
                   href={`/catalog/${section.slug}/${category.slug}`}
-                  className="block px-4 py-3 hover:bg-[hsl(var(--muted))] transition-colors"
+                  className={`block px-4 py-3 transition-colors ${
+                    isCategoryActive 
+                      ? 'bg-[hsl(var(--primary))/0.2] text-[hsl(var(--primary))]' 
+                      : 'hover:bg-[hsl(var(--muted))]'
+                  }`}
                 >
                   <div className="font-medium text-sm">{category.name}</div>
                   <div className="text-xs text-[hsl(var(--muted-foreground))]">
@@ -89,7 +96,11 @@ function SidebarSection({ section, isActive }: { section: Section; isActive: boo
               <a
                 key={category.id}
                 href={`/catalog/${section.slug}/${category.slug}`}
-                className="block px-3 py-2 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] rounded-lg transition-colors"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
+                  activeCategory === category.slug
+                    ? 'bg-[hsl(var(--primary))/0.2] text-[hsl(var(--primary))]'
+                    : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
+                }`}
               >
                 {category.name}
               </a>

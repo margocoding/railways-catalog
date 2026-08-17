@@ -138,8 +138,8 @@ function CatalogMegaMenu() {
 
       {/* Mega Menu Dropdown */}
       <div className="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-        <div className="w-[1000px] p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl">
-          <div className="grid grid-cols-5 gap-4">
+        <div className="w-[900px] p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl">
+          <div className="grid grid-cols-4 gap-4">
             {/* Left column - Main Categories */}
             <div className="col-span-1 border-r border-[hsl(var(--border))] pr-4">
               {CATEGORIES.map((category) => {
@@ -150,7 +150,8 @@ function CatalogMegaMenu() {
                     className={`relative group/category mb-1`}
                     onMouseEnter={() => setActiveCategory(category.slug)}
                   >
-                    <button
+                    <a
+                      href={`/catalog/${category.slug}`}
                       className={`w-full text-left p-2 rounded-lg transition-colors flex items-center justify-between gap-2 min-h-[44px] ${
                         activeCategory === category.slug 
                           ? 'bg-[hsl(var(--primary))] text-white' 
@@ -161,20 +162,21 @@ function CatalogMegaMenu() {
                       {hasSubcategories && (
                         <FiChevronRight className="w-4 h-4 flex-shrink-0" />
                       )}
-                    </button>
+                    </a>
                     
                     {/* Subcategories panel - appears to the right */}
                     {hasSubcategories && activeCategory === category.slug && (
                       <div className="absolute left-full top-0 ml-1 w-56 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg shadow-xl p-2">
                         {SUBCATEGORIES[category.slug].map((sub) => {
-                          const hasBrands = sub.brands?.length > 0
+                          const hasBrands = (sub.brands?.length ?? 0) > 0
                           return (
                             <div
                               key={sub.slug}
                               className="relative group/subcategory"
                               onMouseEnter={() => setActiveSubCategory(sub.slug)}
                             >
-                              <button
+                              <a
+                                href={`/catalog/${category.slug}/${sub.slug}`}
                                 className={`w-full text-left p-2 rounded-lg transition-colors text-sm flex items-center justify-between gap-2 min-h-[40px] ${
                                   activeSubCategory === sub.slug
                                     ? 'bg-[hsl(var(--primary))] text-white'
@@ -185,7 +187,7 @@ function CatalogMegaMenu() {
                                 {hasBrands && (
                                   <FiChevronRight className="w-3 h-3 flex-shrink-0" />
                                 )}
-                              </button>
+                              </a>
                               
                               {/* Brands panel - appears further to the right */}
                               {hasBrands && activeSubCategory === sub.slug && (
@@ -212,15 +214,15 @@ function CatalogMegaMenu() {
             </div>
             
             {/* Right area - Category details when selected */}
-            <div className="col-span-4 pl-4">
+            <div className="col-span-3 pl-4">
               {activeCategory && activeCategory !== 'main' && (
                 <div>
                   {(() => {
                     const category = CATEGORIES.find(c => c.slug === activeCategory)
                     if (!category) return null
                     return (
-                      <div className="mb-4">
-                        <div className="flex items-center gap-3 mb-2">
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
                           <span className="text-3xl">{category.icon}</span>
                           <div>
                             <h3 className="text-lg font-bold">{category.title}</h3>
@@ -228,16 +230,19 @@ function CatalogMegaMenu() {
                           </div>
                         </div>
                         {SUBCATEGORIES[activeCategory] && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {SUBCATEGORIES[activeCategory].map((sub) => (
-                              <a
-                                key={sub.slug}
-                                href={`/catalog/${activeCategory}/${sub.slug}`}
-                                className="px-3 py-1.5 bg-[hsl(var(--muted))] rounded-full text-sm hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
-                              >
-                                {sub.title}
-                              </a>
-                            ))}
+                          <div>
+                            <h4 className="text-sm font-semibold mb-2 text-[hsl(var(--muted-foreground))]">Подкатегории:</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {SUBCATEGORIES[activeCategory].map((sub) => (
+                                <a
+                                  key={sub.slug}
+                                  href={`/catalog/${activeCategory}/${sub.slug}`}
+                                  className="px-3 py-1.5 bg-[hsl(var(--muted))] rounded-full text-sm hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                                >
+                                  {sub.title}
+                                </a>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>

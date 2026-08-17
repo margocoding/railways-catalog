@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router'
-import { getSectionBySlug, products } from '../../entities/product/model/mockData'
+import { getSectionBySlug, products, getCategoryBySlug } from '../../entities/product/model/mockData'
 import type { ProductCondition } from '../../entities/product/model/types'
 import { ProductFilter } from '../../features/product-filter/ProductFilter'
 import { getCategoryBreadcrumbs } from '../../shared/lib/catalog-helpers'
@@ -17,7 +17,7 @@ interface FilterState {
 }
 
 export function SectionPage() {
-  const { section: sectionSlug } = useParams<{ section: string }>()
+  const { section: sectionSlug, category: categorySlug } = useParams<{ section: string; category?: string }>()
   
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -28,10 +28,21 @@ export function SectionPage() {
 
   const section = getSectionBySlug(sectionSlug || '')
   
+  // Filter products by section and optionally by category
   const sectionProducts = useMemo(() => {
     if (!section) return []
-    return products.filter(p => p.sectionId === section.id)
-  }, [section])
+    let filtered = products.filter(p => p.sectionId === section.id)
+    
+    // If category is specified, filter by category
+    if (categorySlug) {
+      const category = getCategoryBySlug(categorySlug)
+      if (category) {
+        filtered = filtered.filter(p => p.categoryId === category.id)
+      }
+    }
+    
+    return filtered
+  }, [section, categorySlug])
 
   const filteredProducts = useMemo(() => {
     let result = [...sectionProducts]
@@ -77,7 +88,7 @@ export function SectionPage() {
     return result
   }, [sectionProducts, filters])
 
-  const breadcrumbs = getCategoryBreadcrumbs(sectionSlug || '')
+  const breadcrumbs = getCategoryBreadcrumbs(sectionSlug || '', categorySlug)
 
   if (!section) {
     return (
@@ -89,19 +100,24 @@ export function SectionPage() {
     )
   }
 
+  // Get category name for display if category is specified
+  const category = categorySlug ? getCategoryBySlug(categorySlug) : null
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <Breadcrumbs items={breadcrumbs} />
         
-        <h1 className="text-3xl font-black mb-2">{section.name}</h1>
+        <h1 className="text-3xl font-black mb-2">
+          {category ? category.name : section.name}
+        </h1>
         <p className="text-[hsl(var(--muted-foreground))] mb-8">
-          {section.description}
+          {category ? 'Категория товаров' : section.description}
         </p>
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
-          <CatalogSidebar activeSection={sectionSlug} />
+          <CatalogSidebar activeSection={sectionSlug} activeCategory={categorySlug} />
 
           {/* Main content */}
           <div className="flex-1 min-w-0">

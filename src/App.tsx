@@ -7,6 +7,7 @@ import { ContactsPage } from './pages/contacts/ContactsPage'
 import { DeliveryPage } from './pages/delivery/DeliveryPage'
 import { PricePage } from './pages/price/PricePage'
 import { ServicesPage } from './pages/services/ServicesPage'
+import { ServicePage } from './pages/service/ServicePage'
 import { Layout } from './widgets/Layout'
 import { Advantages } from './widgets/advantages/Advantages'
 import { Hero } from './widgets/hero/Hero'
@@ -34,9 +35,11 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/catalog/:section" element={<SectionPage />} />
+        <Route path="/catalog/:section/:category" element={<SectionPage />} />
         <Route path="/catalog/:section/:category/:slug" element={<ProductPage />} />
         <Route path="/catalog/:section/:slug" element={<ProductPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services/:slug" element={<ServicePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/delivery" element={<DeliveryPage />} />
