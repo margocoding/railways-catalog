@@ -13,8 +13,6 @@ interface FilterState {
   search: string
   condition: ProductCondition | 'all'
   stock: 'in-stock' | 'on-order' | 'all'
-  priceFrom: string
-  priceTo: string
   sort: 'name' | 'price-asc' | 'price-desc' | 'popular'
 }
 
@@ -25,8 +23,6 @@ export function SectionPage() {
     search: '',
     condition: 'all',
     stock: 'all',
-    priceFrom: '',
-    priceTo: '',
     sort: 'name',
   })
 
@@ -60,14 +56,6 @@ export function SectionPage() {
       result = result.filter(p => p.stock > 100)
     } else if (filters.stock === 'on-order') {
       result = result.filter(p => p.stock <= 100 && p.stock > 0)
-    }
-
-    // Price range
-    if (filters.priceFrom) {
-      result = result.filter(p => p.price >= Number(filters.priceFrom))
-    }
-    if (filters.priceTo) {
-      result = result.filter(p => p.price <= Number(filters.priceTo))
     }
 
     // Sort

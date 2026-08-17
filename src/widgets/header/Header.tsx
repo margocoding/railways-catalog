@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { FiMenu, FiSearch, FiPhone } from 'react-icons/fi'
-import { CATEGORIES } from '../../entities/category/model/types'
+import { FiMenu, FiSearch, FiPhone, FiChevronRight } from 'react-icons/fi'
+import { CATEGORIES, SUBCATEGORIES } from '../../entities/category/model/types'
 import { Drawer } from '../../shared/ui/Drawer'
 import { Button } from '../../shared/ui/Button'
 import { Link } from 'react-router'
@@ -118,34 +118,141 @@ export function Header() {
 }
 
 function CatalogMegaMenu() {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null)
+
   return (
-    <div className="relative group">
-      <button className="text-sm font-medium hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1 min-h-[44px]">
+    <div 
+      className="relative group"
+      onMouseLeave={() => {
+        setActiveCategory(null)
+        setActiveSubCategory(null)
+      }}
+    >
+      <button 
+        className="text-sm font-medium hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1 min-h-[44px]"
+        onMouseEnter={() => setActiveCategory('main')}
+      >
         Каталог
       </button>
 
       {/* Mega Menu Dropdown */}
-      <div className="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-        <div className="w-[900px] p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl">
-          <div className="grid grid-cols-3 gap-6">
-            {CATEGORIES.map((category) => (
-              <a
-                key={category.slug}
-                href={`/catalog/${category.slug}`}
-                className="p-3 rounded-lg hover:bg-[hsl(var(--muted))] transition-colors min-h-[44px]"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">{category.icon}</span>
-                  <div>
-                    <div className="font-bold">{category.title}</div>
-                    <div className="text-xs text-[hsl(var(--muted-foreground))]">{category.count} позиций</div>
+      <div className="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+        <div className="w-[1000px] p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl">
+          <div className="grid grid-cols-5 gap-4">
+            {/* Left column - Main Categories */}
+            <div className="col-span-1 border-r border-[hsl(var(--border))] pr-4">
+              {CATEGORIES.map((category) => {
+                const hasSubcategories = SUBCATEGORIES[category.slug]?.length > 0
+                return (
+                  <div
+                    key={category.slug}
+                    className={`relative group/category mb-1`}
+                    onMouseEnter={() => setActiveCategory(category.slug)}
+                  >
+                    <button
+                      className={`w-full text-left p-2 rounded-lg transition-colors flex items-center justify-between gap-2 min-h-[44px] ${
+                        activeCategory === category.slug 
+                          ? 'bg-[hsl(var(--primary))] text-white' 
+                          : 'hover:bg-[hsl(var(--muted))]'
+                      }`}
+                    >
+                      <span className="text-sm font-medium truncate">{category.title}</span>
+                      {hasSubcategories && (
+                        <FiChevronRight className="w-4 h-4 flex-shrink-0" />
+                      )}
+                    </button>
+                    
+                    {/* Subcategories panel - appears to the right */}
+                    {hasSubcategories && activeCategory === category.slug && (
+                      <div className="absolute left-full top-0 ml-1 w-56 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg shadow-xl p-2">
+                        {SUBCATEGORIES[category.slug].map((sub) => {
+                          const hasBrands = sub.brands?.length > 0
+                          return (
+                            <div
+                              key={sub.slug}
+                              className="relative group/subcategory"
+                              onMouseEnter={() => setActiveSubCategory(sub.slug)}
+                            >
+                              <button
+                                className={`w-full text-left p-2 rounded-lg transition-colors text-sm flex items-center justify-between gap-2 min-h-[40px] ${
+                                  activeSubCategory === sub.slug
+                                    ? 'bg-[hsl(var(--primary))] text-white'
+                                    : 'hover:bg-[hsl(var(--muted))]'
+                                }`}
+                              >
+                                <span>{sub.title}</span>
+                                {hasBrands && (
+                                  <FiChevronRight className="w-3 h-3 flex-shrink-0" />
+                                )}
+                              </button>
+                              
+                              {/* Brands panel - appears further to the right */}
+                              {hasBrands && activeSubCategory === sub.slug && (
+                                <div className="absolute left-full top-0 ml-1 w-48 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg shadow-xl p-2">
+                                  {sub.brands?.map((brand) => (
+                                    <a
+                                      key={brand.slug}
+                                      href={`/catalog/${category.slug}/${sub.slug}/${brand.slug}`}
+                                      className="block p-2 rounded-lg hover:bg-[hsl(var(--muted))] text-sm min-h-[40px]"
+                                    >
+                                      {brand.title}
+                                    </a>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+            
+            {/* Right area - Category details when selected */}
+            <div className="col-span-4 pl-4">
+              {activeCategory && activeCategory !== 'main' && (
+                <div>
+                  {(() => {
+                    const category = CATEGORIES.find(c => c.slug === activeCategory)
+                    if (!category) return null
+                    return (
+                      <div className="mb-4">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-3xl">{category.icon}</span>
+                          <div>
+                            <h3 className="text-lg font-bold">{category.title}</h3>
+                            <p className="text-sm text-[hsl(var(--muted-foreground))]">{category.description}</p>
+                          </div>
+                        </div>
+                        {SUBCATEGORIES[activeCategory] && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {SUBCATEGORIES[activeCategory].map((sub) => (
+                              <a
+                                key={sub.slug}
+                                href={`/catalog/${activeCategory}/${sub.slug}`}
+                                className="px-3 py-1.5 bg-[hsl(var(--muted))] rounded-full text-sm hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                              >
+                                {sub.title}
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
+                </div>
+              )}
+              {!activeCategory || activeCategory === 'main' ? (
+                <div className="flex items-center justify-center h-full text-[hsl(var(--muted-foreground))]">
+                  <div className="text-center">
+                    <p className="text-sm">Выберите категорию для просмотра подкатегорий</p>
                   </div>
                 </div>
-                <div className="text-sm text-[hsl(var(--muted-foreground))] pl-10">
-                  {category.description}
-                </div>
-              </a>
-            ))}
+              ) : null}
+            </div>
           </div>
         </div>
       </div>

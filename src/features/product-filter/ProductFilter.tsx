@@ -12,8 +12,6 @@ interface FilterState {
   search: string
   condition: ProductCondition | 'all'
   stock: 'in-stock' | 'on-order' | 'all'
-  priceFrom: string
-  priceTo: string
   sort: 'name' | 'price-asc' | 'price-desc' | 'popular'
 }
 
@@ -22,8 +20,6 @@ export function ProductFilter({ onFilterChange }: ProductFilterProps) {
     search: '',
     condition: 'all',
     stock: 'all',
-    priceFrom: '',
-    priceTo: '',
     sort: 'name',
   })
   
@@ -73,7 +69,6 @@ const conditionOptions = [
   { value: 'all', label: 'Все' },
   { value: 'new', label: 'Новый' },
   { value: 'used', label: 'Б/У' },
-  { value: 'service', label: 'Услуга' },
 ]
 
 const stockOptions = [
@@ -106,16 +101,25 @@ function FilterContent({ filters, handleChange }: {
         />
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Condition */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Condition - as clickable buttons */}
         <div>
           <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Состояние</label>
-          <Select
-            size="sm"
-            options={conditionOptions}
-            value={filters.condition}
-            onChange={(e) => handleChange('condition', e.target.value)}
-          />
+          <div className="flex gap-1">
+            {conditionOptions.filter(opt => opt.value !== 'all').map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => handleChange('condition', opt.value)}
+                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
+                  filters.condition === opt.value
+                    ? 'bg-[hsl(var(--primary))] text-white'
+                    : 'bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted))/0.8]'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
         
         {/* Stock */}
@@ -129,38 +133,16 @@ function FilterContent({ filters, handleChange }: {
           />
         </div>
         
-        {/* Price From */}
+        {/* Sort */}
         <div>
-          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Цена от, ₽</label>
-          <Input
-            type="number"
+          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Сортировка</label>
+          <Select
             size="sm"
-            value={filters.priceFrom}
-            onChange={(e) => handleChange('priceFrom', e.target.value)}
+            options={sortOptions}
+            value={filters.sort}
+            onChange={(e) => handleChange('sort', e.target.value)}
           />
         </div>
-        
-        {/* Price To */}
-        <div>
-          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Цена до, ₽</label>
-          <Input
-            type="number"
-            size="sm"
-            value={filters.priceTo}
-            onChange={(e) => handleChange('priceTo', e.target.value)}
-          />
-        </div>
-      </div>
-      
-      {/* Sort */}
-      <div className="flex items-center gap-4 pt-2 border-t border-[hsl(var(--border))]">
-        <label className="text-xs text-[hsl(var(--muted-foreground))]">Сортировка:</label>
-        <Select
-          size="sm"
-          options={sortOptions}
-          value={filters.sort}
-          onChange={(e) => handleChange('sort', e.target.value)}
-        />
       </div>
     </div>
   )
