@@ -1,7 +1,10 @@
 import { Drawer } from '@/shared/ui/Drawer'
 import { Button } from '@/shared/ui/Button'
+import { Input } from '@/shared/ui/Input'
+import { FormField } from '@/shared/ui/FormField'
 import { useCart } from '../model/use-cart'
 import { cn } from '@/shared/lib/cn'
+import { useState } from 'react'
 
 interface CartDrawerProps {
   open: boolean
@@ -10,15 +13,33 @@ interface CartDrawerProps {
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'form'>('cart')
 
   const handleCheckout = () => {
-    alert('Функция оформления заказа будет доступна позже')
+    setCheckoutStep('form')
+  }
+
+  const handleSubmitOrder = (e: React.FormEvent) => {
+    e.preventDefault()
+    alert('Заказ успешно оформлен! Менеджер свяжется с вами в ближайшее время.')
+    clearCart()
+    setCheckoutStep('cart')
     onOpenChange(false)
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} title="Корзина" side="right">
-      {items.length === 0 ? (
+    <Drawer 
+      open={open} 
+      onOpenChange={(newOpen) => {
+        if (!newOpen) {
+          setCheckoutStep('cart')
+        }
+        onOpenChange(newOpen)
+      }} 
+      title={checkoutStep === 'cart' ? `Корзина (${totalItems})` : 'Оформление заказа'} 
+      side="right"
+    >
+      {items.length === 0 && checkoutStep === 'cart' ? (
         <div className="flex flex-col items-center justify-center h-full text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,6 +63,57 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             Продолжить покупки
           </Button>
         </div>
+      ) : checkoutStep === 'form' ? (
+        <form onSubmit={handleSubmitOrder} className="flex flex-col h-full">
+          <div className="flex-1 overflow-auto space-y-4">
+            <div className="mb-4 p-3 bg-muted rounded-lg">
+              <p className="text-sm font-semibold text-foreground mb-2">Ваш заказ:</p>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Товары ({totalItems})</span>
+                <span className="font-medium">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+              </div>
+            </div>
+
+            <FormField label="Имя *" error="">
+              <Input placeholder="Иван Иванов" required />
+            </FormField>
+
+            <FormField label="Телефон *" error="">
+              <Input type="tel" placeholder="+7 (___) ___-__-__" inputMode="tel" required />
+            </FormField>
+
+            <FormField label="Email" error="">
+              <Input type="email" placeholder="your@email.com" inputMode="email" />
+            </FormField>
+
+            <FormField label="Адрес доставки" error="">
+              <Input placeholder="Город, улица, дом" />
+            </FormField>
+
+            <FormField label="Комментарий к заказу" error="">
+              <textarea
+                className="w-full rounded-lg border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 transition-colors h-24 p-3 resize-none"
+                placeholder="Дополнительная информация..."
+              />
+            </FormField>
+          </div>
+
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => setCheckoutStep('cart')}
+              >
+                Назад
+              </Button>
+              <Button type="submit" className="flex-1">
+                Подтвердить заказ
+              </Button>
+            </div>
+          </div>
+        </form>
       ) : (
         <div className="flex flex-col h-full">
           <div className="flex-1 overflow-auto space-y-4">
