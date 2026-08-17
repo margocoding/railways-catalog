@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router'
 import { SERVICES } from '../../entities/service/model/mocks'
 
 export function ServicesTeaser() {
@@ -25,8 +26,8 @@ export function ServicesTeaser() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <a
-                href={`/services#${service.slug}`}
+              <Link
+                to={`/services/${service.slug}`}
                 className="block p-6 rounded-xl border border-[hsl(var(--border))] bg-card-gradient hover:border-[hsl(var(--primary))/50] transition-all group"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -42,18 +43,18 @@ export function ServicesTeaser() {
                     </svg>
                   </div>
                 </div>
-              </a>
+              </Link>
             </motion.div>
           ))}
         </div>
 
         <div className="text-center">
-          <a
-            href="/services"
+          <Link
+            to="/services"
             className="inline-flex items-center gap-2 px-6 py-3 bg-accent-gradient rounded-xl font-bold text-white hover:opacity-90 transition-opacity"
           >
             Все услуги →
-          </a>
+          </Link>
         </div>
       </div>
     </section>

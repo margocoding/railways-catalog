@@ -7,12 +7,47 @@ import { Input } from '../../shared/ui/Input'
 import { Textarea } from '../../shared/ui/Textarea'
 import { Layout } from '../../widgets/Layout'
 import { Link } from 'react-router'
+import { useState } from 'react'
 
 export function ServicesPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    comment: ''
+  })
+
   const breadcrumbs = [
     { label: 'Главная', href: '/' },
     { label: 'Услуги', href: undefined },
   ]
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    
+    // Мок запроса на бекенд без serviceId (null)
+    const payload = {
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      address: formData.address,
+      comment: formData.comment,
+      serviceId: null // Нет конкретной услуги
+    }
+    
+    console.log('Отправка общей заявки:', payload)
+    
+    // Имитация запроса к API
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    setIsSubmitting(false)
+    setSubmitted(true)
+    setFormData({ name: '', phone: '', email: '', address: '', comment: '' })
+  }
 
   return (
     <Layout>
@@ -82,17 +117,78 @@ export function ServicesPage() {
               </ul>
             </div>
             
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <Input placeholder="Ваше имя" size="lg" />
-              <Input type="tel" placeholder="Телефон" size="lg" />
-              <Input type="email" placeholder="Email" size="lg" />
-              <Input placeholder="Адрес доставки" size="lg" />
-              <Textarea placeholder="Комментарий к заказу" rows={3} />
-              <Button variant="primary" size="lg" className="w-full">
-                <FiPhone className="w-5 h-5" />
-                Заказать услугу
-              </Button>
-            </form>
+            {submitted ? (
+              <div className="text-center py-8">
+                <div className="text-5xl mb-4">✅</div>
+                <h3 className="text-lg font-bold mb-2">Заявка отправлена!</h3>
+                <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">
+                  Мы свяжемся с вами в ближайшее время
+                </p>
+                <Button 
+                  variant="primary" 
+                  onClick={() => {
+                    setSubmitted(false)
+                    setFormData({ name: '', phone: '', email: '', address: '', comment: '' })
+                  }}
+                  className="w-full"
+                >
+                  Отправить ещё заявку
+                </Button>
+              </div>
+            ) : (
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <Input 
+                  placeholder="Ваше имя" 
+                  size="lg"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+                <Input 
+                  type="tel" 
+                  placeholder="Телефон" 
+                  size="lg"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required
+                />
+                <Input 
+                  type="email" 
+                  placeholder="Email" 
+                  size="lg"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+                <Input 
+                  placeholder="Адрес доставки" 
+                  size="lg"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                />
+                <Textarea 
+                  placeholder="Комментарий к заказу" 
+                  rows={3}
+                  value={formData.comment}
+                  onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                />
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  className="w-full"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>Отправка...</>
+                  ) : (
+                    <>
+                      <FiPhone className="w-5 h-5" />
+                      Заказать услугу
+                    </>
+                  )}
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </div>
@@ -185,10 +281,10 @@ function ServiceListItem({ service }: { service: Service }) {
           
           {/* Button */}
           <div className="flex-shrink-0">
-            <button className="w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <Link to={`/services/${service.slug}`} className="block w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-center">
               <FiPhone className="w-5 h-5" />
               Заказать
-            </button>
+            </Link>
           </div>
         </div>
       </div>

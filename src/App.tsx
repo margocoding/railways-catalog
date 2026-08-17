@@ -6,6 +6,7 @@ import {ContactsPage} from './pages/contacts/ContactsPage'
 import {DeliveryPage} from './pages/delivery/DeliveryPage'
 import {PricePage} from './pages/price/PricePage'
 import {ServicesPage} from './pages/services/ServicesPage'
+import {ServicePage} from './pages/services/ServicePage'
 import {Layout} from './widgets/Layout'
 import {Advantages} from './widgets/advantages/Advantages'
 import {Hero} from './widgets/hero/Hero'
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/catalog" element={<CatalogPage/>}/>
                 <Route path="/catalog/:categorySlug/:subcategorySlug/product/:productSlug" element={<ProductPage/>}/>
                 <Route path="/services" element={<ServicesPage/>}/>
+                <Route path="/services/:slug" element={<ServicePage/>}/>
                 <Route path="/about" element={<AboutPage/>}/>
                 <Route path="/contacts" element={<ContactsPage/>}/>
                 <Route path="/delivery" element={<DeliveryPage/>}/>
