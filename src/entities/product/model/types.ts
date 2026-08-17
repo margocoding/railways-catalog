@@ -4,30 +4,37 @@ export interface Product {
   id: string
   sku: string
   title: string
+  slug: string
+
   gost: string
-  weight: number // kg per meter
-  length: number // meters
+
+  weight: number
+  length: number
+
   price: number
   priceOnRequest?: boolean
+
   stock: number
   condition: ProductCondition
+
   images: string[]
-  categoryId: string
-  sectionId: string
+
+  categorySlug: string
+  subcategorySlug: string
+
   description?: string
   specs?: Record<string, string>
   analogues?: string[]
 }
 
-export interface Category {
+export interface Section {
   id: string
   name: string
-  sectionId: string
-  parentId?: string
   slug: string
+  description?: string
 }
 
-export interface Section {
+export interface Category {
   id: string
   name: string
   slug: string
@@ -35,14 +42,10 @@ export interface Section {
   description?: string
 }
 
-export interface Lead {
+export interface Subcategory {
   id: string
-  productId?: string
-  customerName: string
-  customerEmail: string
-  customerPhone: string
-  message?: string
-  quantity?: number
-  status: 'new' | 'contacted' | 'completed'
-  createdAt: string
+  name: string
+  categorySlug: string;
+  categoryId: string
+  slug: string
 }
