@@ -1,8 +1,8 @@
-import { FiShoppingCart } from 'react-icons/fi'
 import { Link } from 'react-router'
 
 import { formatPrice } from '../../../shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
+import { AddToCartButton } from '../../../features/cart/ui/AddToCartButton'
 
 interface ProductCardProps {
     product: Product
@@ -54,13 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 )}
             </div>
 
-            <button
-                type="button"
-                aria-label={`Запросить КП: ${product.title}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--accent))] text-white transition-all hover:scale-105 hover:opacity-90"
-            >
-                <FiShoppingCart className="h-5 w-5" />
-            </button>
+            <AddToCartButton product={product} />
         </div>
     )
 }

@@ -1,13 +1,17 @@
 import {useState} from 'react'
-import {FiMenu, FiPhone, FiSearch,} from 'react-icons/fi'
+import {FiMenu, FiPhone, FiSearch, FiShoppingCart} from 'react-icons/fi'
 import {Link} from 'react-router'
 import {Button} from '../../shared/ui/Button'
 import {MobileMenu} from "@/widgets/header/MobileMenu.tsx";
 import {CatalogMegaMenu} from "@/widgets/header/CatalogMegaMenu.tsx";
 import {HeaderNavLink} from "@/widgets/header/HeaderNavLink.tsx";
+import {CartDrawer} from "@/widgets/cart-drawer/CartDrawer.tsx";
+import {useCart} from "@/entities/cart/model/use-cart";
 
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [cartDrawerOpen, setCartDrawerOpen] = useState(false)
+    const {totalItems} = useCart()
 
     return (
         <header className="sticky top-0 z-50 border-b border-border bg-background">
@@ -83,6 +87,31 @@ export function Header() {
                         <FiSearch className="h-5 w-5"/>
                     </button>
 
+                    <button
+                        type="button"
+                        onClick={() => setCartDrawerOpen(true)}
+                        className="
+              relative
+              flex h-10 w-10 items-center justify-center
+              rounded-lg
+              text-muted-foreground
+              transition-colors
+              hover:bg-muted
+              hover:text-foreground
+              focus-visible:outline-none
+              focus-visible:ring-2
+              focus-visible:ring-primary/50
+            "
+                        aria-label="Корзина"
+                    >
+                        <FiShoppingCart className="h-5 w-5"/>
+                        {totalItems > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
+                                {totalItems > 9 ? '9+' : totalItems}
+                            </span>
+                        )}
+                    </button>
+
                     <a
                         href="tel:+78000000000"
                         className="
@@ -128,6 +157,30 @@ export function Header() {
 
                     <button
                         type="button"
+                        onClick={() => setCartDrawerOpen(true)}
+                        className="
+              relative
+              flex h-10 w-10 items-center justify-center
+              rounded-lg
+              text-foreground
+              transition-colors
+              hover:bg-muted
+              focus-visible:outline-none
+              focus-visible:ring-2
+              focus-visible:ring-primary/50
+            "
+                        aria-label="Корзина"
+                    >
+                        <FiShoppingCart className="h-5 w-5"/>
+                        {totalItems > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
+                                {totalItems > 9 ? '9+' : totalItems}
+                            </span>
+                        )}
+                    </button>
+
+                    <button
+                        type="button"
                         className="
               flex h-10 w-10 items-center justify-center
               rounded-lg
@@ -150,6 +203,12 @@ export function Header() {
             <MobileMenu
                 open={mobileMenuOpen}
                 onOpenChange={setMobileMenuOpen}
+            />
+
+            {/* Cart Drawer */}
+            <CartDrawer
+                open={cartDrawerOpen}
+                onOpenChange={setCartDrawerOpen}
             />
         </header>
     )
