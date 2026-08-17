@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router'
+
 import { products } from '../../entities/product/model/mockData'
 import type { ProductCondition } from '../../entities/product/model/types'
 import { ProductFilter } from '../../features/product-filter/ProductFilter'
@@ -16,81 +18,129 @@ interface FilterState {
 }
 
 export function CatalogPage() {
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    condition: 'all',
-    stock: 'all',
-    sort: 'name',
-  })
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const categorySlug = searchParams.get('category') ?? undefined
+  const subcategorySlug = searchParams.get('subcategory') ?? undefined
+
+  const search = searchParams.get('search') ?? ''
+
+  const condition =
+      (searchParams.get('condition') as ProductCondition | 'all') ?? 'all'
+
+
+  const handleFilterChange = (nextFilters: FilterState) => {
+    const params = new URLSearchParams(searchParams)
+
+    if (nextFilters.search) {
+      params.set('search', nextFilters.search)
+    } else {
+      params.delete('search')
+    }
+
+    if (nextFilters.condition !== 'all') {
+      params.set('condition', nextFilters.condition)
+    } else {
+      params.delete('condition')
+    }
+
+    if (nextFilters.stock !== 'all') {
+      params.set('stock', nextFilters.stock)
+    } else {
+      params.delete('stock')
+    }
+
+    if (nextFilters.sort !== 'name') {
+      params.set('sort', nextFilters.sort)
+    } else {
+      params.delete('sort')
+    }
+
+    setSearchParams(params)
+  }
 
   const filteredProducts = useMemo(() => {
     let result = [...products]
 
-    // Search
-    if (filters.search) {
-      const q = filters.search.toLowerCase()
-      result = result.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        p.gost.toLowerCase().includes(q)
+    if (categorySlug) {
+      result = result.filter(
+          (product) => product.categorySlug === categorySlug,
       )
     }
 
-    // Condition
-    if (filters.condition !== 'all') {
-      result = result.filter(p => p.condition === filters.condition)
+    if (subcategorySlug) {
+      result = result.filter(
+          (product) => product.subcategorySlug === subcategorySlug,
+      )
     }
 
-    // Stock
-    if (filters.stock === 'in-stock') {
-      result = result.filter(p => p.stock > 100)
-    } else if (filters.stock === 'on-order') {
-      result = result.filter(p => p.stock <= 100 && p.stock > 0)
+    if (search) {
+      const query = search.toLowerCase().trim()
+
+      result = result.filter((product) => {
+        const title = product.title.toLowerCase()
+        const sku = product.sku.toLowerCase()
+        const gost = product.gost?.toLowerCase() ?? ''
+
+        return (
+            title.includes(query) ||
+            sku.includes(query) ||
+            gost.includes(query)
+        )
+      })
     }
 
-    // Sort
-    switch (filters.sort) {
-      case 'price-asc':
-        result.sort((a, b) => a.price - b.price)
-        break
-      case 'price-desc':
-        result.sort((a, b) => b.price - a.price)
-        break
-      case 'name':
-        result.sort((a, b) => a.title.localeCompare(b.title))
-        break
-      case 'popular':
-        // Mock popularity by stock
-        result.sort((a, b) => b.stock - a.stock)
-        break
+    if (condition !== 'all') {
+      result = result.filter(
+          (product) => product.condition === condition,
+      )
     }
 
     return result
-  }, [filters])
+  }, [
+    categorySlug,
+    subcategorySlug,
+    search,
+    condition,
+  ])
 
-  const breadcrumbs = getCategoryBreadcrumbs('all')
+  const breadcrumbs = getCategoryBreadcrumbs(
+      categorySlug || 'Все',
+      subcategorySlug,
+  )
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs items={breadcrumbs} />
-        
-        <h1 className="text-3xl font-black mb-2">Каталог продукции</h1>
-        <p className="text-[hsl(var(--muted-foreground))] mb-8">
-          Все позиции в наличии и под заказ
-        </p>
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <Breadcrumbs items={breadcrumbs} />
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar */}
-          <CatalogSidebar />
+          <div className="mb-8">
+            <h1 className="text-3xl font-black">
+              Каталог продукции
+            </h1>
 
-          {/* Main content */}
-          <div className="flex-1 min-w-0">
-            <ProductFilter onFilterChange={setFilters} />
-            <CatalogGrid products={filteredProducts} />
+            <p className="mt-2 text-[hsl(var(--muted-foreground))]">
+              {categorySlug || subcategorySlug
+                  ? `Найдено позиций: ${filteredProducts.length}`
+                  : 'Все позиции в наличии и под заказ'}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-6 lg:flex-row">
+            <CatalogSidebar
+                activeCategory={categorySlug}
+                activeSubcategory={subcategorySlug}
+            />
+
+            <div className="min-w-0 flex-1">
+              <ProductFilter
+                  onFilterChange={handleFilterChange}
+              />
+
+              <CatalogGrid products={filteredProducts} />
+            </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
   )
 }

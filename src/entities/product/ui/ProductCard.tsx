@@ -1,61 +1,66 @@
-import { formatPrice, getConditionBadgeColor, getConditionLabel } from '../../../shared/lib/catalog-helpers'
-import type { Product } from '../model/types'
 import { FiShoppingCart } from 'react-icons/fi'
 import { Link } from 'react-router'
 
+import { formatPrice } from '../../../shared/lib/catalog-helpers'
+import type { Product } from '../model/types'
+
 interface ProductCardProps {
-  product: Product
+    product: Product
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  return (
-    <Link 
-      to={`/catalog/${product.sectionId}/${product.categoryId}/${product.id}`}
-      className="group bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] overflow-hidden hover:border-[hsl(var(--primary))/0.5] transition-all duration-300 hover:shadow-lg block"
-    >
-      {/* Image */}
-      <div className="aspect-[4/3] bg-[hsl(var(--muted))] relative overflow-hidden">
-        <img 
-          src={product.images[0] || '/placeholders/product.svg'} 
-          alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        {/* Condition Badge */}
-        <div className={`absolute top-3 left-3 px-2 py-1 rounded-md text-xs font-medium border ${getConditionBadgeColor(product.condition)}`}>
-          {getConditionLabel(product.condition)}
+    const productUrl = `/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`
+
+    return (
+        <div className="group grid min-h-[100px] grid-cols-[80px_minmax(220px,1.8fr)_minmax(180px,1.2fr)_80px_120px_56px] items-center gap-4 border-t border-[hsl(var(--border))]">
+            <Link
+                to={productUrl}
+                className="flex h-[80px] w-[80px] items-center justify-center overflow-hidden bg-[hsl(var(--muted))]"
+            >
+                <img
+                    src={product.images[0] || '/placeholders/product.svg'}
+                    alt={product.title}
+                    className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+            </Link>
+
+            <Link
+                to={productUrl}
+                className="min-w-0 font-semibold text-[hsl(var(--foreground))] transition-colors hover:text-[hsl(var(--accent))]"
+            >
+                {product.title}
+            </Link>
+
+            <Link
+                to={productUrl}
+                className="text-sm leading-5 text-[hsl(var(--muted-foreground))]"
+            >
+                {product.gost || '—'}
+            </Link>
+
+            <div className="text-sm text-[hsl(var(--muted-foreground))]">
+                {product.weight ? `${product.weight} кг` : '—'}
+            </div>
+
+            <div>
+                {product.priceOnRequest ? (
+                    <span className="font-semibold text-[hsl(var(--accent))]">
+            По запросу
+          </span>
+                ) : (
+                    <span className="text-lg font-bold text-[hsl(var(--accent))]">
+            {formatPrice(product.price)} ₽
+          </span>
+                )}
+            </div>
+
+            <button
+                type="button"
+                aria-label={`Запросить КП: ${product.title}`}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--accent))] text-white transition-all hover:scale-105 hover:opacity-90"
+            >
+                <FiShoppingCart className="h-5 w-5" />
+            </button>
         </div>
-      </div>
-      
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg mb-1 line-clamp-2">{product.title}</h3>
-        
-        {product.gost && (
-          <p className="text-xs text-[hsl(var(--muted-foreground))] mb-2">{product.gost}</p>
-        )}
-        
-        {/* Price */}
-        <div className="mb-2">
-          {product.priceOnRequest ? (
-            <span className="text-sm font-medium text-[hsl(var(--accent))]">По запросу</span>
-          ) : (
-            <span className="text-lg font-bold text-[hsl(var(--accent))]">от {formatPrice(product.price)} ₽</span>
-          )}
-        </div>
-        
-        {/* Stock */}
-        <div className="text-xs text-[hsl(var(--muted-foreground))] mb-3">
-          {product.stock > 100 ? 'В наличии' : 
-           product.stock > 0 ? `Остаток: ${product.stock} шт` : 
-           'Под заказ'}
-        </div>
-        
-        {/* CTA Button */}
-        <button className="w-full py-2 bg-accent-gradient rounded-lg font-bold text-sm text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-          <FiShoppingCart className="w-4 h-4" />
-          Запросить КП
-        </button>
-      </div>
-    </Link>
-  )
+    )
 }

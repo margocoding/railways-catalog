@@ -11,9 +11,41 @@
   --border: 220 10% 22%;
   --radius: 0.75rem;
 
-  --hero-gradient: linear-gradient(135deg, hsl(220 15% 5%) 0%, hsl(220 10% 9%) 40%, hsl(0 30% 14%) 100%);
-  --card-gradient: linear-gradient(180deg, hsl(220 10% 13%) 0%, hsl(220 10% 9%) 100%);
-  --accent-gradient: linear-gradient(135deg, hsl(0 75% 52%) 0%, hsl(10 80% 55%) 100%);
+  --hero-gradient: linear-gradient(
+          135deg,
+          hsl(220 15% 5%) 0%,
+          hsl(220 10% 9%) 40%,
+          hsl(0 30% 14%) 100%
+  );
+
+  --card-gradient: linear-gradient(
+          180deg,
+          hsl(220 10% 13%) 0%,
+          hsl(220 10% 9%) 100%
+  );
+
+  --accent-gradient: linear-gradient(
+          135deg,
+          hsl(0 75% 52%) 0%,
+          hsl(10 80% 55%) 100%
+  );
+}
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+
+  --color-primary: hsl(var(--primary));
+  --color-accent: hsl(var(--accent));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-border: hsl(var(--border));
+
+  --radius-lg: var(--radius);
 }
 
 html {
@@ -21,9 +53,9 @@ html {
 }
 
 body {
+  min-height: 100vh;
   background: hsl(var(--background));
   color: hsl(var(--foreground));
-  min-height: 100vh;
 }
 
 #root {
@@ -42,4 +74,32 @@ body {
 
 .border-primary\/50:hover {
   border-color: hsl(var(--primary) / 0.5);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

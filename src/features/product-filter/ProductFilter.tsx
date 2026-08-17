@@ -1,149 +1,116 @@
-import { useState } from 'react'
-import { FiSearch, FiFilter, FiX } from 'react-icons/fi'
-import type { ProductCondition } from '../../entities/product/model/types'
-import { Input } from '../../shared/ui/Input'
-import { Select } from '../../shared/ui/Select'
+import {useState} from 'react'
+import {FiFilter, FiSearch, FiX} from 'react-icons/fi'
+import type {ProductCondition} from '../../entities/product/model/types'
+import {Input} from '../../shared/ui/Input'
 
 interface ProductFilterProps {
-  onFilterChange: (filters: FilterState) => void
+    onFilterChange: (filters: FilterState) => void
 }
 
 interface FilterState {
-  search: string
-  condition: ProductCondition | 'all'
-  stock: 'in-stock' | 'on-order' | 'all'
-  sort: 'name' | 'price-asc' | 'price-desc' | 'popular'
+    search: string
+    condition: ProductCondition | 'all'
+    stock: 'in-stock' | 'on-order' | 'all'
+    sort: 'name' | 'price-asc' | 'price-desc' | 'popular'
 }
 
-export function ProductFilter({ onFilterChange }: ProductFilterProps) {
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    condition: 'all',
-    stock: 'all',
-    sort: 'name',
-  })
-  
-  const [mobileOpen, setMobileOpen] = useState(false)
+export function ProductFilter({onFilterChange}: ProductFilterProps) {
+    const [filters, setFilters] = useState<FilterState>({
+        search: '',
+        condition: 'all',
+        stock: 'all',
+        sort: 'name',
+    })
 
-  const handleChange = (key: keyof FilterState, value: string) => {
-    const newFilters = { ...filters, [key]: value }
-    setFilters(newFilters)
-    onFilterChange(newFilters)
-  }
+    const [mobileOpen, setMobileOpen] = useState(false)
 
-  return (
-    <>
-      {/* Mobile filter button */}
-      <button 
-        className="lg:hidden fixed bottom-4 right-4 z-50 w-14 h-14 bg-accent-gradient rounded-full shadow-lg flex items-center justify-center"
-        onClick={() => setMobileOpen(true)}
-      >
-        <FiFilter className="w-6 h-6 text-white" />
-      </button>
-      
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[hsl(var(--card))] p-6 overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Фильтры</h2>
-              <button onClick={() => setMobileOpen(false)}>
-                <FiX className="w-6 h-6" />
-              </button>
+    const handleChange = (key: keyof FilterState, value: string) => {
+        const newFilters = {...filters, [key]: value}
+        setFilters(newFilters)
+        onFilterChange(newFilters)
+    }
+
+    return (
+        <>
+            {/* Mobile filter button */}
+            <button
+                className="lg:hidden fixed bottom-4 right-4 z-50 w-14 h-14 bg-accent-gradient rounded-full shadow-lg flex items-center justify-center"
+                onClick={() => setMobileOpen(true)}
+            >
+                <FiFilter className="w-6 h-6 text-white"/>
+            </button>
+
+            {/* Mobile drawer */}
+            {mobileOpen && (
+                <div className="fixed inset-0 z-50 lg:hidden">
+                    <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)}/>
+                    <div
+                        className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[hsl(var(--card))] p-6 overflow-y-auto">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold">Фильтры</h2>
+                            <button onClick={() => setMobileOpen(false)}>
+                                <FiX className="w-6 h-6"/>
+                            </button>
+                        </div>
+                        <FilterContent filters={filters} handleChange={handleChange}/>
+                    </div>
+                </div>
+            )}
+
+            {/* Desktop filters */}
+            <div
+                className="hidden lg:block bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-4 mb-6">
+                <FilterContent filters={filters} handleChange={handleChange}/>
             </div>
-            <FilterContent filters={filters} handleChange={handleChange} />
-          </div>
-        </div>
-      )}
-      
-      {/* Desktop filters */}
-      <div className="hidden lg:block bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-4 mb-6">
-        <FilterContent filters={filters} handleChange={handleChange} />
-      </div>
-    </>
-  )
+        </>
+    )
 }
 
 const conditionOptions = [
-  { value: 'all', label: 'Все' },
-  { value: 'new', label: 'Новый' },
-  { value: 'used', label: 'Б/У' },
+    {value: 'all', label: 'Все'},
+    {value: 'new', label: 'Новый'},
+    {value: 'used', label: 'Б/У'},
 ]
 
-const stockOptions = [
-  { value: 'all', label: 'Все' },
-  { value: 'in-stock', label: 'В наличии' },
-  { value: 'on-order', label: 'Под заказ' },
-]
-
-const sortOptions = [
-  { value: 'name', label: 'По названию' },
-  { value: 'price-asc', label: 'Цена: по возрастанию' },
-  { value: 'price-desc', label: 'Цена: по убыванию' },
-  { value: 'popular', label: 'По популярности' },
-]
-
-function FilterContent({ filters, handleChange }: { 
-  filters: FilterState
-  handleChange: (key: keyof FilterState, value: string) => void 
+function FilterContent({filters, handleChange}: {
+    filters: FilterState
+    handleChange: (key: keyof FilterState, value: string) => void
 }) {
-  return (
-    <div className="space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--muted-foreground))]" />
-        <Input
-          placeholder="Поиск по названию, артикулу, ГОСТу"
-          className="w-full pl-10"
-          value={filters.search}
-          onChange={(e) => handleChange('search', e.target.value)}
-        />
-      </div>
-      
-      <div className="grid grid-cols-3 gap-4">
-        {/* Condition - as clickable buttons */}
-        <div>
-          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Состояние</label>
-          <div className="flex gap-1">
-            {conditionOptions.filter(opt => opt.value !== 'all').map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleChange('condition', opt.value)}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
-                  filters.condition === opt.value
-                    ? 'bg-[hsl(var(--primary))] text-white'
-                    : 'bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted))/0.8]'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+    return (
+        <div className="space-y-4">
+            {/* Search */}
+            <div className="relative">
+                <FiSearch
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--muted-foreground))]"/>
+                <Input
+                    placeholder="Поиск по названию, артикулу, ГОСТу"
+                    className="w-full pl-10"
+                    value={filters.search}
+                    onChange={(e) => handleChange('search', e.target.value)}
+                />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+                {/* Condition - as clickable buttons */}
+                <div>
+                    <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Состояние</label>
+                    <div className="flex gap-1">
+                        {conditionOptions.filter(opt => opt.value !== 'all').map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => handleChange('condition', opt.value)}
+                                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
+                                    filters.condition === opt.value
+                                        ? 'bg-[hsl(var(--primary))] text-white'
+                                        : 'bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted))/0.8]'
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        {/* Stock */}
-        <div>
-          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Наличие</label>
-          <Select
-            size="sm"
-            options={stockOptions}
-            value={filters.stock}
-            onChange={(e) => handleChange('stock', e.target.value)}
-          />
-        </div>
-        
-        {/* Sort */}
-        <div>
-          <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Сортировка</label>
-          <Select
-            size="sm"
-            options={sortOptions}
-            value={filters.sort}
-            onChange={(e) => handleChange('sort', e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  )
+    )
 }
