@@ -257,7 +257,7 @@ export function Hero() {
               {categories.map((category) => (
                 <a
                   key={category.id}
-                  href={`/catalog/${category.slug}`}
+                  href={`/catalog?category=${category.slug}`}
                   className="flex items-center gap-3 rounded-lg px-4 py-1 transition-colors hover:bg-muted"
                   onClick={() => setMobileCategoriesOpen(false)}
                 >
