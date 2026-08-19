@@ -21,6 +21,7 @@ import {
 } from '../../shared/lib/catalog-helpers'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
 import { Layout } from '../../widgets/Layout'
+import { RequestFormModal } from '../../shared/ui/RequestFormModal'
 
 export function ProductPage() {
   const {
@@ -39,6 +40,7 @@ export function ProductPage() {
 
   const [railType, setRailType] = useState('Р-65')
   const [railLength, setRailLength] = useState('12.5')
+  const [requestFormOpen, setRequestFormOpen] = useState(false)
 
   const { addToCart } = useCart()
 
@@ -186,11 +188,12 @@ export function ProductPage() {
 
                 <button
                     type="button"
+                    onClick={() => setRequestFormOpen(true)}
                     className="flex-1 rounded-lg bg-[hsl(var(--muted))] py-3 font-bold transition-colors hover:bg-[hsl(var(--muted))]/80"
                 >
                 <span className="flex items-center justify-center gap-2">
                   <FiPlus className="h-5 w-5" />
-                  В спецификацию
+                  Отправить заявку или запрос
                 </span>
                 </button>
               </div>

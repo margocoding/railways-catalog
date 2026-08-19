@@ -1,17 +1,32 @@
-import {useState} from 'react'
-import {FiMenu, FiPhone, FiSearch, FiShoppingCart} from 'react-icons/fi'
-import {Link} from 'react-router'
-import {Button} from '../../shared/ui/Button'
-import {MobileMenu} from "@/widgets/header/MobileMenu.tsx";
-import {CatalogMegaMenu} from "@/widgets/header/CatalogMegaMenu.tsx";
-import {HeaderNavLink} from "@/widgets/header/HeaderNavLink.tsx";
-import {CartDrawer} from "@/widgets/cart-drawer/CartDrawer.tsx";
-import {useCart} from "@/entities/cart/model/use-cart";
+import { useEffect, useState } from 'react'
+import { FiMenu, FiPhone, FiSearch, FiShoppingCart, FiMail } from 'react-icons/fi'
+import { Link } from 'react-router'
+import { Button } from '../../shared/ui/Button'
+import { MobileMenu } from "@/widgets/header/MobileMenu.tsx";
+import { CatalogMegaMenu } from "@/widgets/header/CatalogMegaMenu.tsx";
+import { HeaderNavLink } from "@/widgets/header/HeaderNavLink.tsx";
+import { CartDrawer } from "@/widgets/cart-drawer/CartDrawer.tsx";
+import { useCart } from "@/entities/cart/model/use-cart";
+import { RequestFormModal } from "../../shared/ui/RequestFormModal";
 
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [cartDrawerOpen, setCartDrawerOpen] = useState(false)
-    const {totalItems} = useCart()
+    const [requestFormOpen, setRequestFormOpen] = useState(false)
+    const { totalItems } = useCart()
+
+    // Обработчик глобального события для открытия формы заявки
+    useEffect(() => {
+        const handleOpenRequestForm = () => {
+            setRequestFormOpen(true)
+        }
+
+        window.addEventListener('open-request-form', handleOpenRequestForm)
+
+        return () => {
+            window.removeEventListener('open-request-form', handleOpenRequestForm)
+        }
+    }, [])
 
     return (
         <header className="sticky top-0 z-50 border-b border-border bg-background">
@@ -128,11 +143,26 @@ export function Header() {
                         <span>8 (800) 000-00-00</span>
                     </a>
 
-                    <Link to="/contacts">
-                        <Button>
-                            Получить КП
-                        </Button>
-                    </Link>
+                    <a
+                        href="mailto:info@stalput.ru"
+                        className="
+              hidden items-center gap-2
+              px-2
+              text-sm font-semibold
+              text-foreground
+              transition-colors
+              hover:text-primary
+              xl:flex
+            "
+                        aria-label="Email"
+                    >
+                        <FiMail className="h-4 w-4 text-primary"/>
+                        <span>info@stalput.ru</span>
+                    </a>
+
+                    <Button onClick={() => setRequestFormOpen(true)}>
+                        Получить КП
+                    </Button>
                 </div>
 
                 {/* Mobile Actions */}
@@ -209,6 +239,12 @@ export function Header() {
             <CartDrawer
                 open={cartDrawerOpen}
                 onOpenChange={setCartDrawerOpen}
+            />
+
+            {/* Request Form Modal */}
+            <RequestFormModal
+                open={requestFormOpen}
+                onOpenChange={setRequestFormOpen}
             />
         </header>
     )
