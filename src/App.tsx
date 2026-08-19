@@ -23,7 +23,7 @@ function HomePage() {
 
     return (
         <Layout>
-            <Hero onOpenRequestForm={() => setRequestFormOpen(true)} />
+            <Hero />
             <CategoriesCarousel />
             <PopularProducts />
             <MaterialsServices />
