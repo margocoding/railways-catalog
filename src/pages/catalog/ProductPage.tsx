@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import {
   FiFileText,
@@ -19,8 +19,22 @@ import {
   getSubcategoryName,
 } from '../../shared/lib/catalog-helpers'
 import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
+import { Button } from '../../shared/ui/Button'
+import { Input } from '../../shared/ui/Input'
 import { Layout } from '../../widgets/Layout'
 import { RequestFormModal } from '../../shared/ui/RequestFormModal'
+
+const specLabels: Record<string, string> = {
+  type: 'Тип',
+  steel: 'Марка стали',
+  material: 'Материал',
+  length: 'Длина',
+  weight: 'Масса',
+  diameter: 'Диаметр',
+  thickness: 'Толщина',
+  size: 'Размер',
+  drive: 'Привод',
+}
 
 export function ProductPage() {
   const {
@@ -33,9 +47,9 @@ export function ProductPage() {
     productSlug: string
   }>()
 
-  const [railType, setRailType] = useState('Р-65')
-  const [railLength, setRailLength] = useState('12.5')
   const [requestFormOpen, setRequestFormOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [railLength, setRailLength] = useState('12.5')
 
   const { addToCart } = useCart()
 
@@ -75,9 +89,41 @@ export function ProductPage() {
 
   const isRail = product.categorySlug === 'rails'
 
-  const weightPerMeter = product.weight
-  const totalWeight = weightPerMeter * Number(railLength)
+  const weightSpec = product.specs?.find(
+    (spec) => spec.id === 'weight',
+  )
+
+  const lengthSpec = product.specs?.find(
+    (spec) => spec.id === 'length',
+  )
+
+  const weightPerMeter =
+    typeof weightSpec?.value === 'number'
+      ? weightSpec.value
+      : 0
+
+  const defaultRailLength =
+    typeof lengthSpec?.value === 'number'
+      ? lengthSpec.value
+      : 12.5
+
+  const totalWeight =
+    weightPerMeter * Number(railLength || 0)
+
   const tons = totalWeight / 1000
+
+  const displaySpecs = useMemo(
+    () =>
+      product.specs?.filter(
+        (spec) => spec.id !== 'weight' || spec.unit !== 'кг/м',
+      ) ?? [],
+    [product.specs],
+  )
+
+  const selectedProductImage =
+    product.images[selectedImage] ||
+    product.images[0] ||
+    '/placeholders/product.svg'
 
   return (
     <Layout>
@@ -87,25 +133,15 @@ export function ProductPage() {
       />
 
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-10">
-        {/* Breadcrumbs */}
         <div className="mb-6">
           <Breadcrumbs items={breadcrumbs} />
         </div>
 
-        {/* =========================================================
-            PRODUCT
-        ========================================================= */}
         <div className="mb-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* =======================================================
-              LEFT — IMAGE
-          ======================================================= */}
           <div>
             <div className="mb-4 aspect-4/3 overflow-hidden rounded-xl border border-border bg-muted">
               <img
-                src={
-                  product.images[0] ||
-                  '/placeholders/product.svg'
-                }
+                src={selectedProductImage}
                 alt={product.title}
                 className="h-full w-full object-cover"
               />
@@ -117,7 +153,12 @@ export function ProductPage() {
                   <button
                     key={`${image}-${index}`}
                     type="button"
-                    className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-transparent bg-muted transition-colors hover:border-primary"
+                    onClick={() => setSelectedImage(index)}
+                    className={`h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-muted transition-colors ${
+                      selectedImage === index
+                        ? 'border-primary'
+                        : 'border-transparent hover:border-primary'
+                    }`}
                   >
                     <img
                       src={image}
@@ -130,11 +171,7 @@ export function ProductPage() {
             )}
           </div>
 
-          {/* =======================================================
-              RIGHT — PRODUCT INFO
-          ======================================================= */}
           <div>
-            {/* Status + SKU */}
             <div className="mb-3 flex flex-wrap items-center gap-3">
               <span
                 className={`rounded-md border px-2 py-1 text-xs font-medium ${getConditionBadgeColor(
@@ -149,26 +186,23 @@ export function ProductPage() {
               </span>
             </div>
 
-            {/* Title */}
             <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-foreground md:text-4xl">
               {product.title}
             </h1>
 
-            {/* GOST */}
             {product.gost && (
               <p className="mb-5 text-sm text-muted-foreground">
                 {product.gost}
               </p>
             )}
 
-            {/* Price */}
             <div className="mb-5">
               {product.priceOnRequest ? (
                 <span className="text-2xl font-bold text-primary">
                   По запросу
                 </span>
               ) : (
-                <div className="flex items-baseline flex-wrap gap-2">
+                <div className="flex flex-wrap items-baseline gap-2">
                   <span className="text-3xl font-bold text-primary">
                     от {formatPrice(product.price)} ₽
                   </span>
@@ -180,7 +214,6 @@ export function ProductPage() {
               )}
             </div>
 
-            {/* Stock */}
             <div className="mb-6 rounded-lg bg-muted p-4">
               <div className="mb-1 text-sm text-muted-foreground">
                 Наличие
@@ -195,9 +228,6 @@ export function ProductPage() {
               </div>
             </div>
 
-            {/* =====================================================
-                SPECIFICATIONS
-            ===================================================== */}
             <div className="mb-6">
               <div className="mb-4 flex items-center gap-2">
                 <FiSettings className="h-5 w-5 text-primary" />
@@ -208,43 +238,21 @@ export function ProductPage() {
               </div>
 
               <div className="overflow-hidden rounded-lg border border-border bg-card">
-                {product.specs &&
-                  Object.entries(product.specs).map(
-                    ([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between gap-6 border-b border-border px-4 py-3 last:border-b-0"
-                      >
-                        <span className="text-sm text-muted-foreground">
-                          {key}
-                        </span>
+                {displaySpecs.map((spec) => (
+                  <div
+                    key={spec.id}
+                    className="flex items-center justify-between gap-6 border-b border-border px-4 py-3 last:border-b-0"
+                  >
+                    <span className="text-sm text-muted-foreground">
+                      {specLabels[spec.id] ?? spec.id}
+                    </span>
 
-                        <span className="text-right text-sm font-medium text-foreground">
-                          {value}
-                        </span>
-                      </div>
-                    ),
-                  )}
-
-                <div className="flex items-center justify-between gap-6 border-b border-border px-4 py-3">
-                  <span className="text-sm text-muted-foreground">
-                    Масса 1 пог.м
-                  </span>
-
-                  <span className="text-right text-sm font-medium text-foreground">
-                    {product.weight} кг
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-6 border-b border-border px-4 py-3">
-                  <span className="text-sm text-muted-foreground">
-                    Длина
-                  </span>
-
-                  <span className="text-right text-sm font-medium text-foreground">
-                    {product.length} м
-                  </span>
-                </div>
+                    <span className="text-right text-sm font-medium text-foreground">
+                      {spec.value}
+                      {spec.unit ? ` ${spec.unit}` : ''}
+                    </span>
+                  </div>
+                ))}
 
                 <div className="flex items-center justify-between gap-6 border-b border-border px-4 py-3">
                   <span className="text-sm text-muted-foreground">
@@ -268,36 +276,29 @@ export function ProductPage() {
               </div>
             </div>
 
-            {/* =====================================================
-                CTA
-            ===================================================== */}
             <div className="flex flex-col gap-3 sm:flex-row">
-              {/* Main CTA */}
-              <button
+              <Button
                 type="button"
+                size="lg"
                 onClick={() => setRequestFormOpen(true)}
-                className="flex-1 rounded-lg bg-primary px-6 py-3 font-bold text-primary-foreground shadow-sm transition-all hover:opacity-90"
+                className="flex-1"
               >
                 Отправить заявку или запрос
-              </button>
+              </Button>
 
-              {/* Secondary CTA */}
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="lg"
                 onClick={handleAddToCart}
-                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-5 py-3 font-bold text-foreground transition-colors hover:border-primary hover:text-primary"
               >
                 <FiShoppingCart className="h-5 w-5" />
-
                 <span>В корзину</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* =========================================================
-            DESCRIPTION
-        ========================================================= */}
         <section className="mb-12 border-t border-border pt-10">
           <div className="mb-5 flex items-center gap-2">
             <FiFileText className="h-5 w-5 text-primary" />
@@ -329,9 +330,6 @@ export function ProductPage() {
           </div>
         </section>
 
-        {/* =========================================================
-            DELIVERY
-        ========================================================= */}
         <section className="mb-12 border-t border-border pt-10">
           <div className="mb-5 flex items-center gap-2">
             <FiTruck className="h-5 w-5 text-primary" />
@@ -349,21 +347,10 @@ export function ProductPage() {
             </p>
 
             <ul className="mb-4 list-inside list-disc space-y-2">
-              <li>
-                Самовывоз со склада в Екатеринбурге
-              </li>
-
-              <li>
-                Доставка ж/д транспортом для крупных партий
-              </li>
-
-              <li>
-                Автомобильная доставка по России
-              </li>
-
-              <li>
-                Возможна упаковка и консервация груза
-              </li>
+              <li>Самовывоз со склада в Екатеринбурге</li>
+              <li>Доставка ж/д транспортом для крупных партий</li>
+              <li>Автомобильная доставка по России</li>
+              <li>Возможна упаковка и консервация груза</li>
             </ul>
 
             <Link
@@ -375,9 +362,6 @@ export function ProductPage() {
           </div>
         </section>
 
-        {/* =========================================================
-            RAIL CALCULATOR
-        ========================================================= */}
         {isRail && (
           <section className="mb-12 rounded-xl border border-border bg-card p-6">
             <h2 className="mb-5 text-xl font-bold text-foreground">
@@ -385,67 +369,60 @@ export function ProductPage() {
             </h2>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {/* Rail type */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">
                   Тип рельса
                 </label>
 
-                <select
-                  value={railType}
-                  onChange={(event) =>
-                    setRailType(event.target.value)
-                  }
-                  className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-                >
-                  <option value="Р-65">
-                    Р-65 (64.72 кг/м)
-                  </option>
-
-                  <option value="Р-50">
-                    Р-50 (51.67 кг/м)
-                  </option>
-
-                  <option value="КР-70">
-                    КР-70 (крановый)
-                  </option>
-                </select>
+                <div className="flex h-11 items-center rounded-lg border border-border bg-muted/50 px-4 text-sm text-foreground">
+                  {product.specs?.find(
+                    (spec) => spec.id === 'type',
+                  )?.value ?? product.title}
+                </div>
               </div>
 
-              {/* Length */}
               <div>
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                <label
+                  htmlFor="rail-length"
+                  className="mb-1 block text-xs font-medium text-muted-foreground"
+                >
                   Длина, м
                 </label>
 
-                <input
+                <Input
+                  id="rail-length"
                   type="number"
+                  min="0"
+                  step="0.1"
                   value={railLength}
                   onChange={(event) =>
                     setRailLength(event.target.value)
                   }
-                  className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
-              {/* Result */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">
                   Итого
                 </label>
 
-                <div className="rounded-lg bg-muted px-3 py-2 font-bold text-foreground">
+                <div className="flex h-11 items-center rounded-lg bg-muted px-4 font-bold text-foreground">
                   {totalWeight.toFixed(1)} кг (
                   {tons.toFixed(3)} т)
                 </div>
               </div>
             </div>
+
+            <p className="mt-3 text-xs text-muted-foreground">
+              Расчёт выполнен исходя из массы{' '}
+              {weightPerMeter} кг/м.
+              {defaultRailLength
+                ? ` Стандартная длина товара: ${defaultRailLength} м.`
+                : ''}
+            </p>
           </section>
         )}
 
-        {/* =========================================================
-            SIMILAR PRODUCTS
-        ========================================================= */}
         {similarProducts.length > 0 && (
           <section className="border-t border-border pt-10">
             <h2 className="mb-6 text-2xl font-bold text-foreground">

@@ -6,49 +6,55 @@ export const categories: Category[] = [
     name: 'Рельсы',
     slug: 'rails',
     description:
-        'Железнодорожные, крановые и узкоколейные рельсы всех типов',
+      'Железнодорожные, крановые и узкоколейные рельсы всех типов',
   },
+
   {
     id: 'sleepers',
     name: 'Шпалы и плиты',
     slug: 'sleepers',
     description:
-        'Деревянные, железобетонные шпалы и подрельсовые плиты',
+      'Деревянные, железобетонные шпалы и подрельсовые плиты',
   },
+
   {
     id: 'fasteners',
     name: 'Крепёж',
     slug: 'fasteners',
     description:
-        'Рельсовый крепёж: болты, гайки, накладки, скрепления',
+      'Рельсовый крепёж: болты, гайки, накладки, скрепления',
   },
+
   {
     id: 'shoes',
     name: 'Башмаки',
     slug: 'shoes',
     description:
-        'Тормозные и подкладочные башмаки для железнодорожных вагонов',
+      'Тормозные и подкладочные башмаки для железнодорожных вагонов',
   },
+
   {
     id: 'buffers',
     name: 'Упоры тупиковые',
     slug: 'buffers',
     description:
-        'Тупиковые упоры для защиты концов путей',
+      'Тупиковые упоры для защиты концов путей',
   },
+
   {
     id: 'metal',
     name: 'Металлоизделия',
     slug: 'metal',
     description:
-        'Металлоизделия по чертежам заказчика',
+      'Металлоизделия по чертежам заказчика',
   },
+
   {
     id: 'tools',
     name: 'Путевой инструмент',
     slug: 'tools',
     description:
-        'Путевой инструмент: ручной и механизированный',
+      'Путевой инструмент: ручной и механизированный',
   },
 ]
 
@@ -60,6 +66,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'rails',
     slug: 'new',
   },
+
   {
     id: 'rails-used',
     name: 'Рельсы б/у',
@@ -67,6 +74,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'rails',
     slug: 'used',
   },
+
   {
     id: 'rails-parts',
     name: 'Части рельсов',
@@ -82,6 +90,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'sleepers',
     slug: 'wood',
   },
+
   {
     id: 'sleepers-concrete',
     name: 'Шпалы железобетонные',
@@ -89,6 +98,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'sleepers',
     slug: 'concrete',
   },
+
   {
     id: 'sleepers-plates',
     name: 'Плиты подрельсовые',
@@ -104,6 +114,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'fasteners',
     slug: 'bolts',
   },
+
   {
     id: 'fasteners-nuts',
     name: 'Гайки',
@@ -111,6 +122,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'fasteners',
     slug: 'nuts',
   },
+
   {
     id: 'fasteners-clamps',
     name: 'Скрепления',
@@ -126,6 +138,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'shoes',
     slug: 'brake',
   },
+
   {
     id: 'shoes-rail',
     name: 'Башмаки подкладочные',
@@ -141,6 +154,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'buffers',
     slug: 'concrete',
   },
+
   {
     id: 'buffers-metal',
     name: 'Упоры металлические',
@@ -156,19 +170,13 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'metal',
     slug: 'sheets',
   },
+
   {
     id: 'metal-bars',
     name: 'Прутки',
     categoryId: 'metal',
     categorySlug: 'metal',
     slug: 'bars',
-  },
-  {
-    id: 'metal-pipes',
-    name: 'Трубы',
-    categoryId: 'metal',
-    categorySlug: 'metal',
-    slug: 'pipes',
   },
 
   {
@@ -178,6 +186,7 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'tools',
     slug: 'manual',
   },
+
   {
     id: 'tools-mechanized',
     name: 'Механизированный',
@@ -185,7 +194,8 @@ export const subcategories: Subcategory[] = [
     categorySlug: 'tools',
     slug: 'mechanized',
   },
-];
+]
+
 
 export const products: Product[] = [
   {
@@ -194,8 +204,6 @@ export const products: Product[] = [
     sku: 'REL-R65-N',
     title: 'Рельс Р-65 новый',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 64.72,
-    length: 12.5,
     price: 68500,
     stock: 150,
     condition: 'new',
@@ -203,12 +211,12 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'new',
     description: 'Рельс железнодорожный новый типа Р-65 для главных путей.',
-    specs: {
-      'Тип': 'Р-65',
-      'Длина': '12.5 м',
-      'Масса 1 пог.м': '64.72 кг',
-      'Сталь': 'Э76ХФ',
-    },
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-65' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 64.72, unit: 'кг/м' },
+      { id: 'steel', label: 'Марка стали', value: 'Э76ХФ' },
+    ],
   },
   {
     id: 'rel-r50-new',
@@ -216,8 +224,6 @@ export const products: Product[] = [
     sku: 'REL-R50-N',
     title: 'Рельс Р-50 новый',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 51.67,
-    length: 12.5,
     price: 52000,
     stock: 200,
     condition: 'new',
@@ -225,12 +231,12 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'new',
     description: 'Рельс железнодорожный новый типа Р-50 для промышленных путей.',
-    specs: {
-      'Тип': 'Р-50',
-      'Длина': '12.5 м',
-      'Масса 1 пог.м': '51.67 кг',
-      'Сталь': 'Э76ХФ',
-    },
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-50' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 51.67, unit: 'кг/м' },
+      { id: 'steel', label: 'Марка стали', value: 'Э76ХФ' },
+    ],
   },
   {
     id: 'rel-r75-new',
@@ -238,8 +244,6 @@ export const products: Product[] = [
     sku: 'REL-R75-N',
     title: 'Рельс Р-75 новый',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 74.41,
-    length: 12.5,
     price: 82000,
     stock: 90,
     condition: 'new',
@@ -247,12 +251,12 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'new',
     description: 'Рельс железнодорожный новый типа Р-75 для тяжелонагруженных путей.',
-    specs: {
-      'Тип': 'Р-75',
-      'Длина': '12.5 м',
-      'Масса 1 пог.м': '74.41 кг',
-      'Сталь': 'Э76ХФ',
-    },
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-75' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 74.41, unit: 'кг/м' },
+      { id: 'steel', label: 'Марка стали', value: 'Э76ХФ' },
+    ],
   },
   {
     id: 'rel-r65-used',
@@ -260,8 +264,6 @@ export const products: Product[] = [
     sku: 'REL-R65-U',
     title: 'Рельс Р-65 б/у',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 64.72,
-    length: 12.5,
     price: 35000,
     stock: 300,
     condition: 'used',
@@ -269,6 +271,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'used',
     description: 'Рельс железнодорожный б/у типа Р-65 после ревизии.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-65' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 64.72, unit: 'кг/м' },
+    ],
   },
   {
     id: 'rel-r50-used',
@@ -276,8 +283,6 @@ export const products: Product[] = [
     sku: 'REL-R50-U',
     title: 'Рельс Р-50 б/у',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 51.67,
-    length: 12.5,
     price: 28000,
     stock: 400,
     condition: 'used',
@@ -285,6 +290,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'used',
     description: 'Рельс железнодорожный б/у типа Р-50 для подъездных путей.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-50' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 51.67, unit: 'кг/м' },
+    ],
   },
   {
     id: 'rel-r75-used',
@@ -292,8 +302,6 @@ export const products: Product[] = [
     sku: 'REL-R75-U',
     title: 'Рельс Р-75 б/у',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 74.41,
-    length: 12.5,
     price: 43000,
     stock: 180,
     condition: 'used',
@@ -301,6 +309,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'used',
     description: 'Рельс Р-75 б/у после дефектоскопии и ревизии.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-75' },
+      { id: 'length', label: 'Длина', value: 12.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 74.41, unit: 'кг/м' },
+    ],
   },
   {
     id: 'rel-cut-r50',
@@ -308,8 +321,6 @@ export const products: Product[] = [
     sku: 'REL-CUT-R50',
     title: 'Рельс резаный Р-50',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 51.67,
-    length: 1,
     price: 4200,
     stock: 1000,
     condition: 'service',
@@ -317,6 +328,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'parts',
     description: 'Рельс Р-50, нарезанный на отрезки нужной длины.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-50' },
+      { id: 'length', label: 'Длина', value: 1, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 51.67, unit: 'кг/м' },
+    ],
   },
   {
     id: 'rel-cut-r65',
@@ -324,8 +340,6 @@ export const products: Product[] = [
     sku: 'REL-CUT-R65',
     title: 'Рельс резаный Р-65',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 64.72,
-    length: 1,
     price: 5500,
     stock: 1200,
     condition: 'service',
@@ -333,6 +347,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'parts',
     description: 'Рельс Р-65, нарезанный на мерные отрезки.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-65' },
+      { id: 'length', label: 'Длина', value: 1, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 64.72, unit: 'кг/м' },
+    ],
   },
   {
     id: 'rel-cut-r75',
@@ -340,8 +359,6 @@ export const products: Product[] = [
     sku: 'REL-CUT-R75',
     title: 'Рельс резаный Р-75',
     gost: 'ГОСТ Р 51685-2022',
-    weight: 74.41,
-    length: 1,
     price: 6800,
     stock: 700,
     condition: 'service',
@@ -349,6 +366,11 @@ export const products: Product[] = [
     categorySlug: 'rails',
     subcategorySlug: 'parts',
     description: 'Отрезки рельса Р-75 для ремонтных и строительных работ.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Р-75' },
+      { id: 'length', label: 'Длина', value: 1, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 74.41, unit: 'кг/м' },
+    ],
   },
 
   {
@@ -357,8 +379,6 @@ export const products: Product[] = [
     sku: 'SLP-WD-1',
     title: 'Шпала деревянная тип 1',
     gost: 'ГОСТ 78-2011',
-    weight: 70,
-    length: 2.75,
     price: 1200,
     stock: 5000,
     condition: 'new',
@@ -366,6 +386,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'wood',
     description: 'Шпала деревянная пропитанная тип 1.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Тип 1' },
+      { id: 'length', label: 'Длина', value: 2.75, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 70, unit: 'кг' },
+    ],
   },
   {
     id: 'sleeper-wood-2',
@@ -373,8 +398,6 @@ export const products: Product[] = [
     sku: 'SLP-WD-2',
     title: 'Шпала деревянная тип 2',
     gost: 'ГОСТ 78-2011',
-    weight: 65,
-    length: 2.75,
     price: 950,
     stock: 7000,
     condition: 'new',
@@ -382,6 +405,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'wood',
     description: 'Шпала деревянная пропитанная тип 2.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Тип 2' },
+      { id: 'length', label: 'Длина', value: 2.75, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 65, unit: 'кг' },
+    ],
   },
   {
     id: 'sleeper-wood-bridge',
@@ -389,8 +417,6 @@ export const products: Product[] = [
     sku: 'SLP-WD-BR',
     title: 'Шпала деревянная мостовая',
     gost: 'ГОСТ 78-2011',
-    weight: 82,
-    length: 3,
     price: 1800,
     stock: 2500,
     condition: 'new',
@@ -398,6 +424,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'wood',
     description: 'Усиленная деревянная шпала для мостовых и промышленных путей.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Мостовая' },
+      { id: 'length', label: 'Длина', value: 3, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 82, unit: 'кг' },
+    ],
   },
   {
     id: 'sleeper-concrete-sh1',
@@ -405,8 +436,6 @@ export const products: Product[] = [
     sku: 'SLP-CN-SH1',
     title: 'Шпала Ш-1',
     gost: 'ГОСТ 19291-2019',
-    weight: 270,
-    length: 2.7,
     price: 4500,
     stock: 2000,
     condition: 'new',
@@ -414,6 +443,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'concrete',
     description: 'Шпала железобетонная Ш-1 для бесстыкового пути.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Ш-1' },
+      { id: 'length', label: 'Длина', value: 2.7, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 270, unit: 'кг' },
+    ],
   },
   {
     id: 'sleeper-concrete-sh2',
@@ -421,8 +455,6 @@ export const products: Product[] = [
     sku: 'SLP-CN-SH2',
     title: 'Шпала Ш-2',
     gost: 'ГОСТ 19291-2019',
-    weight: 275,
-    length: 2.7,
     price: 4800,
     stock: 1800,
     condition: 'new',
@@ -430,6 +462,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'concrete',
     description: 'Железобетонная шпала Ш-2 для железнодорожных путей.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Ш-2' },
+      { id: 'length', label: 'Длина', value: 2.7, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 275, unit: 'кг' },
+    ],
   },
   {
     id: 'sleeper-concrete-sh3',
@@ -437,8 +474,6 @@ export const products: Product[] = [
     sku: 'SLP-CN-SH3',
     title: 'Шпала Ш-3',
     gost: 'ГОСТ 19291-2019',
-    weight: 280,
-    length: 2.7,
     price: 5200,
     stock: 1500,
     condition: 'new',
@@ -446,6 +481,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'concrete',
     description: 'Усиленная железобетонная шпала Ш-3.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Ш-3' },
+      { id: 'length', label: 'Длина', value: 2.7, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 280, unit: 'кг' },
+    ],
   },
   {
     id: 'plate-rc50',
@@ -453,8 +493,6 @@ export const products: Product[] = [
     sku: 'PLT-RC50',
     title: 'Плита подрельсовая RC50',
     gost: 'ТУ 0941-001-44659632-2018',
-    weight: 10,
-    length: 0.5,
     price: 2400,
     stock: 12000,
     condition: 'new',
@@ -462,6 +500,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'plates',
     description: 'Плита подрельсовая полимеркомпозитная RC50.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'RC50' },
+      { id: 'length', label: 'Длина', value: 0.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 10, unit: 'кг' },
+    ],
   },
   {
     id: 'plate-rc65',
@@ -469,8 +512,6 @@ export const products: Product[] = [
     sku: 'PLT-RC65',
     title: 'Плита подрельсовая RC65',
     gost: 'ТУ 0941-001-44659632-2018',
-    weight: 12,
-    length: 0.5,
     price: 2800,
     stock: 10000,
     condition: 'new',
@@ -478,6 +519,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'plates',
     description: 'Плита подрельсовая полимеркомпозитная RC65.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'RC65' },
+      { id: 'length', label: 'Длина', value: 0.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 12, unit: 'кг' },
+    ],
   },
   {
     id: 'plate-rc65-heavy',
@@ -485,8 +531,6 @@ export const products: Product[] = [
     sku: 'PLT-RC65-H',
     title: 'Плита подрельсовая RC65 усиленная',
     gost: 'ТУ 0941-001-44659632-2018',
-    weight: 14,
-    length: 0.5,
     price: 3200,
     stock: 8000,
     condition: 'new',
@@ -494,6 +538,11 @@ export const products: Product[] = [
     categorySlug: 'sleepers',
     subcategorySlug: 'plates',
     description: 'Усиленная подрельсовая плита RC65 для высоких нагрузок.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'RC65 усиленная' },
+      { id: 'length', label: 'Длина', value: 0.5, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 14, unit: 'кг' },
+    ],
   },
 
   {
@@ -502,8 +551,6 @@ export const products: Product[] = [
     sku: 'BLT-M22',
     title: 'Болт путевой М22',
     gost: 'ГОСТ 11530-93',
-    weight: 0.4,
-    length: 0.13,
     price: 150,
     stock: 60000,
     condition: 'new',
@@ -511,6 +558,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'bolts',
     description: 'Путевой болт М22 для рельсовых скреплений.',
+    specs: [
+      { id: 'diameter', label: 'Диаметр', value: 22, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 130, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 0.4, unit: 'кг' },
+    ],
   },
   {
     id: 'bolt-m24',
@@ -518,8 +570,6 @@ export const products: Product[] = [
     sku: 'BLT-M24',
     title: 'Болт путевой М24',
     gost: 'ГОСТ 11530-93',
-    weight: 0.45,
-    length: 0.14,
     price: 180,
     stock: 50000,
     condition: 'new',
@@ -527,6 +577,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'bolts',
     description: 'Болт рельсового скрепления М24.',
+    specs: [
+      { id: 'diameter', label: 'Диаметр', value: 24, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 140, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 0.45, unit: 'кг' },
+    ],
   },
   {
     id: 'bolt-m27',
@@ -534,8 +589,6 @@ export const products: Product[] = [
     sku: 'BLT-M27',
     title: 'Болт стыковой М27',
     gost: 'ГОСТ 11530-93',
-    weight: 0.62,
-    length: 0.16,
     price: 250,
     stock: 30000,
     condition: 'new',
@@ -543,6 +596,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'bolts',
     description: 'Болт стыковой высокопрочный М27.',
+    specs: [
+      { id: 'diameter', label: 'Диаметр', value: 27, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 160, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 0.62, unit: 'кг' },
+    ],
   },
   {
     id: 'nut-m22',
@@ -550,8 +608,6 @@ export const products: Product[] = [
     sku: 'NUT-M22',
     title: 'Гайка М22',
     gost: 'ГОСТ 5915-70',
-    weight: 0.06,
-    length: 0.018,
     price: 35,
     stock: 120000,
     condition: 'new',
@@ -559,6 +615,10 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'nuts',
     description: 'Гайка шестигранная М22 оцинкованная.',
+    specs: [
+      { id: 'size', label: 'Размер', value: 'М22' },
+      { id: 'weight', label: 'Масса', value: 0.06, unit: 'кг' },
+    ],
   },
   {
     id: 'nut-m24',
@@ -566,8 +626,6 @@ export const products: Product[] = [
     sku: 'NUT-M24',
     title: 'Гайка М24',
     gost: 'ГОСТ 5915-70',
-    weight: 0.08,
-    length: 0.02,
     price: 45,
     stock: 100000,
     condition: 'new',
@@ -575,6 +633,10 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'nuts',
     description: 'Гайка шестигранная М24 оцинкованная.',
+    specs: [
+      { id: 'size', label: 'Размер', value: 'М24' },
+      { id: 'weight', label: 'Масса', value: 0.08, unit: 'кг' },
+    ],
   },
   {
     id: 'nut-m27',
@@ -582,8 +644,6 @@ export const products: Product[] = [
     sku: 'NUT-M27',
     title: 'Гайка М27',
     gost: 'ГОСТ 5915-70',
-    weight: 0.1,
-    length: 0.022,
     price: 65,
     stock: 80000,
     condition: 'new',
@@ -591,6 +651,10 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'nuts',
     description: 'Усиленная шестигранная гайка М27.',
+    specs: [
+      { id: 'size', label: 'Размер', value: 'М27' },
+      { id: 'weight', label: 'Масса', value: 0.1, unit: 'кг' },
+    ],
   },
   {
     id: 'clamp-kb',
@@ -598,8 +662,6 @@ export const products: Product[] = [
     sku: 'CLP-KB',
     title: 'Скрепление КБ',
     gost: 'ГОСТ 19646-90',
-    weight: 2.5,
-    length: 0.3,
     price: 850,
     stock: 20000,
     condition: 'new',
@@ -607,6 +669,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'clamps',
     description: 'Скрепление раздельное промежуточное КБ.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'КБ' },
+      { id: 'weight', label: 'Масса', value: 2.5, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.3, unit: 'м' },
+    ],
   },
   {
     id: 'clamp-kb65',
@@ -614,8 +681,6 @@ export const products: Product[] = [
     sku: 'CLP-KB65',
     title: 'Скрепление КБ-65',
     gost: 'ГОСТ 19646-90',
-    weight: 2.7,
-    length: 0.3,
     price: 920,
     stock: 18000,
     condition: 'new',
@@ -623,6 +688,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'clamps',
     description: 'Промежуточное рельсовое скрепление КБ-65.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'КБ-65' },
+      { id: 'weight', label: 'Масса', value: 2.7, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.3, unit: 'м' },
+    ],
   },
   {
     id: 'clamp-ars4',
@@ -630,8 +700,6 @@ export const products: Product[] = [
     sku: 'CLP-ARS4',
     title: 'Скрепление АРС-4',
     gost: 'ТУ 0921-001-01124323-2004',
-    weight: 3.2,
-    length: 0.3,
     price: 1250,
     stock: 15000,
     condition: 'new',
@@ -639,6 +707,11 @@ export const products: Product[] = [
     categorySlug: 'fasteners',
     subcategorySlug: 'clamps',
     description: 'Анкерное рельсовое скрепление АРС-4.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'АРС-4' },
+      { id: 'weight', label: 'Масса', value: 3.2, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.3, unit: 'м' },
+    ],
   },
 
   {
@@ -647,8 +720,6 @@ export const products: Product[] = [
     sku: 'SHO-BR-C',
     title: 'Башмак тормозной чугунный',
     gost: 'ГОСТ 1101-93',
-    weight: 38,
-    length: 0.4,
     price: 4500,
     stock: 5000,
     condition: 'new',
@@ -656,6 +727,11 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'brake',
     description: 'Башмак тормозной литой чугунный для грузовых вагонов.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Чугун' },
+      { id: 'weight', label: 'Масса', value: 38, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.4, unit: 'м' },
+    ],
   },
   {
     id: 'shoe-brake-composite',
@@ -663,8 +739,6 @@ export const products: Product[] = [
     sku: 'SHO-BR-P',
     title: 'Башмак тормозной композитный',
     gost: 'ГОСТ Р 55093-2012',
-    weight: 22,
-    length: 0.4,
     price: 8900,
     stock: 3000,
     condition: 'new',
@@ -672,6 +746,11 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'brake',
     description: 'Башмак тормозной композиционный износостойкий.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Композит' },
+      { id: 'weight', label: 'Масса', value: 22, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.4, unit: 'м' },
+    ],
   },
   {
     id: 'shoe-brake-cast-heavy',
@@ -679,8 +758,6 @@ export const products: Product[] = [
     sku: 'SHO-BR-C-U',
     title: 'Башмак тормозной усиленный',
     gost: 'ГОСТ 1101-93',
-    weight: 40,
-    length: 0.42,
     price: 4900,
     stock: 4000,
     condition: 'new',
@@ -688,6 +765,12 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'brake',
     description: 'Усиленный чугунный тормозной башмак.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Чугун' },
+      { id: 'type', label: 'Тип', value: 'Усиленный' },
+      { id: 'weight', label: 'Масса', value: 40, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.42, unit: 'м' },
+    ],
   },
   {
     id: 'shoe-rail-pad-kp',
@@ -695,8 +778,6 @@ export const products: Product[] = [
     sku: 'SHO-PAD-KP',
     title: 'Подкладка КП',
     gost: 'ГОСТ 19646-90',
-    weight: 4.2,
-    length: 0.25,
     price: 650,
     stock: 40000,
     condition: 'new',
@@ -704,6 +785,11 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'rail',
     description: 'Подкладка подрельсовая КП для деревянных шпал.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'КП' },
+      { id: 'length', label: 'Длина', value: 0.25, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 4.2, unit: 'кг' },
+    ],
   },
   {
     id: 'shoe-rail-pad-kr65',
@@ -711,8 +797,6 @@ export const products: Product[] = [
     sku: 'SHO-PAD-KR65',
     title: 'Подкладка КР-65',
     gost: 'ГОСТ 19646-90',
-    weight: 4.5,
-    length: 0.25,
     price: 720,
     stock: 35000,
     condition: 'new',
@@ -720,6 +804,11 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'rail',
     description: 'Подрельсовая подкладка КР-65.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'КР-65' },
+      { id: 'length', label: 'Длина', value: 0.25, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 4.5, unit: 'кг' },
+    ],
   },
   {
     id: 'shoe-rail-pad-2r',
@@ -727,8 +816,6 @@ export const products: Product[] = [
     sku: 'SHO-PAD-2R',
     title: 'Подкладка двухребордчатая',
     gost: 'ГОСТ 19646-90',
-    weight: 4.8,
-    length: 0.26,
     price: 790,
     stock: 28000,
     condition: 'new',
@@ -736,6 +823,11 @@ export const products: Product[] = [
     categorySlug: 'shoes',
     subcategorySlug: 'rail',
     description: 'Двухребордчатая металлическая подкладка.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Двухребордчатая' },
+      { id: 'length', label: 'Длина', value: 0.26, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 4.8, unit: 'кг' },
+    ],
   },
 
   {
@@ -744,8 +836,6 @@ export const products: Product[] = [
     sku: 'BUF-CN-1',
     title: 'Упор тупиковый бетонный',
     gost: 'ТУ 0941-002-44659632-2019',
-    weight: 1500,
-    length: 1.5,
     price: 45000,
     stock: 100,
     condition: 'new',
@@ -753,6 +843,11 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'concrete',
     description: 'Упор тупиковый монолитный бетонный.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Бетон' },
+      { id: 'weight', label: 'Масса', value: 1500, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 1.5, unit: 'м' },
+    ],
   },
   {
     id: 'buffer-concrete-2',
@@ -760,8 +855,6 @@ export const products: Product[] = [
     sku: 'BUF-CN-UB1',
     title: 'Упор тупиковый УБ-1',
     gost: 'ТУ 0941-002-44659632-2019',
-    weight: 1550,
-    length: 1.5,
     price: 47000,
     stock: 80,
     condition: 'new',
@@ -769,6 +862,12 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'concrete',
     description: 'Сборный бетонный тупиковый упор УБ-1.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'УБ-1' },
+      { id: 'material', label: 'Материал', value: 'Бетон' },
+      { id: 'weight', label: 'Масса', value: 1550, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 1.5, unit: 'м' },
+    ],
   },
   {
     id: 'buffer-concrete-3',
@@ -776,8 +875,6 @@ export const products: Product[] = [
     sku: 'BUF-CN-UB2',
     title: 'Упор тупиковый УБ-2',
     gost: 'ТУ 0941-002-44659632-2019',
-    weight: 1700,
-    length: 1.6,
     price: 52000,
     stock: 60,
     condition: 'new',
@@ -785,6 +882,12 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'concrete',
     description: 'Усиленный бетонный тупиковый упор УБ-2.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'УБ-2' },
+      { id: 'material', label: 'Материал', value: 'Бетон' },
+      { id: 'weight', label: 'Масса', value: 1700, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 1.6, unit: 'м' },
+    ],
   },
   {
     id: 'buffer-metal-1',
@@ -792,8 +895,6 @@ export const products: Product[] = [
     sku: 'BUF-MT-1',
     title: 'Упор тупиковый металлический',
     gost: 'ТУ 0941-003-44659632-2020',
-    weight: 800,
-    length: 2,
     price: 85000,
     stock: 50,
     condition: 'new',
@@ -801,6 +902,11 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'metal',
     description: 'Упор тупиковый сварной металлический с амортизатором.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'weight', label: 'Масса', value: 800, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2, unit: 'м' },
+    ],
   },
   {
     id: 'buffer-metal-2',
@@ -808,8 +914,6 @@ export const products: Product[] = [
     sku: 'BUF-MT-U',
     title: 'Упор тупиковый усиленный',
     gost: 'ТУ 0941-003-44659632-2020',
-    weight: 950,
-    length: 2.2,
     price: 105000,
     stock: 35,
     condition: 'new',
@@ -817,6 +921,12 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'metal',
     description: 'Усиленный металлический тупиковый упор.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Усиленный' },
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'weight', label: 'Масса', value: 950, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2.2, unit: 'м' },
+    ],
   },
   {
     id: 'buffer-metal-3',
@@ -824,8 +934,6 @@ export const products: Product[] = [
     sku: 'BUF-MT-AM',
     title: 'Упор тупиковый амортизационный',
     gost: 'ТУ 0941-003-44659632-2020',
-    weight: 1100,
-    length: 2.2,
     price: 125000,
     stock: 25,
     condition: 'new',
@@ -833,6 +941,12 @@ export const products: Product[] = [
     categorySlug: 'buffers',
     subcategorySlug: 'metal',
     description: 'Металлический упор с усиленным амортизирующим механизмом.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Амортизационный' },
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'weight', label: 'Масса', value: 1100, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2.2, unit: 'м' },
+    ],
   },
 
   {
@@ -841,8 +955,6 @@ export const products: Product[] = [
     sku: 'SHT-ST-05',
     title: 'Лист стальной 5 мм',
     gost: 'ГОСТ 19903-2015',
-    weight: 39.25,
-    length: 2,
     price: 6500,
     stock: 800,
     condition: 'new',
@@ -850,6 +962,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'sheets',
     description: 'Лист горячекатаный стальной толщиной 5 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'thickness', label: 'Толщина', value: 5, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 39.25, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2, unit: 'м' },
+    ],
   },
   {
     id: 'sheet-steel-10',
@@ -857,8 +975,6 @@ export const products: Product[] = [
     sku: 'SHT-ST-10',
     title: 'Лист стальной 10 мм',
     gost: 'ГОСТ 19903-2015',
-    weight: 78.5,
-    length: 2,
     price: 12000,
     stock: 500,
     condition: 'new',
@@ -866,6 +982,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'sheets',
     description: 'Лист горячекатаный стальной толщиной 10 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'thickness', label: 'Толщина', value: 10, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 78.5, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2, unit: 'м' },
+    ],
   },
   {
     id: 'sheet-steel-12',
@@ -873,8 +995,6 @@ export const products: Product[] = [
     sku: 'SHT-ST-12',
     title: 'Лист стальной 12 мм',
     gost: 'ГОСТ 19903-2015',
-    weight: 94.2,
-    length: 2,
     price: 14500,
     stock: 350,
     condition: 'new',
@@ -882,6 +1002,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'sheets',
     description: 'Лист горячекатаный стальной толщиной 12 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'thickness', label: 'Толщина', value: 12, unit: 'мм' },
+      { id: 'weight', label: 'Масса', value: 94.2, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 2, unit: 'м' },
+    ],
   },
   {
     id: 'bar-steel-16',
@@ -889,8 +1015,6 @@ export const products: Product[] = [
     sku: 'BAR-ST-16',
     title: 'Пруток стальной Ø16',
     gost: 'ГОСТ 2590-2006',
-    weight: 1.58,
-    length: 6,
     price: 3200,
     stock: 1500,
     condition: 'new',
@@ -898,6 +1022,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'bars',
     description: 'Пруток круглый стальной диаметром 16 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 16, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 1.58, unit: 'кг/м' },
+    ],
   },
   {
     id: 'bar-steel-20',
@@ -905,8 +1035,6 @@ export const products: Product[] = [
     sku: 'BAR-ST-20',
     title: 'Пруток стальной Ø20',
     gost: 'ГОСТ 2590-2006',
-    weight: 2.47,
-    length: 6,
     price: 4500,
     stock: 1000,
     condition: 'new',
@@ -914,6 +1042,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'bars',
     description: 'Пруток круглый стальной диаметром 20 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 20, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 2.47, unit: 'кг/м' },
+    ],
   },
   {
     id: 'bar-steel-25',
@@ -921,8 +1055,6 @@ export const products: Product[] = [
     sku: 'BAR-ST-25',
     title: 'Пруток стальной Ø25',
     gost: 'ГОСТ 2590-2006',
-    weight: 3.85,
-    length: 6,
     price: 6800,
     stock: 700,
     condition: 'new',
@@ -930,6 +1062,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'bars',
     description: 'Пруток круглый стальной диаметром 25 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 25, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 3.85, unit: 'кг/м' },
+    ],
   },
   {
     id: 'pipe-steel-32',
@@ -937,8 +1075,6 @@ export const products: Product[] = [
     sku: 'PIP-ST-32',
     title: 'Труба стальная Ø32',
     gost: 'ГОСТ 3262-75',
-    weight: 3.6,
-    length: 6,
     price: 5800,
     stock: 1200,
     condition: 'new',
@@ -946,6 +1082,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'pipes',
     description: 'Труба водогазопроводная Ø32 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 32, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 3.6, unit: 'кг/м' },
+    ],
   },
   {
     id: 'pipe-steel-50',
@@ -953,8 +1095,6 @@ export const products: Product[] = [
     sku: 'PIP-ST-50',
     title: 'Труба стальная Ø50',
     gost: 'ГОСТ 3262-75',
-    weight: 5.5,
-    length: 6,
     price: 8500,
     stock: 800,
     condition: 'new',
@@ -962,6 +1102,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'pipes',
     description: 'Труба водогазопроводная Ø50 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 50, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 5.5, unit: 'кг/м' },
+    ],
   },
   {
     id: 'pipe-steel-108',
@@ -969,8 +1115,6 @@ export const products: Product[] = [
     sku: 'PIP-ST-108',
     title: 'Труба стальная Ø108',
     gost: 'ГОСТ 10704-91',
-    weight: 12.5,
-    length: 6,
     price: 15800,
     stock: 500,
     condition: 'new',
@@ -978,6 +1122,12 @@ export const products: Product[] = [
     categorySlug: 'metal',
     subcategorySlug: 'pipes',
     description: 'Электросварная стальная труба Ø108 мм.',
+    specs: [
+      { id: 'material', label: 'Материал', value: 'Сталь' },
+      { id: 'diameter', label: 'Диаметр', value: 108, unit: 'мм' },
+      { id: 'length', label: 'Длина', value: 6, unit: 'м' },
+      { id: 'weight', label: 'Масса', value: 12.5, unit: 'кг/м' },
+    ],
   },
 
   {
@@ -986,8 +1136,6 @@ export const products: Product[] = [
     sku: 'TL-HAM',
     title: 'Молоток путевой',
     gost: 'ТУ 12-06-39-2016',
-    weight: 1.5,
-    length: 0.35,
     price: 2500,
     stock: 200,
     condition: 'new',
@@ -995,6 +1143,11 @@ export const products: Product[] = [
     categorySlug: 'tools',
     subcategorySlug: 'manual',
     description: 'Молоток путевой специальный.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Ручной' },
+      { id: 'weight', label: 'Масса', value: 1.5, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.35, unit: 'м' },
+    ],
   },
   {
     id: 'tool-wrench',
@@ -1002,8 +1155,6 @@ export const products: Product[] = [
     sku: 'TL-WRN',
     title: 'Ключ путевой',
     gost: 'ТУ 12-06-40-2016',
-    weight: 3.2,
-    length: 0.6,
     price: 4500,
     stock: 150,
     condition: 'new',
@@ -1011,6 +1162,11 @@ export const products: Product[] = [
     categorySlug: 'tools',
     subcategorySlug: 'manual',
     description: 'Ключ путевой универсальный.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Универсальный' },
+      { id: 'weight', label: 'Масса', value: 3.2, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.6, unit: 'м' },
+    ],
   },
   {
     id: 'tool-crowbar',
@@ -1018,8 +1174,6 @@ export const products: Product[] = [
     sku: 'TL-CBR',
     title: 'Лом путевой усиленный',
     gost: 'ТУ 12-06-38-2016',
-    weight: 5,
-    length: 1.5,
     price: 3200,
     stock: 300,
     condition: 'new',
@@ -1027,6 +1181,11 @@ export const products: Product[] = [
     categorySlug: 'tools',
     subcategorySlug: 'manual',
     description: 'Усиленный лом для выполнения путевых работ.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Усиленный' },
+      { id: 'weight', label: 'Масса', value: 5, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 1.5, unit: 'м' },
+    ],
   },
   {
     id: 'tool-drill',
@@ -1034,8 +1193,6 @@ export const products: Product[] = [
     sku: 'TL-DRL',
     title: 'Сверлильная машина БМ-2А',
     gost: 'ТУ 12-06-41-2017',
-    weight: 28,
-    length: 0.8,
     price: 125000,
     stock: 20,
     condition: 'new',
@@ -1043,6 +1200,12 @@ export const products: Product[] = [
     categorySlug: 'tools',
     subcategorySlug: 'mechanized',
     description: 'Машина сверлильная бензиновая для рельсов.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Рельсосверлильный станок' },
+      { id: 'drive', label: 'Привод', value: 'Бензиновый' },
+      { id: 'weight', label: 'Масса', value: 28, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.8, unit: 'м' },
+    ],
   },
   {
     id: 'tool-grinder',
@@ -1050,8 +1213,6 @@ export const products: Product[] = [
     sku: 'TL-GRN',
     title: 'Шлифмашина угловая',
     gost: 'ТУ 12-06-42-2017',
-    weight: 12,
-    length: 0.5,
     price: 85000,
     stock: 30,
     condition: 'new',
@@ -1059,6 +1220,12 @@ export const products: Product[] = [
     categorySlug: 'tools',
     subcategorySlug: 'mechanized',
     description: 'Машина шлифовальная бензиновая.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Рельсошлифовальный станок' },
+      { id: 'drive', label: 'Привод', value: 'Бензиновый' },
+      { id: 'weight', label: 'Масса', value: 12, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.5, unit: 'м' },
+    ],
   },
   {
     id: 'tool-rail-cutter',
@@ -1066,14 +1233,22 @@ export const products: Product[] = [
     sku: 'TL-CUT-RR',
     title: 'Рельсорезная машина РРМ-1',
     gost: 'ТУ 12-06-45-2017',
-    weight: 32,
-    length: 0.9,
     price: 145000,
     stock: 15,
     condition: 'new',
-    images: ['/test-product.webp', '/test-product.webp', '/test-product.webp'],
+    images: [
+      '/test-product.webp',
+      '/test-product.webp',
+      '/test-product.webp',
+    ],
     categorySlug: 'tools',
     subcategorySlug: 'mechanized',
     description: 'Бензиновая рельсорезная машина для резки рельсов.',
+    specs: [
+      { id: 'type', label: 'Тип', value: 'Рельсорезный станок' },
+      { id: 'drive', label: 'Привод', value: 'Бензиновый' },
+      { id: 'weight', label: 'Масса', value: 32, unit: 'кг' },
+      { id: 'length', label: 'Длина', value: 0.9, unit: 'м' },
+    ],
   },
 ]
