@@ -89,7 +89,7 @@ export function ProductPage() {
 
           <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div>
-              <div className="mb-4 aspect-[4/3] overflow-hidden rounded-xl bg-[hsl(var(--muted))]">
+              <div className="mb-4 aspect-4/3 overflow-hidden rounded-xl bg-[hsl(var(--muted))]">
                 <img
                     src={
                         product.images[0] ||
@@ -242,7 +242,7 @@ export function ProductPage() {
               </button>
             </div>
 
-            <div className="min-h-[200px]">
+            <div className="min-h-50">
               {activeTab === 'specs' && (
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {product.specs &&
@@ -434,6 +434,8 @@ export function ProductPage() {
               </div>
           )}
         </div>
+
+        <RequestFormModal open={requestFormOpen} onOpenChange={setRequestFormOpen}/>
       </Layout>
   )
 }
