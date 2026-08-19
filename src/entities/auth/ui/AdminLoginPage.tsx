@@ -3,9 +3,10 @@ import { Input } from '@/shared/ui/Input'
 import { Label } from '@/shared/ui/Label'
 import { useAuth } from '@/entities/auth'
 import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 
 interface AdminLoginPageProps {
-  onLoginSuccess: () => void
+  onLoginSuccess?: () => void
 }
 
 export function AdminLoginPage({ onLoginSuccess }: AdminLoginPageProps) {
@@ -14,6 +15,8 @@ export function AdminLoginPage({ onLoginSuccess }: AdminLoginPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { login } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,7 +26,13 @@ export function AdminLoginPage({ onLoginSuccess }: AdminLoginPageProps) {
     try {
       const result = await login({ username, password })
       if (result.success) {
-        onLoginSuccess()
+        if (onLoginSuccess) {
+          onLoginSuccess()
+        } else {
+          // Редирект на страницу админки или туда, откуда пришли
+          const from = location.state?.from?.pathname || '/admin'
+          navigate(from, { replace: true })
+        }
       } else {
         setError(result.error || 'Ошибка входа')
       }

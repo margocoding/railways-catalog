@@ -10,6 +10,7 @@ import { ServicesPage } from './pages/services/ServicesPage'
 import { ServicePage } from './pages/services/ServicePage'
 import { CartPage } from './pages/cart/CartPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
+import { AdminLoginPage } from './entities/auth'
 import { Layout } from './widgets/Layout'
 import { Hero } from './widgets/hero/Hero'
 import { CategoriesCarousel } from './widgets/categories-carousel/CategoriesCarousel'
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 
                 {/* Admin routes */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route 
                     path="/admin/*" 
                     element={
