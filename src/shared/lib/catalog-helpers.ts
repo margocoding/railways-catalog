@@ -80,14 +80,14 @@ export function getCategoryBreadcrumbs(
     },
     {
       label: getCategoryName(categorySlug),
-      href: `/catalog/${categorySlug}`,
+      href: `/catalog?category=${categorySlug}`,
     },
   ]
 
   if (subcategorySlug) {
     items.push({
       label: getSubcategoryName(subcategorySlug),
-      href: `/catalog/${categorySlug}/${subcategorySlug}`,
+      href: `/catalog?category=${categorySlug}&subcategory=${subcategorySlug}`,
     })
   }
 

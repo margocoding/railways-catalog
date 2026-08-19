@@ -258,7 +258,7 @@ export function Hero() {
                 <a
                   key={category.id}
                   href={`/catalog/${category.slug}`}
-                  className="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-muted"
+                  className="flex items-center gap-3 rounded-lg px-4 py-1 transition-colors hover:bg-muted"
                   onClick={() => setMobileCategoriesOpen(false)}
                 >
                   <span className="text-xl">
