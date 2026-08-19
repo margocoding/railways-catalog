@@ -1,2 +1,2 @@
 export {cn} from './cn'
-export { getCategoryIcon, getSubcategoryUrl, getCategoryUrl } from './catalog-helpers'
+export { getCategoryIcon, getSubcategoryUrl, getCategoryUrl, getSpecValue } from './catalog-helpers'

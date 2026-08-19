@@ -1,26 +1,11 @@
 import { Link } from 'react-router'
 
-import { formatPrice } from '../../../shared/lib/catalog-helpers'
+import { formatPrice, getSpecValue } from '../../../shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
 import { AddToCartButton } from '../../../features/cart/ui/AddToCartButton'
 
 interface ProductCardProps {
     product: Product
-}
-
-function getSpecValue(
-    product: Product,
-    id: string,
-) {
-    const spec = product.specs?.find(
-        (item) => item.id === id,
-    )
-
-    if (!spec) {
-        return '—'
-    }
-
-    return `${spec.value}${spec.unit ? ` ${spec.unit}` : ''}`
 }
 
 export function ProductCard({ product }: ProductCardProps) {
