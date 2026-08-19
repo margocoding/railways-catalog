@@ -1,3 +1,5 @@
+import { categories } from "@/entities/product/model/mockData"
+
 export function Footer() {
   return (
     <footer className="bg-[hsl(var(--card))] border-t border-[hsl(var(--border))]">
@@ -34,13 +36,11 @@ export function Footer() {
           <div>
             <h4 className="font-bold mb-4">Каталог</h4>
             <ul className="space-y-2 text-sm text-[hsl(var(--muted-foreground))]">
-              <li><a href="/catalog/rails" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Рельсы</a></li>
-              <li><a href="/catalog/sleepers" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Шпалы и плиты</a></li>
-              <li><a href="/catalog/fasteners" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Крепёж</a></li>
-              <li><a href="/catalog/shoes" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Башмаки</a></li>
-              <li><a href="/catalog/buffers" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Упоры тупиковые</a></li>
-              <li><a href="/catalog/metal" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Металлоизделия</a></li>
-              <li><a href="/catalog/tools" className="hover:text-[hsl(var(--primary))] min-h-[44px] block">Путевой инструмент</a></li>
+              {categories.map(category => <li>
+                <a href={`/catalog?category=${category.slug}`} className="hover:text-[hsl(var(--primary))] min-h-11 block">
+                {category.description}
+                </a>
+              </li>)}
             </ul>
           </div>
 
