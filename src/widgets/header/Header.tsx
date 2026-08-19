@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
 import { FiMenu, FiPhone, FiSearch, FiShoppingCart, FiMail } from 'react-icons/fi'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Button } from '../../shared/ui/Button'
 import { MobileMenu } from "@/widgets/header/MobileMenu.tsx";
 import { CatalogMegaMenu } from "@/widgets/header/CatalogMegaMenu.tsx";
 import { HeaderNavLink } from "@/widgets/header/HeaderNavLink.tsx";
-import { CartDrawer } from "@/widgets/cart-drawer/CartDrawer.tsx";
 import { useCart } from "@/entities/cart/model/use-cart";
 import { RequestFormModal } from "../../shared/ui/RequestFormModal";
 
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const [cartDrawerOpen, setCartDrawerOpen] = useState(false)
     const [requestFormOpen, setRequestFormOpen] = useState(false)
     const { totalItems } = useCart()
+    const navigate = useNavigate()
 
     // Обработчик глобального события для открытия формы заявки
     useEffect(() => {
@@ -104,7 +103,7 @@ export function Header() {
 
                     <button
                         type="button"
-                        onClick={() => setCartDrawerOpen(true)}
+                        onClick={() => navigate('/cart')}
                         className="
               relative
               flex h-10 w-10 items-center justify-center
@@ -187,9 +186,8 @@ export function Header() {
 
                     <button
                         type="button"
-                        onClick={() => setCartDrawerOpen(true)}
+                        onClick={() => navigate('/cart')}
                         className="
-              relative
               flex h-10 w-10 items-center justify-center
               rounded-lg
               text-foreground
@@ -233,12 +231,6 @@ export function Header() {
             <MobileMenu
                 open={mobileMenuOpen}
                 onOpenChange={setMobileMenuOpen}
-            />
-
-            {/* Cart Drawer */}
-            <CartDrawer
-                open={cartDrawerOpen}
-                onOpenChange={setCartDrawerOpen}
             />
 
             {/* Request Form Modal */}

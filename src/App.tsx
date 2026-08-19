@@ -8,6 +8,7 @@ import { DeliveryPage } from './pages/delivery/DeliveryPage'
 import { PricePage } from './pages/price/PricePage'
 import { ServicesPage } from './pages/services/ServicesPage'
 import { ServicePage } from './pages/services/ServicePage'
+import { CartPage } from './pages/cart/CartPage'
 import { Layout } from './widgets/Layout'
 import { Hero } from './widgets/hero/Hero'
 import { CategoriesCarousel } from './widgets/categories-carousel/CategoriesCarousel'
@@ -49,6 +50,7 @@ function App() {
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/delivery" element={<DeliveryPage />} />
                 <Route path="/price" element={<PricePage />} />
+                <Route path="/cart" element={<CartPage />} />
             </Routes>
         </BrowserRouter>
     )
