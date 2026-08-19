@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/cn'
+import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react'
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link'
 type Size = 'sm' | 'md' | 'lg'
@@ -20,11 +21,29 @@ const sizes: Record<Size, string> = {
   lg: 'h-14 px-8 text-base',
 }
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   variant?: Variant
   size?: Size
+  asChild?: boolean
+  children?: ReactNode
 }
 
-export function Button({ variant = 'primary', size = 'md', className, ...props }: ButtonProps) {
-  return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />
-}
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'md', className, asChild, children, ...props }, ref) => {
+    if (asChild) {
+      // When asChild is true, render children directly (for Link wrapping)
+      return <>{children}</>
+    }
+    return (
+      <button 
+        ref={ref}
+        className={cn(base, variants[variant], sizes[size], className)} 
+        {...props} 
+      >
+        {children}
+      </button>
+    )
+  }
+)
+
+Button.displayName = 'Button'

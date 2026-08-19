@@ -72,6 +72,13 @@ const conditionOptions = [
     {value: 'used', label: 'Б/У'},
 ]
 
+const sortOptions = [
+    {value: 'name', label: 'По названию'},
+    {value: 'popular', label: 'По популярности'},
+    {value: 'price-asc', label: 'Цена: по возрастанию'},
+    {value: 'price-desc', label: 'Цена: по убыванию'},
+]
+
 function FilterContent({filters, handleChange}: {
     filters: FilterState
     handleChange: (key: keyof FilterState, value: string) => void
@@ -90,7 +97,7 @@ function FilterContent({filters, handleChange}: {
                 />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Condition - as clickable buttons */}
                 <div>
                     <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Состояние</label>
@@ -109,6 +116,22 @@ function FilterContent({filters, handleChange}: {
                             </button>
                         ))}
                     </div>
+                </div>
+
+                {/* Sorting */}
+                <div>
+                    <label className="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Сортировка</label>
+                    <select
+                        value={filters.sort}
+                        onChange={(e) => handleChange('sort', e.target.value)}
+                        className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted))] px-3 py-2 outline-none min-h-[44px]"
+                    >
+                        {sortOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </div>
         </div>
