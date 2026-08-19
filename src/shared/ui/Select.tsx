@@ -1,71 +1,232 @@
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+
 import { cn } from '@/shared/lib/cn'
+
 
 type Size = 'sm' | 'md' | 'lg'
 
-const base =
-    'w-full rounded-lg border border-border bg-muted/50 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 transition-colors'
+
+interface Option {
+  value: string
+  label: string
+}
+
+
+export interface SelectProps {
+  size?: Size
+  options: Option[]
+  value?: string
+  onChange?: (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => void
+  className?: string
+}
+
 
 const sizes: Record<Size, string> = {
-    sm: 'h-9 pl-3 pr-8 text-sm',
-    md: 'h-11 pl-4 pr-10 text-sm',
-    lg: 'h-14 pl-6 pr-12 text-base',
+  sm: 'h-9 px-3 text-sm',
+  md: 'h-11 px-4 text-sm',
+  lg: 'h-14 px-5 text-base',
 }
 
-export interface SelectProps
-    extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
-    size?: Size
-    error?: boolean
-    options: Array<{ value: string; label: string }>
-}
 
 export function Select({
-                           size = 'md',
-                           error,
-                           className,
-                           options,
-                           ...props
-                       }: SelectProps) {
-    return (
-        <div className="relative">
-            <select
-                className={cn(
-                    base,
-                    sizes[size],
-                    error && 'border-primary ring-1 ring-primary',
-                    className,
-                    'appearance-none'
-                )}
-                {...props}
-            >
-                {options.map((option) => (
-                    <option
-                        key={option.value}
-                        value={option.value}
-                        style={{
-                            backgroundColor: 'hsl(var(--card))',
-                            color: 'hsl(var(--foreground))',
-                        }}
-                    >
-                        {option.label}
-                    </option>
-                ))}
-            </select>
+  size = 'md',
+  options,
+  value,
+  onChange,
+  className,
+}: SelectProps) {
 
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
-                <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                    />
-                </svg>
-            </div>
-        </div>
+  const [open, setOpen] = useState(false)
+
+  const ref = useRef<HTMLDivElement>(null)
+
+
+  useEffect(() => {
+    const handler = (event: MouseEvent) => {
+      if (
+        ref.current &&
+        !ref.current.contains(event.target as Node)
+      ) {
+        setOpen(false)
+      }
+    }
+
+
+    document.addEventListener(
+      'mousedown',
+      handler,
     )
+
+    return () =>
+      document.removeEventListener(
+        'mousedown',
+        handler,
+      )
+
+  }, [])
+
+
+  const selected =
+    options.find(
+      option => option.value === value,
+    ) ?? options[0]
+
+
+  const changeValue = (nextValue: string) => {
+
+    const event = {
+      target: {
+        value: nextValue,
+      },
+    } as React.ChangeEvent<HTMLSelectElement>
+
+
+    onChange?.(event)
+
+    setOpen(false)
+  }
+
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+    >
+
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={cn(
+          `
+          flex
+          w-full
+          items-center
+          justify-between
+          rounded-xl
+          border
+          border-border
+          bg-card
+          text-foreground
+          shadow-sm
+          transition-all
+          hover:border-primary/40
+          focus:outline-none
+          focus:ring-2
+          focus:ring-primary/30
+          `,
+          sizes[size],
+          className,
+        )}
+      >
+
+        <span className="truncate">
+          {selected?.label}
+        </span>
+
+
+        <svg
+          className={cn(
+            'h-4 w-4 transition-transform text-muted-foreground',
+            open && 'rotate-180',
+          )}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+
+      </button>
+
+
+      {open && (
+        <div
+          className="
+          absolute
+          z-50
+          mt-2
+          max-h-60
+          w-full
+          overflow-auto
+          rounded-xl
+          border
+          border-border
+          bg-card
+          p-1
+          shadow-xl
+          animate-in
+          fade-in
+          zoom-in-95
+          "
+        >
+
+          {options.map(option => (
+
+            <button
+              key={option.value}
+              type="button"
+              onClick={() =>
+                changeValue(option.value)
+              }
+              className={cn(
+                `
+                flex
+                w-full
+                items-center
+                rounded-lg
+                px-3
+                py-2.5
+                text-left
+                text-sm
+                transition-colors
+                hover:bg-muted
+                `,
+                option.value === value &&
+                `
+                bg-primary/10
+                text-primary
+                font-semibold
+                `,
+              )}
+            >
+
+              {option.label}
+
+            </button>
+
+          ))}
+
+        </div>
+      )}
+
+
+      {/* скрытый select для совместимости */}
+      <select
+        className="hidden"
+        value={value}
+        onChange={onChange}
+      >
+        {options.map(option => (
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+    </div>
+  )
 }
