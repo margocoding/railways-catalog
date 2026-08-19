@@ -73,12 +73,32 @@ export function Footer() {
               <li className="min-h-[44px] flex items-center">г. Москва, ул. Примерная, 1</li>
               <li className="min-h-[44px] flex items-center">Склад: г. Екатеринбург, промзона 5</li>
             </ul>
+            <button
+              type="button"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent-gradient rounded-lg font-bold text-white text-sm hover:opacity-90 transition-opacity"
+              onClick={() => {
+                // Здесь будет логика скачивания файла реквизитов
+                console.log('Скачать реквизиты')
+              }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Скачать реквизиты
+            </button>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-[hsl(var(--border))] text-sm text-[hsl(var(--muted-foreground))] text-center">
-          © 2026 СтальПуть · Политика конфиденциальности
+        <div className="pt-8 border-t border-[hsl(var(--border))] text-sm text-[hsl(var(--muted-foreground))] flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            © 2026 СтальПуть
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/privacy" className="hover:text-[hsl(var(--primary))]">
+              Политика конфиденциальности
+            </a>
+          </div>
         </div>
       </div>
     </footer>
