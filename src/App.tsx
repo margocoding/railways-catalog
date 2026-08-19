@@ -15,7 +15,6 @@ import { PopularProducts } from './widgets/popular-products/PopularProducts'
 import { MaterialsServices } from './widgets/materials-services/MaterialsServices'
 import { CompanyInfo } from './widgets/company-info/CompanyInfo'
 import { FastenersSection } from './widgets/fasteners-section/FastenersSection'
-import { VisualBlock } from './widgets/visual-block/VisualBlock'
 import { RequestFormModal } from './shared/ui/RequestFormModal'
 
 function HomePage() {
@@ -29,7 +28,6 @@ function HomePage() {
             <MaterialsServices />
             <CompanyInfo />
             <FastenersSection />
-            <VisualBlock />
             <RequestFormModal
                 open={requestFormOpen}
                 onOpenChange={setRequestFormOpen}
