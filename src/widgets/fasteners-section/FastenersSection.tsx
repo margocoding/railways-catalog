@@ -1,46 +1,126 @@
 import { motion } from 'framer-motion'
+import useEmblaCarousel from 'embla-carousel-react'
+import { useCallback, useEffect, useState } from 'react'
+
 import { subcategories } from '../../entities/product/model/mockData'
+import { CarouselArrows } from '@/shared/ui/CarouselArrows'
 
 // Filter fastener subcategories
-const fastenerSubcategories = subcategories.filter(sub => sub.categoryId === 'fasteners')
+const fastenerSubcategories = subcategories.filter(
+  (sub) => sub.categoryId === 'fasteners',
+)
 
 export function FastenersSection() {
-  return (
-    <section className="py-16 bg-[hsl(var(--muted))]">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-black mb-8 text-[hsl(var(--foreground))]"
-        >
-          Крепёжные элементы
-        </motion.h2>
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+  })
 
-        {/* Horizontal scrollable carousel */}
-        <div className="relative">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
+
+  const updateButtons = useCallback(() => {
+    if (!emblaApi) return
+
+    setCanScrollPrev(emblaApi.canScrollPrev())
+    setCanScrollNext(emblaApi.canScrollNext())
+  }, [emblaApi])
+
+  useEffect(() => {
+    if (!emblaApi) return
+
+    updateButtons()
+
+    emblaApi.on('select', updateButtons)
+    emblaApi.on('reInit', updateButtons)
+
+    return () => {
+      emblaApi.off('select', updateButtons)
+      emblaApi.off('reInit', updateButtons)
+    }
+  }, [emblaApi, updateButtons])
+
+  const scrollPrev = useCallback(() => {
+    emblaApi?.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    emblaApi?.scrollNext()
+  }, [emblaApi])
+
+  return (
+    <section className="bg-muted/40 py-14">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+        {/* Header */}
+        <div className="mb-7 flex items-center justify-between gap-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-black tracking-tight text-foreground md:text-4xl"
+          >
+            Крепёжные элементы
+          </motion.h2>
+
+          <CarouselArrows
+            onPrev={scrollPrev}
+            onNext={scrollNext}
+            canScrollPrev={canScrollPrev}
+            canScrollNext={canScrollNext}
+          />
+        </div>
+
+        {/* Carousel */}
+        <div ref={emblaRef} className="overflow-hidden">
+          <div className="-ml-3 flex">
             {fastenerSubcategories.map((subcat, index) => (
-              <motion.a
+              <div
                 key={subcat.id}
-                href={`/catalog/${subcat.categorySlug}/${subcat.slug}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="flex-shrink-0 w-48 sm:w-56 snap-start group"
+                className="min-w-0 flex-[0_0_75%] pl-3 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]"
               >
-                <div className="h-40 rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] group-hover:border-[hsl(var(--primary))/50] transition-all">
-                  <div className="h-full w-full bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--background))] flex items-center justify-center">
-                    <span className="text-4xl">🔩</span>
+                <motion.a
+                  href={`/catalog/${subcat.categorySlug}/${subcat.slug}`}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    delay: index * 0.04,
+                    duration: 0.35,
+                  }}
+                  className="group relative flex h-[150px] flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+                >
+                  {/* Decorative background */}
+                  <div className="pointer-events-none absolute -right-7 -top-7 h-24 w-24 rounded-full bg-muted transition-transform duration-500 group-hover:scale-125" />
+
+                  {/* Icon */}
+                  <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-lg">
+                    🔩
                   </div>
-                </div>
-                <div className="mt-3">
-                  <h3 className="font-bold text-base text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--primary))] transition-colors">
-                    {subcat.name}
-                  </h3>
-                </div>
-              </motion.a>
+
+                  {/* Content */}
+                  <div className="relative z-10 flex items-end justify-between gap-3">
+                    <h3 className="line-clamp-2 text-base font-bold leading-snug text-foreground transition-colors group-hover:text-primary">
+                      {subcat.name}
+                    </h3>
+
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
+                      <svg
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M5 12h14m-6-6 6 6-6 6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                </motion.a>
+              </div>
             ))}
           </div>
         </div>
