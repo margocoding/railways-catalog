@@ -9,6 +9,7 @@ import { PricePage } from './pages/price/PricePage'
 import { ServicesPage } from './pages/services/ServicesPage'
 import { ServicePage } from './pages/services/ServicePage'
 import { CartPage } from './pages/cart/CartPage'
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { Layout } from './widgets/Layout'
 import { Hero } from './widgets/hero/Hero'
 import { CategoriesCarousel } from './widgets/categories-carousel/CategoriesCarousel'
@@ -17,6 +18,7 @@ import { MaterialsServices } from './widgets/materials-services/MaterialsService
 import { CompanyInfo } from './widgets/company-info/CompanyInfo'
 import { FastenersSection } from './widgets/fasteners-section/FastenersSection'
 import { RequestFormModal } from './shared/ui/RequestFormModal'
+import { ProtectedRoute } from './shared/ui/ProtectedRoute'
 
 function HomePage() {
     const [requestFormOpen, setRequestFormOpen] = useState(false)
@@ -51,6 +53,16 @@ function App() {
                 <Route path="/delivery" element={<DeliveryPage />} />
                 <Route path="/price" element={<PricePage />} />
                 <Route path="/cart" element={<CartPage />} />
+                
+                {/* Admin routes */}
+                <Route 
+                    path="/admin/*" 
+                    element={
+                        <ProtectedRoute>
+                            <AdminDashboardPage />
+                        </ProtectedRoute>
+                    } 
+                />
             </Routes>
         </BrowserRouter>
     )
