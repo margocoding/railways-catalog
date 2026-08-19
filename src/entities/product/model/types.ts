@@ -1,5 +1,9 @@
 export type ProductCondition = 'new' | 'used' | 'service'
 
+interface ProductSpecs {
+  id: string, value: number | string; unit?: string; label: string;
+}
+
 export interface Product {
   id: string
   sku: string
@@ -7,10 +11,6 @@ export interface Product {
   slug: string
 
   gost: string
-
-  weight: number
-  length: number
-
   price: number
   priceOnRequest?: boolean
 
@@ -23,29 +23,33 @@ export interface Product {
   subcategorySlug: string
 
   description?: string
-  specs?: Record<string, string>
+  specs?: ProductSpecs[];
   analogues?: string[]
 }
 
-export interface Section {
-  id: string
-  name: string
-  slug: string
-  description?: string
+export interface FilterOption {
+  key: string
+  label: string
+  type?: 'select' | 'range'
+    options?: Array<{
+    value: string
+    label: string
+  }>
 }
 
 export interface Category {
   id: string
   name: string
   slug: string
-  icon?: string
-  description?: string
+  description: string
+  filters?: FilterOption[]
 }
 
 export interface Subcategory {
   id: string
   name: string
-  categorySlug: string;
   categoryId: string
+  categorySlug: string
   slug: string
+  filters?: FilterOption[]
 }
