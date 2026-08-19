@@ -100,7 +100,7 @@ export function ProductPage() {
               LEFT — IMAGE
           ======================================================= */}
           <div>
-            <div className="mb-4 aspect-[4/3] overflow-hidden rounded-xl border border-border bg-muted">
+            <div className="mb-4 aspect-4/3 overflow-hidden rounded-xl border border-border bg-muted">
               <img
                 src={
                   product.images[0] ||
