@@ -22,6 +22,22 @@ export function getCategoryUrl(categorySlug: string) {
   return `/catalog?${params.toString()}`
 }
 
+
+export function getSpecValue(
+    product: Product,
+    id: string,
+) {
+    const spec = product.specs?.find(
+        (item) => item.id === id,
+    )
+
+    if (!spec) {
+        return '—'
+    }
+
+    return `${spec.value}${spec.unit ? ` ${spec.unit}` : ''}`
+}
+
 export function getSubcategoryUrl(
     categorySlug: string,
     subcategorySlug: string,

@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 
 import { products } from '../../entities/product/model/mockData'
 import { CarouselArrows } from '@/shared/ui/CarouselArrows'
+import { getSpecValue } from '@/shared/lib'
 
 const popularProducts = products.slice(0, 10)
 
@@ -127,9 +128,9 @@ export function PopularProducts() {
                           </p>
                         )}
 
-                        {product.weight && (
+                        {getSpecValue(product, 'weight') && (
                           <p className="mt-1 text-xs text-muted-foreground">
-                            Масса: {product.weight} кг/м
+                            Масса: {getSpecValue(product, 'weight')}
                           </p>
                         )}
                       </div>
