@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useParams } from 'react-router'
 import {
   FiFileText,
   FiPlus,
@@ -6,7 +7,6 @@ import {
   FiShoppingCart,
   FiTruck,
 } from 'react-icons/fi'
-import { Link, useParams } from 'react-router'
 
 import { products } from '../../entities/product/model/mockData'
 import { ProductCard } from '../../entities/product/ui/ProductCard'
@@ -84,6 +84,10 @@ export function ProductPage() {
 
   return (
       <Layout>
+        <RequestFormModal
+            open={requestFormOpen}
+            onOpenChange={setRequestFormOpen}
+        />
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs items={breadcrumbs} />
 
