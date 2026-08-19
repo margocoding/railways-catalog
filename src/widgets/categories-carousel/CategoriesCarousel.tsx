@@ -3,8 +3,8 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { useCallback, useEffect, useState } from 'react'
 
 import { categories } from '../../entities/product/model/mockData'
-import { getCategoryIcon } from '@/shared/lib'
 import { CarouselArrows } from '@/shared/ui/CarouselArrows'
+import { FiArrowUpRight } from 'react-icons/fi'
 
 export function CategoriesCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -53,7 +53,13 @@ export function CategoriesCarousel() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-black tracking-tight text-foreground md:text-4xl"
+            className="
+              text-3xl
+              font-black
+              tracking-tight
+              text-foreground
+              md:text-4xl
+            "
           >
             Каталог продукции
           </motion.h2>
@@ -72,54 +78,128 @@ export function CategoriesCarousel() {
             {categories.map((category, index) => (
               <div
                 key={category.id}
-                className="min-w-0 flex-[0_0_85%] pl-3 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_25%]"
+                className="
+                  min-w-0
+                  flex-[0_0_75%]
+                  pl-3
+                  sm:flex-[0_0_45%]
+                  md:flex-[0_0_30%]
+                  lg:flex-[0_0_20%]
+                "
               >
                 <motion.a
                   href={`/catalog/${category.slug}`}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  initial={{
+                    opacity: 0,
+                    y: 20,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  viewport={{
+                    once: true,
+                  }}
                   transition={{
                     delay: index * 0.04,
                     duration: 0.35,
                   }}
-                  className="group relative flex h-[190px] flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+                  className="
+                    group
+                    relative
+                    block
+                    aspect-3/4
+                    overflow-hidden
+                    rounded-3xl
+                  "
                 >
-                  {/* Decorative background */}
-                  <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-muted/60 transition-transform duration-500 group-hover:scale-125" />
+                  {/* Blurred image background */}
+                  <div
+                    className="
+                      absolute
+                      -inset-6.25
+                      scale-110
+                      bg-cover
+                      bg-center
+                      blur-2xl
+                      transition-transform
+                      duration-700
+                      group-hover:scale-125
+                    "
+                    style={{
+                      backgroundImage: `url(${category.image})`,
+                    }}
+                  />
 
-                  {/* Icon */}
-                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-xl">
-                    {getCategoryIcon(category.id)}
-                  </div>
+                  {/* Dark gradient */}
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      bg-linear-to-t
+                      from-black/70
+                      via-black/30
+                      to-black/10
+                    "
+                  />
 
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <div className="flex items-end justify-between gap-4">
-                      <h3 className="text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
+                  <div
+                    className="
+                      absolute
+                      bottom-3
+                      left-3
+                      right-3
+                      rounded-2xl
+                      border
+                      border-white/20
+                      bg-white/80
+                      p-4
+                      backdrop-blur-xl
+                      transition-all
+                      duration-300
+                      group-hover:bg-white
+                    "
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <h3
+                        className="
+                          text-base
+                          font-bold
+                          leading-tight
+                          text-foreground
+                        "
+                      >
                         {category.name}
                       </h3>
-
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
-                        <svg
-                          className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                        <span
+                          className="
+                            flex
+                            h-8
+                            w-8
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-muted
+                            text-muted-foreground
+                            transition-all
+                            duration-300
+                            group-hover:bg-primary
+                            group-hover:text-primary-foreground
+                          "
                         >
-                          <path
-                            d="M5 12h14m-6-6 6 6-6 6"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
+                          <FiArrowUpRight
+                            className="
+                              h-4
+                              w-4
+                              transition-transform
+                              duration-300
+                              group-hover:translate-x-0.5
+                              group-hover:-translate-y-0.5
+                            "
                           />
-                        </svg>
-                      </span>
+                        </span>
                     </div>
-
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                      {category.description}
-                    </p>
                   </div>
                 </motion.a>
               </div>

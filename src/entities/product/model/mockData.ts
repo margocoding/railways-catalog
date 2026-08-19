@@ -4,6 +4,7 @@ export const categories: Category[] = [
   {
     id: 'rails',
     name: 'Рельсы',
+    image: '/test-product.webp',
     slug: 'rails',
     description:
       'Железнодорожные, крановые и узкоколейные рельсы всех типов',
@@ -12,6 +13,7 @@ export const categories: Category[] = [
   {
     id: 'sleepers',
     name: 'Шпалы и плиты',
+    image: '/test-product.webp',
     slug: 'sleepers',
     description:
       'Деревянные, железобетонные шпалы и подрельсовые плиты',
@@ -20,6 +22,7 @@ export const categories: Category[] = [
   {
     id: 'fasteners',
     name: 'Крепёж',
+    image: '/test-product.webp',
     slug: 'fasteners',
     description:
       'Рельсовый крепёж: болты, гайки, накладки, скрепления',
@@ -28,6 +31,7 @@ export const categories: Category[] = [
   {
     id: 'shoes',
     name: 'Башмаки',
+    image: '/test-product.webp',
     slug: 'shoes',
     description:
       'Тормозные и подкладочные башмаки для железнодорожных вагонов',
@@ -36,6 +40,7 @@ export const categories: Category[] = [
   {
     id: 'buffers',
     name: 'Упоры тупиковые',
+    image: '/test-product.webp',
     slug: 'buffers',
     description:
       'Тупиковые упоры для защиты концов путей',
@@ -44,6 +49,7 @@ export const categories: Category[] = [
   {
     id: 'metal',
     name: 'Металлоизделия',
+    image: '/test-product.webp',
     slug: 'metal',
     description:
       'Металлоизделия по чертежам заказчика',
@@ -52,6 +58,7 @@ export const categories: Category[] = [
   {
     id: 'tools',
     name: 'Путевой инструмент',
+    image: '/test-product.webp',
     slug: 'tools',
     description:
       'Путевой инструмент: ручной и механизированный',
