@@ -91,9 +91,9 @@ export function PopularProducts() {
                   >
                     <article className="overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
                       {/* Image */}
-                      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                      <div className="relative aspect-4/3 overflow-hidden bg-muted">
                         {/* TODO: заменить на реальное изображение товара */}
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-background">
+                        <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-muted to-background">
                           <img src={product.images[0]} alt={product.title}/>
                         </div>
 

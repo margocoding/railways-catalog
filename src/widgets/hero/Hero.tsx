@@ -7,7 +7,7 @@ export function Hero() {
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
 
   return (
-    <section className="relative min-h-[620px] lg:min-h-[680px] flex items-center overflow-hidden bg-background">
+    <section className="relative min-h-155 lg:min-h-170 flex items-center overflow-hidden bg-background">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <div
@@ -19,10 +19,10 @@ export function Hero() {
         />
 
         {/* Light overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/20" />
+        <div className="absolute inset-0 bg-linear-to-r from-white via-white/90 to-white/20" />
 
         {/* Soft bottom transition */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/70 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background/70 to-transparent" />
       </div>
 
       {/* Decorative rails pattern */}
@@ -61,7 +61,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="hidden w-56 flex-shrink-0 lg:block"
+            className="hidden w-56 shrink-0 lg:block"
           >
             <nav className="space-y-1">
               {categories.map((category, index) => (

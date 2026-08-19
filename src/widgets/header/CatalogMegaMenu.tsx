@@ -45,7 +45,7 @@ export function CatalogMegaMenu() {
             >
                 <div
                     className="
-                        w-[1100px]
+                        w-275
                         max-h-[calc(100vh-100px)]
                         overflow-y-auto
 
