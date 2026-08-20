@@ -2,71 +2,70 @@ import {
   getCategoriesApi,
   getSubcategoriesApi,
 } from '@/entities/product/api/product.api'
-import type { Subcategory } from '@/entities/product/model/types'
-import { useCallback, useEffect, useReducer } from 'react'
-import {
-  catalogReducer,
-  initialCatalogState
-} from '../model/catalog.model'
+import type { Category, Subcategory } from '@/entities/product/model/types'
+import { useCallback, useEffect, useState } from 'react'
 
 export function useCatalog() {
-  const [state, dispatch] = useReducer(catalogReducer, initialCatalogState)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Загрузка категорий
   const loadCategories = useCallback(async () => {
-    dispatch({ type: 'SET_LOADING', payload: true })
+    setIsLoading(true)
+    setError(null)
     try {
-      const categories = await getCategoriesApi()
-      dispatch({ type: 'SET_CATEGORIES', payload: categories })
-    } catch (error) {
-      dispatch({ 
-        type: 'SET_ERROR', 
-        payload: error instanceof Error ? error.message : 'Failed to load categories' 
-      })
+      const data = await getCategoriesApi()
+      setCategories(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load categories')
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
+      setIsLoading(false)
     }
   }, [])
 
   // Загрузка субкатегорий
   const loadSubcategories = useCallback(async () => {
-    dispatch({ type: 'SET_LOADING', payload: true })
+    setIsLoading(true)
+    setError(null)
     try {
-      const subcategories = await getSubcategoriesApi()
-      dispatch({ type: 'SET_SUBCATEGORIES', payload: subcategories })
-    } catch (error) {
-      dispatch({ 
-        type: 'SET_ERROR', 
-        payload: error instanceof Error ? error.message : 'Failed to load subcategories' 
-      })
+      const data = await getSubcategoriesApi()
+      setSubcategories(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load subcategories')
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
+      setIsLoading(false)
     }
   }, [])
 
   // Выбор категории
   const selectCategory = useCallback((categorySlug: string) => {
-    dispatch({ type: 'SELECT_CATEGORY', payload: categorySlug })
+    setSelectedCategory(categorySlug)
+    setSelectedSubcategory(null)
   }, [])
 
   // Выбор субкатегории
   const selectSubcategory = useCallback((subcategorySlug: string) => {
-    dispatch({ type: 'SELECT_SUBCATEGORY', payload: subcategorySlug })
+    setSelectedSubcategory(subcategorySlug)
   }, [])
 
   // Очистка выбора
   const clearSelection = useCallback(() => {
-    dispatch({ type: 'CLEAR_SELECTION' })
+    setSelectedCategory(null)
+    setSelectedSubcategory(null)
   }, [])
 
   // Получение субкатегорий для выбранной категории
   const getSubcategoriesForCategory = useCallback(
     (categorySlug: string): Subcategory[] => {
-      return state.subcategories.filter(
+      return subcategories.filter(
         (sub) => sub.categorySlug === categorySlug
       )
     },
-    [state.subcategories]
+    [subcategories]
   )
 
   // Инициализация при монтировании
@@ -76,7 +75,12 @@ export function useCatalog() {
   }, [loadCategories, loadSubcategories])
 
   return {
-    ...state,
+    categories,
+    subcategories,
+    selectedCategory,
+    selectedSubcategory,
+    isLoading,
+    error,
     selectCategory,
     selectSubcategory,
     clearSelection,
