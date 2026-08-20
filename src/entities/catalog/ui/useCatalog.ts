@@ -1,13 +1,12 @@
-import { useReducer, useEffect, useCallback } from 'react'
 import {
   getCategoriesApi,
   getSubcategoriesApi,
 } from '@/entities/product/api/product.api'
-import type { Category, Subcategory } from '@/entities/product/model/types'
+import type { Subcategory } from '@/entities/product/model/types'
+import { useCallback, useEffect, useReducer } from 'react'
 import {
   catalogReducer,
-  initialCatalogState,
-  type CatalogAction,
+  initialCatalogState
 } from '../model/catalog.model'
 
 export function useCatalog() {
