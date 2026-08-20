@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
-import { categories, subcategories } from '@/entities/product'
+import { useCatalog } from '@/entities/catalog'
 import { cn } from '@/shared/lib/cn'
 
 export function AdminSidebar() {

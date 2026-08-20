@@ -12,7 +12,6 @@ export {
   getProductsByCategoryApi,
   createProductApi,
   updateProductApi,
-  deleteProductApi,
 } from './api/product.api'
 
 // UI components
