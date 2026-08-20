@@ -1,7 +1,7 @@
-import { categories, subcategories } from '@/entities/product'
-import { cn } from '@/shared/lib/cn'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
+import { cn } from '@/shared/lib/cn'
+import { categories, subcategories } from '@/entities/product'
 
 export function AdminSidebar() {
   const location = useLocation()
@@ -22,7 +22,6 @@ export function AdminSidebar() {
   const menuItems = [
     { to: '/admin', label: 'Дашборд', icon: '📊' },
     { to: '/admin/products', label: 'Продукты', icon: '📦' },
-    { to: '/admin/categories', label: 'Категории', icon: '📂' },
     { to: '/admin/orders', label: 'Заказы', icon: '🛒' },
   ]
 

@@ -6,17 +6,32 @@ import { Select } from '@/shared/ui/Select'
 import { Button } from '@/shared/ui/Button'
 import { Input } from '@/shared/ui/Input'
 import { EmptyState } from '@/shared/ui/EmptyState'
+import { useAdminCategories, CategoriesSection } from '@/features/admin-categories'
 
 export function AdminProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('')
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Хук для управления категориями
+  const {
+    categories: adminCategories,
+    subcategories: adminSubcategories,
+    isLoading: categoriesLoading,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+  } = useAdminCategories()
+  
+  // Используем данные из хука или моковые данные как фоллбэк
+  const categoriesList = adminCategories.length > 0 ? adminCategories : categories
+  const subcategoriesList = adminSubcategories.length > 0 ? adminSubcategories : subcategories
+
   // Фильтрация субкатегорий на основе выбранной категории
   const filteredSubcategories = useMemo(() => {
     if (!selectedCategory) return []
-    return subcategories.filter(sub => sub.categorySlug === selectedCategory)
-  }, [selectedCategory])
+    return subcategoriesList.filter(sub => sub.categorySlug === selectedCategory)
+  }, [selectedCategory, subcategoriesList])
 
   // Фильтрация продуктов
   const filteredProducts = useMemo(() => {
@@ -46,11 +61,11 @@ export function AdminProductsPage() {
 
   // Опции для селекта категорий
   const categoryOptions = useMemo(() => {
-    return categories.map(cat => ({
+    return categoriesList.map(cat => ({
       value: cat.slug,
       label: cat.name,
     }))
-  }, [])
+  }, [categoriesList])
 
   // Опции для селекта субкатегорий
   const subcategoryOptions = useMemo(() => {
@@ -84,6 +99,16 @@ export function AdminProductsPage() {
           Управление продуктами, категориями и субкатегориями
         </p>
       </div>
+
+      {/* Секция управления категориями */}
+      <CategoriesSection
+        categories={categoriesList}
+        subcategories={subcategoriesList}
+        isLoading={categoriesLoading}
+        onCreateCategory={createCategory}
+        onUpdateCategory={updateCategory}
+        onDeleteCategory={deleteCategory}
+      />
 
       {/* Панель фильтров */}
       <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-end">
