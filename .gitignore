@@ -1,4 +1,4 @@
-```
+
 # Dependencies
 node_modules/
 
@@ -25,14 +25,3 @@ Thumbs.db
 
 # TypeScript cache
 *.tsbuildinfo
-
-# Package lock files
-package-lock.json
-.yarn/*
-!.yarn/cache
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-```
