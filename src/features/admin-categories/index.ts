@@ -1,4 +1,5 @@
 export { useAdminCategories } from './useAdminCategories'
+export { CategoriesSection } from './ui/CategoriesSection'
 export { CreateCategoryModal } from './ui/CreateCategoryModal'
 export { EditCategoryModal } from './ui/EditCategoryModal'
 export { DeleteCategoryDialog } from './ui/DeleteCategoryDialog'
