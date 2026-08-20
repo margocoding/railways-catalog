@@ -55,10 +55,3 @@ export async function updateProductApi(id: string, updates: Partial<Product>): P
   
   return Promise.resolve({ ...product, ...updates })
 }
-
-// Мок API для удаления продукта
-export async function deleteProductApi(id: string): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 300))
-  // В реальном проекте здесь был бы DELETE запрос
-  return Promise.resolve()
-}

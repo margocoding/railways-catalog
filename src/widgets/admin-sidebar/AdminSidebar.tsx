@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 import { useCatalog } from '@/entities/catalog'
 import { cn } from '@/shared/lib/cn'
 
@@ -7,12 +7,6 @@ export function AdminSidebar() {
   const { categories, selectedCategory, selectCategory } = useCatalog()
   const location = useLocation()
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set())
-
-  const getSubcategoriesForCategory = (categorySlug: string) => {
-    // Здесь можно использовать хук или пропсы для получения субкатегорий
-    // Для простоты используем локальную логику
-    return []
-  }
 
   const toggleCategory = (slug: string) => {
     setOpenCategories((prev) => {

@@ -88,7 +88,7 @@ export function CategoriesCarousel() {
                 "
               >
                 <motion.a
-                  href={`/catalog/${category.slug}`}
+                  href={`/catalog?category=${category.slug}`}
                   initial={{
                     opacity: 0,
                     y: 20,

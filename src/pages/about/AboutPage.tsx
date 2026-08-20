@@ -1,4 +1,3 @@
-import { CertificateCard } from '@/shared/ui/CertificateCard'
 import { DirectionCard } from '@/shared/ui/DirectionCard'
 import { StatCard } from '@/shared/ui/StatCard'
 import { FiPhone } from 'react-icons/fi'
@@ -73,17 +72,6 @@ export function AboutPage() {
               title="Монтаж/демонтаж"
               description="Работы по укладке и разборке железнодорожных путей"
             />
-          </div>
-        </div>
-
-        {/* Certificates */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Сертификаты и документы</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <CertificateCard title="ГОСТ Р 51685-2022" type="Рельсы" />
-            <CertificateCard title="ГОСТ 78-2011" type="Шпалы" />
-            <CertificateCard title="ГОСТ 11530-93" type="Болты" />
-            <CertificateCard title="ISO 9001" type="Сертификат качества" />
           </div>
         </div>
 
