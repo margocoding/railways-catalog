@@ -20,7 +20,7 @@ venv/
 .env.local
 *.env.*
 
-# IDE files
+# Editors
 .vscode/
 .idea/
 *.swp
@@ -30,10 +30,8 @@ venv/
 # Logs
 *.log
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
+# Temp files
+*.tmp
 
 # OS files
 .DS_Store
