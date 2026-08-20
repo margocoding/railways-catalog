@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn'
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react'
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link'
+type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
@@ -13,6 +13,7 @@ const variants: Record<Variant, string> = {
   outline: 'border border-border text-foreground hover:bg-muted',
   ghost: 'text-foreground hover:bg-muted',
   link: 'text-primary underline-offset-4 hover:underline',
+  destructive: 'bg-red-600 text-white hover:bg-red-700',
 }
 
 const sizes: Record<Size, string> = {
