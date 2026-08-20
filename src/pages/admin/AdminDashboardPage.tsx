@@ -28,7 +28,7 @@ export function AdminDashboardPage() {
       <AdminHeader onLogout={handleLogout} />
       <AdminSidebar />
       
-      <main className="ml-64 pt-16 min-h-[calc(100vh-4rem)]">
+      <main className="lg:ml-64 pt-16 min-h-[calc(100vh-4rem)]">
         <Routes>
           <Route path="/" element={
             <div className="p-6">

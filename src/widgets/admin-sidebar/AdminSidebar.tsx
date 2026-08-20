@@ -1,23 +1,10 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { cn } from '@/shared/lib/cn'
-import { categories, subcategories } from '@/entities/product'
 
 export function AdminSidebar() {
   const location = useLocation()
-  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set())
-
-  const toggleCategory = (slug: string) => {
-    setOpenCategories((prev) => {
-      const next = new Set(prev)
-      if (next.has(slug)) {
-        next.delete(slug)
-      } else {
-        next.add(slug)
-      }
-      return next
-    })
-  }
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   const menuItems = [
     { to: '/admin', label: 'Дашборд', icon: '📊' },
@@ -26,96 +13,58 @@ export function AdminSidebar() {
   ]
 
   return (
-    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[hsl(var(--background))] border-r border-border overflow-y-auto">
-      <nav className="p-4 space-y-2">
-        {/* Основные пункты меню */}
-        <div className="space-y-1 mb-6">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.to
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))]'
-                    : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
-                )}
-              >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </div>
+    <>
+      {/* Мобильная кнопка открытия */}
+      <button
+        type="button"
+        className="lg:hidden fixed left-4 top-20 z-40 p-2 rounded-lg bg-[hsl(var(--background))] border border-border shadow-sm"
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+      >
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
-        {/* Разделитель */}
-        <div className="border-t border-border my-4" />
+      {/* Затемнение фона для мобильных */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
 
-        {/* Заголовок секции каталога */}
-        <div className="px-4 py-2 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider">
-          Каталог товаров
-        </div>
-
-        {/* Дерево категорий */}
-        <div className="space-y-1">
-          {categories.map((category) => {
-            const isOpen = openCategories.has(category.slug)
-            const categorySubcategories = subcategories.filter(
-              (sub) => sub.categorySlug === category.slug
-            )
-
-            return (
-              <div key={category.slug}>
-                <button
-                  type="button"
-                  onClick={() => toggleCategory(category.slug)}
+      <aside
+        className={cn(
+          'fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[hsl(var(--background))] border-r border-border overflow-y-auto transition-transform duration-300 z-50',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full',
+          'lg:translate-x-0 lg:z-30'
+        )}
+      >
+        <nav className="p-4 space-y-2">
+          {/* Основные пункты меню */}
+          <div className="space-y-1">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.to
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setIsMobileOpen(false)}
                   className={cn(
-                    'w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left',
-                    isOpen
+                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                    isActive
                       ? 'bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))]'
                       : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
                   )}
                 >
-                  <span className="truncate">{category.name}</span>
-                  <svg
-                    className={cn(
-                      'h-4 w-4 transition-transform duration-200',
-                      isOpen && 'rotate-180'
-                    )}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {/* Субкатегории */}
-                {isOpen && categorySubcategories.length > 0 && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
-                    {categorySubcategories.map((sub) => (
-                      <Link
-                        key={sub.slug}
-                        to={`/admin/products?category=${category.slug}&subcategory=${sub.slug}`}
-                        className="block px-3 py-2 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/50 rounded"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </nav>
-    </aside>
+                  <span className="text-lg">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </nav>
+      </aside>
+    </>
   )
 }

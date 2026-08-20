@@ -1,75 +1,38 @@
 ```
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-*.o
-*.obj
-*.class
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
 # Dependencies
 node_modules/
-venv/
-.venv/
-.env
-.env.local
-.env.*
 
-# Build directories
+# Build outputs
 dist/
-build/
-target/
-*.log
-*.tmp
-*.swp
-*.swo
 
-# Editors
+# Environment variables
+.env*
+
+# IDE files
 .vscode/
 .idea/
 
-# System files
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# Coverage
-coverage/
-htmlcov/
-.coverage
+# TypeScript cache
+*.tsbuildinfo
 
-# Python specific
-.mypy_cache/
-.pytest_cache/
+# Package lock files
+package-lock.json
+.yarn/*
+!.yarn/cache
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-# Java/Gradle
-.gradle/
-*.class
-
-# Compressed files
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
 ```
