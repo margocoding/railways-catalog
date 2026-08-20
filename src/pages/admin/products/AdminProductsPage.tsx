@@ -1,120 +1,193 @@
-import { useState } from 'react'
-import { useCatalog } from '@/entities/catalog'
-import { getProductsByCategoryApi } from '@/entities/product/api/product.api'
+import { useState, useMemo } from 'react'
+import { categories, subcategories, products } from '@/entities/product'
 import type { Product } from '@/entities/product/model/types'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
-import { Skeleton } from '@/shared/ui/Skeleton'
+import { ProductTableRow } from '@/entities/product/ui/ProductTableRow'
+import { Select } from '@/shared/ui/Select'
+import { Button } from '@/shared/ui/Button'
+import { Input } from '@/shared/ui/Input'
 import { EmptyState } from '@/shared/ui/EmptyState'
 
 export function AdminProductsPage() {
-  const { categories, subcategories, selectedCategory, selectedSubcategory, selectCategory, selectSubcategory } = useCatalog()
-  const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('')
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const handleCategorySelect = async (categorySlug: string) => {
-    selectCategory(categorySlug)
-    setIsLoading(true)
-    try {
-      const fetchedProducts = await getProductsByCategoryApi(categorySlug)
-      setProducts(fetchedProducts)
-    } catch (error) {
-      console.error('Failed to load products:', error)
-    } finally {
-      setIsLoading(false)
+  // Фильтрация субкатегорий на основе выбранной категории
+  const filteredSubcategories = useMemo(() => {
+    if (!selectedCategory) return []
+    return subcategories.filter(sub => sub.categorySlug === selectedCategory)
+  }, [selectedCategory])
+
+  // Фильтрация продуктов
+  const filteredProducts = useMemo(() => {
+    let result = products
+
+    // Фильтр по категории
+    if (selectedCategory) {
+      result = result.filter(p => p.categorySlug === selectedCategory)
     }
+
+    // Фильтр по субкатегории
+    if (selectedSubcategory) {
+      result = result.filter(p => p.subcategorySlug === selectedSubcategory)
+    }
+
+    // Поиск по названию или SKU
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim()
+      result = result.filter(p => 
+        p.title.toLowerCase().includes(query) ||
+        p.sku.toLowerCase().includes(query)
+      )
+    }
+
+    return result
+  }, [selectedCategory, selectedSubcategory, searchQuery])
+
+  // Опции для селекта категорий
+  const categoryOptions = useMemo(() => {
+    return categories.map(cat => ({
+      value: cat.slug,
+      label: cat.name,
+    }))
+  }, [])
+
+  // Опции для селекта субкатегорий
+  const subcategoryOptions = useMemo(() => {
+    return filteredSubcategories.map(sub => ({
+      value: sub.slug,
+      label: sub.name,
+    }))
+  }, [filteredSubcategories])
+
+  const handleEdit = (product: Product) => {
+    console.log('Edit product:', product)
+    // TODO: Открыть модалку редактирования
   }
 
-  const handleSubcategorySelect = async (subcategorySlug: string) => {
-    if (!selectedCategory) return
-    
-    selectSubcategory(subcategorySlug)
-    setIsLoading(true)
-    try {
-      const fetchedProducts = await getProductsByCategoryApi(selectedCategory, subcategorySlug)
-      setProducts(fetchedProducts)
-    } catch (error) {
-      console.error('Failed to load products:', error)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleDelete = (id: string) => {
+    console.log('Delete product:', id)
+    // TODO: Подтверждение и удаление
   }
 
-  const categorySubcategories = subcategories.filter(
-    (sub) => sub.categorySlug === selectedCategory
-  )
+  const handleCreateNew = () => {
+    console.log('Create new product')
+    // TODO: Открыть модалку создания
+  }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
+      {/* Заголовок */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">Каталог продуктов</h1>
         <p className="text-[hsl(var(--muted-foreground))] mt-1">
-          Управление продуктами по категориям и субкатегориям
+          Управление продуктами, категориями и субкатегориями
         </p>
       </div>
 
-      <div className="flex gap-4 mb-6">
+      {/* Панель фильтров */}
+      <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-end">
         {/* Выбор категории */}
-        <div className="w-64">
+        <div className="w-full md:w-56">
           <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
             Категория
           </label>
-          <select
-            value={selectedCategory || ''}
-            onChange={(e) => handleCategorySelect(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-[hsl(var(--background))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-primary/50"
-          >
-            <option value="">Все категории</option>
-            {categories.map((cat) => (
-              <option key={cat.slug} value={cat.slug}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={[{ value: '', label: 'Все категории' }, ...categoryOptions]}
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value)
+              setSelectedSubcategory('')
+            }}
+          />
         </div>
 
         {/* Выбор субкатегории */}
-        {selectedCategory && (
-          <div className="w-64">
-            <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-              Субкатегория
-            </label>
-            <select
-              value={selectedSubcategory || ''}
-              onChange={(e) => handleSubcategorySelect(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-[hsl(var(--background))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="">Все субкатегории</option>
-              {categorySubcategories.map((sub) => (
-                <option key={sub.slug} value={sub.slug}>
-                  {sub.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        <div className="w-full md:w-56">
+          <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
+            Субкатегория
+          </label>
+          <Select
+            options={[{ value: '', label: 'Все субкатегории' }, ...subcategoryOptions]}
+            value={selectedSubcategory}
+            onChange={(e) => setSelectedSubcategory(e.target.value)}
+            disabled={!selectedCategory}
+          />
+        </div>
+
+        {/* Поиск */}
+        <div className="flex-1 min-w-0">
+          <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
+            Поиск
+          </label>
+          <Input
+            placeholder="Поиск по названию или SKU..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Кнопка создания */}
+        <Button onClick={handleCreateNew} className="shrink-0">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          <span className="hidden sm:inline">Добавить продукт</span>
+          <span className="sm:hidden">Добавить</span>
+        </Button>
       </div>
 
-      {/* Список продуктов */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="h-48 w-full rounded-lg" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          ))}
-        </div>
-      ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+      {/* Таблица продуктов */}
+      {filteredProducts.length > 0 ? (
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto rounded-xl border border-border bg-card">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground w-16">Фото</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Название</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">ГОСТ</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Состояние</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Масса</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Остаток</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Цена</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground w-24">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProducts.map((product) => (
+                  <ProductTableRow
+                    key={product.id}
+                    product={product}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards - рендерятся внутри ProductTableRow */}
+          <div className="md:hidden space-y-4">
+            {filteredProducts.map((product) => (
+              <ProductTableRow
+                key={product.id}
+                product={product}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        </>
       ) : (
         <EmptyState
           title="Продукты не найдены"
-          description="Выберите категорию или субкатегорию для просмотра продуктов"
+          description={
+            searchQuery || selectedCategory || selectedSubcategory
+              ? 'Измените параметры фильтрации или поиска'
+              : 'Добавьте первый продукт в каталог'
+          }
         />
       )}
     </div>

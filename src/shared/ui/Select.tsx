@@ -24,6 +24,7 @@ export interface SelectProps {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => void
   className?: string
+  disabled?: boolean
 }
 
 
@@ -40,6 +41,7 @@ export function Select({
   value,
   onChange,
   className,
+  disabled = false,
 }: SelectProps) {
 
   const [open, setOpen] = useState(false)
@@ -101,7 +103,7 @@ export function Select({
 
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => !disabled && setOpen(!open)}
         className={cn(
           `
           flex
@@ -122,6 +124,7 @@ export function Select({
           `,
           sizes[size],
           className,
+          disabled && 'cursor-not-allowed opacity-50',
         )}
       >
 

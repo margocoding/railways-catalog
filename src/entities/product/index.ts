@@ -16,3 +16,4 @@ export {
 
 // UI components
 export { ProductCard } from './ui/ProductCard'
+export { ProductTableRow } from './ui/ProductTableRow'
