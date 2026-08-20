@@ -1,0 +1,189 @@
+import { Link } from 'react-router'
+import { formatPrice, getSpecValue } from '@/shared/lib/catalog-helpers'
+import type { Product } from '../model/types'
+import { Badge } from '@/shared/ui/Badge'
+import { Button } from '@/shared/ui/Button'
+
+interface ProductTableRowProps {
+  product: Product
+  onEdit?: (product: Product) => void
+  onDelete?: (id: string) => void
+}
+
+export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowProps) {
+  const weight = getSpecValue(product, 'weight')
+  
+  const conditionLabels: Record<Product['condition'], string> = {
+    new: 'Новый',
+    used: 'Б/У',
+    service: 'Сервисный',
+  }
+
+  const conditionVariants: Record<Product['condition'], 'default' | 'secondary' | 'outline'> = {
+    new: 'default',
+    used: 'secondary',
+    service: 'outline',
+  }
+
+  return (
+    <>
+      {/* Desktop table row */}
+      <tr className="group border-b border-border/50 hover:bg-muted/30 transition-colors">
+        <td className="py-4 px-4">
+          <Link
+            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            className="flex items-center gap-3"
+          >
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
+              <img
+                src={product.images[0] || '/placeholders/product.svg'}
+                alt={product.title}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          </Link>
+        </td>
+
+        <td className="py-4 px-4">
+          <Link
+            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            className="font-medium text-foreground hover:text-primary transition-colors line-clamp-1"
+          >
+            {product.title}
+          </Link>
+          <p className="text-xs text-muted-foreground mt-0.5">{product.sku}</p>
+        </td>
+
+        <td className="py-4 px-4">
+          <span className="text-sm text-muted-foreground">{product.gost || '—'}</span>
+        </td>
+
+        <td className="py-4 px-4">
+          <Badge variant={conditionVariants[product.condition]}>
+            {conditionLabels[product.condition]}
+          </Badge>
+        </td>
+
+        <td className="py-4 px-4">
+          <span className="text-sm text-muted-foreground">{weight}</span>
+        </td>
+
+        <td className="py-4 px-4">
+          <span className="text-sm text-muted-foreground">{product.stock} шт.</span>
+        </td>
+
+        <td className="py-4 px-4">
+          {product.priceOnRequest ? (
+            <span className="text-sm font-semibold text-primary">По запросу</span>
+          ) : (
+            <span className="text-base font-bold text-primary">
+              {formatPrice(product.price)} ₽
+            </span>
+          )}
+        </td>
+
+        <td className="py-4 px-4">
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onEdit(product)}
+                className="h-8 px-2"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDelete(product.id)}
+                className="h-8 px-2 text-destructive hover:text-destructive"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </Button>
+            )}
+          </div>
+        </td>
+      </tr>
+
+      {/* Mobile card */}
+      <div className="md:hidden rounded-xl border border-border bg-card p-4 space-y-3">
+        <div className="flex gap-3">
+          <Link
+            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted"
+          >
+            <img
+              src={product.images[0] || '/placeholders/product.svg'}
+              alt={product.title}
+              className="h-full w-full object-contain"
+            />
+          </Link>
+
+          <div className="min-w-0 flex-1">
+            <Link
+              to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+              className="block font-medium leading-5 text-foreground hover:text-primary transition-colors line-clamp-2"
+            >
+              {product.title}
+            </Link>
+            <p className="text-xs text-muted-foreground mt-1">{product.sku}</p>
+            
+            <div className="mt-2 flex items-center gap-2">
+              <Badge variant={conditionVariants[product.condition]}>
+                {conditionLabels[product.condition]}
+              </Badge>
+              <span className="text-xs text-muted-foreground">{product.stock} шт.</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-3 border-t border-border/50">
+          <div>
+            <p className="text-xs text-muted-foreground">{product.gost || '—'}</p>
+            <p className="text-xs text-muted-foreground">Масса: {weight}</p>
+          </div>
+          
+          {product.priceOnRequest ? (
+            <span className="text-sm font-semibold text-primary">По запросу</span>
+          ) : (
+            <span className="text-lg font-bold text-primary">
+              {formatPrice(product.price)} ₽
+            </span>
+          )}
+        </div>
+
+        {(onEdit || onDelete) && (
+          <div className="flex gap-2 pt-2">
+            {onEdit && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onEdit(product)}
+                className="flex-1"
+              >
+                Редактировать
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onDelete(product.id)}
+                className="text-destructive hover:text-destructive"
+              >
+                Удалить
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
