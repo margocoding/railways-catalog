@@ -5,7 +5,6 @@ import { AdminHeader } from '@/widgets/admin-header'
 import { AdminSidebar } from '@/widgets/admin-sidebar'
 import { getToken } from '@/entities/auth/model/auth.model'
 import { AdminProductsPage } from './products'
-import { AdminCategoriesPage } from './categories'
 
 export function AdminDashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -64,7 +63,6 @@ export function AdminDashboardPage() {
             </div>
           } />
           <Route path="/products" element={<AdminProductsPage />} />
-          <Route path="/categories" element={<AdminCategoriesPage />} />
         </Routes>
       </main>
     </div>

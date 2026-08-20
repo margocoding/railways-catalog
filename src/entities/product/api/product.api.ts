@@ -55,3 +55,14 @@ export async function updateProductApi(id: string, updates: Partial<Product>): P
   
   return Promise.resolve({ ...product, ...updates })
 }
+
+// Мок API для удаления продукта
+export async function deleteProductApi(id: string): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 300))
+  const product = products.find(p => p.id === id)
+  if (!product) {
+    throw new Error('Product not found')
+  }
+  // В мок-реализации просто логируем
+  console.log('Deleting product:', id)
+}
