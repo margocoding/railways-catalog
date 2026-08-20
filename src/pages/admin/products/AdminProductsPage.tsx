@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { categories, subcategories, products } from '@/entities/product'
 import type { Product } from '@/entities/product/model/types'
 import { ProductTableRow } from '@/entities/product/ui/ProductTableRow'
 import { Select } from '@/shared/ui/Select'
@@ -7,12 +6,13 @@ import { Button } from '@/shared/ui/Button'
 import { Input } from '@/shared/ui/Input'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { useAdminCategories, CategoriesSection } from '@/features/admin-categories'
+import { useAdminProducts, CreateProductModal, EditProductModal, DeleteProductDialog } from '@/features/admin-products'
 
 export function AdminProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('')
   const [searchQuery, setSearchQuery] = useState('')
-
+  
   // Хук для управления категориями
   const {
     categories: adminCategories,
@@ -23,9 +23,21 @@ export function AdminProductsPage() {
     deleteCategory,
   } = useAdminCategories()
   
+  // Хук для управления продуктами
+  const {
+    products: adminProducts,
+    categories,
+    subcategories,
+    isLoading: productsLoading,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+  } = useAdminProducts()
+  
   // Используем данные из хука или моковые данные как фоллбэк
   const categoriesList = adminCategories.length > 0 ? adminCategories : categories
   const subcategoriesList = adminSubcategories.length > 0 ? adminSubcategories : subcategories
+  const productsList = adminProducts.length > 0 ? adminProducts : []
 
   // Фильтрация субкатегорий на основе выбранной категории
   const filteredSubcategories = useMemo(() => {
@@ -35,7 +47,7 @@ export function AdminProductsPage() {
 
   // Фильтрация продуктов
   const filteredProducts = useMemo(() => {
-    let result = products
+    let result = productsList
 
     // Фильтр по категории
     if (selectedCategory) {
@@ -57,7 +69,7 @@ export function AdminProductsPage() {
     }
 
     return result
-  }, [selectedCategory, selectedSubcategory, searchQuery])
+  }, [selectedCategory, selectedSubcategory, searchQuery, productsList])
 
   // Опции для селекта категорий
   const categoryOptions = useMemo(() => {
@@ -75,20 +87,39 @@ export function AdminProductsPage() {
     }))
   }, [filteredSubcategories])
 
+  // Состояния для модалок продуктов
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
+
   const handleEdit = (product: Product) => {
-    console.log('Edit product:', product)
-    // TODO: Открыть модалку редактирования
+    setEditingProduct(product)
   }
 
   const handleDelete = (id: string) => {
-    console.log('Delete product:', id)
-    // TODO: Подтверждение и удаление
+    const product = productsList.find(p => p.id === id)
+    if (product) {
+      setDeletingProduct(product)
+    }
   }
 
   const handleCreateNew = () => {
-    console.log('Create new product')
-    // TODO: Открыть модалку создания
+    setIsCreateModalOpen(true)
   }
+
+  const handleCreateProduct = async (productData: Omit<Product, 'id'>) => {
+    await createProduct(productData)
+  }
+
+  const handleUpdateProduct = async (id: string, updates: Partial<Product>) => {
+    return await updateProduct(id, updates)
+  }
+
+  const handleDeleteProduct = async (id: string) => {
+    return await deleteProduct(id)
+  }
+
+  const isLoading = categoriesLoading || productsLoading
 
   return (
     <div className="p-4 md:p-6">
@@ -163,7 +194,11 @@ export function AdminProductsPage() {
       </div>
 
       {/* Таблица продуктов */}
-      {filteredProducts.length > 0 ? (
+      {isLoading && productsList.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-[hsl(var(--muted-foreground))]">Загрузка продуктов...</p>
+        </div>
+      ) : filteredProducts.length > 0 ? (
         <>
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto rounded-xl border border-border bg-card">
@@ -213,6 +248,35 @@ export function AdminProductsPage() {
               ? 'Измените параметры фильтрации или поиска'
               : 'Добавьте первый продукт в каталог'
           }
+        />
+      )}
+
+      {/* Модалки для продуктов */}
+      <CreateProductModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onCreate={handleCreateProduct}
+        categories={categoriesList}
+        subcategories={subcategoriesList}
+      />
+
+      {editingProduct && (
+        <EditProductModal
+          open={!!editingProduct}
+          onOpenChange={(open) => !open && setEditingProduct(null)}
+          product={editingProduct}
+          onUpdate={handleUpdateProduct}
+          categories={categoriesList}
+          subcategories={subcategoriesList}
+        />
+      )}
+
+      {deletingProduct && (
+        <DeleteProductDialog
+          open={!!deletingProduct}
+          onOpenChange={(open) => !open && setDeletingProduct(null)}
+          product={deletingProduct}
+          onDelete={handleDeleteProduct}
         />
       )}
     </div>
