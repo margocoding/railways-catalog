@@ -279,7 +279,7 @@ export function MobileMenu({
                         {/* Contact */}
                         <div className="mt-auto border-t border-border pt-5">
                             <a
-                                href="tel:+78000000000"
+                                href="tel:+78432597300"
                                 className="
                   mb-3 flex min-h-12 items-center
                   gap-3 rounded-lg
@@ -290,7 +290,7 @@ export function MobileMenu({
                                 <FiPhone className="h-5 w-5 text-primary"/>
 
                                 <div>
-                                    <div>8 (800) 000-00-00</div>
+                                    <div>+7 (843) 259-73-00</div>
 
                                     <div className="mt-0.5 text-xs font-normal text-muted-foreground">
                                         Бесплатно по России
