@@ -3,6 +3,9 @@ import { Link } from 'react-router'
 import { SERVICES } from '../../entities/service/model/mocks'
 
 export function ServicesTeaser() {
+  // Берём только первые 2 услуги для главной страницы
+  const displayedServices = SERVICES.slice(0, 2)
+
   return (
     <section className="py-20 bg-[hsl(var(--background))]">
       <div className="container mx-auto px-4">
@@ -16,9 +19,9 @@ export function ServicesTeaser() {
           <p className="text-[hsl(var(--muted-foreground))]">Не только поставка, но и обработка</p>
         </motion.div>
 
-        {/* Services List - Vertical layout instead of grid */}
-        <div className="max-w-4xl mx-auto space-y-4 mb-12">
-          {SERVICES.map((service, i) => (
+        {/* Services Grid - 2 large square cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-12">
+          {displayedServices.map((service, i) => (
             <motion.div
               key={service.slug}
               initial={{ opacity: 0, y: 20 }}
@@ -28,17 +31,32 @@ export function ServicesTeaser() {
             >
               <Link
                 to={`/services/${service.slug}`}
-                className="block p-6 rounded-xl border border-[hsl(var(--border))] bg-card-gradient hover:border-[hsl(var(--primary))/50] transition-all group"
+                className="group relative block aspect-square rounded-2xl border border-[hsl(var(--border))] bg-card-gradient overflow-hidden hover:border-[hsl(var(--primary))/50] transition-all duration-300"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="text-4xl flex-shrink-0">{service.icon}</div>
-                  <div className="flex-grow">
-                    <h3 className="font-bold text-lg mb-1">{service.title}</h3>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))]">{service.description}</p>
+                {/* Background gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10 pointer-events-none" />
+                
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-between p-8 sm:p-10">
+                  {/* Icon */}
+                  <div className="text-5xl sm:text-6xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
+                    {service.icon}
                   </div>
-                  <div className="text-sm font-medium text-[hsl(var(--primary))] flex items-center gap-1 flex-shrink-0">
+                  
+                  {/* Title and description */}
+                  <div className="space-y-3">
+                    <h3 className="font-black text-xl sm:text-2xl md:text-3xl leading-tight group-hover:text-[hsl(var(--primary))] transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-[hsl(var(--muted-foreground))] line-clamp-2">
+                      {service.description}
+                    </p>
+                  </div>
+                  
+                  {/* CTA */}
+                  <div className="flex items-center gap-2 text-sm font-bold text-[hsl(var(--primary))] opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                     Подробнее
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>

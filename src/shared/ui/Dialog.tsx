@@ -40,17 +40,18 @@ export function Dialog({ open, onOpenChange, title, description, children, class
       aria-labelledby={title ? 'dialog-title' : undefined}
       aria-describedby={description ? 'dialog-description' : undefined}
     >
-      {/* Overlay */}
+      {/* Overlay with smooth fade animation */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 ease-out"
         onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
 
-      {/* Dialog content */}
+      {/* Dialog content with scale + fade animation */}
       <div
         className={cn(
-          'relative z-50 w-full max-w-lg mx-4 rounded-xl border border-border bg-background p-6 shadow-lg animate-in zoom-in-95 duration-200',
+          'relative z-50 w-full max-w-lg mx-4 rounded-xl border border-border bg-background p-6 shadow-lg',
+          'animate-in zoom-in-95 fade-in duration-200 ease-out',
           className
         )}
         onClick={(e) => e.stopPropagation()}
