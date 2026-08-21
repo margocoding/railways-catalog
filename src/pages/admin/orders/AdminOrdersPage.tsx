@@ -56,6 +56,14 @@ export function AdminOrdersPage() {
     })
   }
 
+  const statusOptions = [
+    { value: 'all', label: 'Все статусы' },
+    { value: 'new', label: 'Новый' },
+    { value: 'processing', label: 'В обработке' },
+    { value: 'completed', label: 'Выполнен' },
+    { value: 'cancelled', label: 'Отменён' },
+  ]
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -76,16 +84,11 @@ export function AdminOrdersPage() {
           />
         </div>
         <Select
+          options={statusOptions}
           value={statusFilter}
-          onValueChange={(v) => setStatusFilter(v as OrderStatus | 'all')}
+          onChange={(e) => setStatusFilter(e.target.value as OrderStatus | 'all')}
           className="w-full sm:w-48"
-        >
-          <option value="all">Все статусы</option>
-          <option value="new">Новый</option>
-          <option value="processing">В обработке</option>
-          <option value="completed">Выполнен</option>
-          <option value="cancelled">Отменён</option>
-        </Select>
+        />
       </div>
 
       {/* Content */}
@@ -276,17 +279,20 @@ export function AdminOrdersPage() {
             <div className="border-t border-[hsl(var(--border))] pt-4">
               <h3 className="font-bold mb-3">Изменить статус</h3>
               <div className="flex flex-wrap gap-2">
-                {(Object.keys(ORDER_STATUS_LABELS) as OrderStatus[]).map((status) => (
-                  <Button
-                    key={status}
-                    variant={selectedOrder.status === status ? 'default' : 'outline'}
-                    size="sm"
-                    disabled={isChangingStatus || selectedOrder.status === status}
-                    onClick={() => handleStatusChange(status)}
-                  >
-                    {ORDER_STATUS_LABELS[status]}
-                  </Button>
-                ))}
+                {(Object.keys(ORDER_STATUS_LABELS) as OrderStatus[]).map((status) => {
+                  const isActive = selectedOrder.status === status
+                  return (
+                    <Button
+                      key={status}
+                      variant={isActive ? 'primary' : 'outline'}
+                      size="sm"
+                      disabled={isChangingStatus || isActive}
+                      onClick={() => handleStatusChange(status)}
+                    >
+                      {ORDER_STATUS_LABELS[status]}
+                    </Button>
+                  )
+                })}
               </div>
             </div>
 

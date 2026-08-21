@@ -197,10 +197,6 @@ export async function createOrderApi(orderData: Omit<Order, 'id' | 'orderNumber'
   await new Promise(resolve => setTimeout(resolve, 500))
   
   const orders = getStoredOrders()
-  const nextOrderNumber = orders.length > 0 
-    ? `ORD-${parseInt(orders[0].orderNumber.split('-')[1]) + 1}`.padStart(6, '0').replace('ORD-', 'ORD-')
-    : 'ORD-1001'
-  
   const newOrder: Order = {
     ...orderData,
     id: `order-${Date.now()}`,
