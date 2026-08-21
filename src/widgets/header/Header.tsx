@@ -127,7 +127,7 @@ export function Header() {
                     </button>
 
                     <a
-                        href="tel:+78000000000"
+                        href="tel:+78432597300"
                         className="
               hidden items-center gap-2
               px-2
@@ -139,11 +139,11 @@ export function Header() {
             "
                     >
                         <FiPhone className="h-4 w-4 text-primary"/>
-                        <span>8 (800) 000-00-00</span>
+                        <span>+7 (843) 259-73-00</span>
                     </a>
 
                     <a
-                        href="mailto:info@stalput.ru"
+                        href="mailto:zakaz@ttr2.ru"
                         className="
               hidden items-center gap-2
               px-2
@@ -156,7 +156,7 @@ export function Header() {
                         aria-label="Email"
                     >
                         <FiMail className="h-4 w-4 text-primary"/>
-                        <span>info@stalput.ru</span>
+                        <span>zakaz@ttr2.ru</span>
                     </a>
 
                     <Button onClick={() => setRequestFormOpen(true)}>

@@ -15,7 +15,7 @@ export function ContactsPage() {
     { label: 'Главная', href: '/' },
     { label: 'Контакты', href: undefined },
   ]
-
+  
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -28,14 +28,26 @@ export function ContactsPage() {
           <ContactCard
             icon={<FiPhone className="h-6 w-6" />}
             title="Телефон"
-            value="+7 (800) 000-00-00"
-            href="tel:+78000000000"
+            value="+7 (843) 259-73-00"
+            href="tel:+78432597300"
+          />
+          <ContactCard
+            icon={<FiPhone className="h-6 w-6" />}
+            title="Телефон"
+            value="+7 (962) 559-73-00"
+            href="tel:+79625597300"
+          />
+          <ContactCard
+            icon={<FiPhone className="h-6 w-6" />}
+            title="Телефон"
+            value="+7 (960) 039-01-01"
+            href="tel:+79600390101"
           />
           <ContactCard
             icon={<FiMail className="h-6 w-6" />}
             title="Email"
-            value="info@stalput.ru"
-            href="mailto:info@stalput.ru"
+            value="zakaz@ttr2.ru"
+            href="mailto:zakaz@ttr2.ru"
           />
           <ContactCard
             icon={<FiClock className="h-6 w-6" />}
@@ -54,14 +66,12 @@ export function ContactsPage() {
         {/* Addresses */}
         <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           <AddressCard
-            title="Офис"
-            address="г. Москва, ул. Примерная, 1, офис 101"
-            metro="м. Примерная"
+            title="Юридический/фактический адрес"
+            address="422549, Респ Татарстан, Зеленодольский р-н, г Зеленодольск, ул Московская, ЗД.4, помещ.1"
           />
           <AddressCard
-            title="Склад"
-            address="г. Екатеринбург, промзона 5, склад 12"
-            metro="Ж/д ветка"
+            title="Почтовый адрес"
+            address="422540, г. Зеленодольск, а/я 34"
           />
         </div>
 
@@ -74,7 +84,6 @@ export function ContactsPage() {
               type="button"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent-gradient px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
               onClick={() => {
-                // Здесь будет логика скачивания файла реквизитов
                 console.log('Скачать реквизиты')
               }}
             >
@@ -95,22 +104,38 @@ export function ContactsPage() {
               <span className="text-[hsl(var(--muted-foreground))]">
                 ИНН:
               </span>
-              <div className="font-medium">7700000000</div>
+              <div className="font-medium">1648052000</div>
+            </div>
+
+            <div>
+              <span className="text-[hsl(var(--muted-foreground))]">
+                КПП:
+              </span>
+              <div className="font-medium">164801001</div>
             </div>
 
             <div>
               <span className="text-[hsl(var(--muted-foreground))]">
                 ОГРН:
               </span>
-              <div className="font-medium">1027700000000</div>
+              <div className="font-medium">1201600037055</div>
             </div>
 
-            <div>
+            <div className="md:col-span-2">
               <span className="text-[hsl(var(--muted-foreground))]">
-                Адрес:
+                Юридический/фактический адрес:
               </span>
               <div className="font-medium">
-                г. Москва, ул. Примерная, 1
+                422549, Респ Татарстан, Зеленодольский р-н, г Зеленодольск, ул Московская, ЗД.4, помещ.1
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <span className="text-[hsl(var(--muted-foreground))]">
+                Почтовый адрес:
+              </span>
+              <div className="font-medium">
+                422540, г. Зеленодольск, а/я 34
               </div>
             </div>
 
@@ -118,14 +143,28 @@ export function ContactsPage() {
               <span className="text-[hsl(var(--muted-foreground))]">
                 Расчётный счёт:
               </span>
-              <div className="font-medium">40702810000000000000</div>
+              <div className="font-medium">40702810229070006758</div>
+            </div>
+
+            <div>
+              <span className="text-[hsl(var(--muted-foreground))]">
+                Корр. счёт:
+              </span>
+              <div className="font-medium">30101810200000000824</div>
             </div>
 
             <div>
               <span className="text-[hsl(var(--muted-foreground))]">
                 Банк:
               </span>
-              <div className="font-medium">ПАО Сбербанк</div>
+              <div className="font-medium">ФИЛИАЛ "НИЖЕГОРОДСКИЙ" АО "АЛЬФА-БАНК"</div>
+            </div>
+
+            <div>
+              <span className="text-[hsl(var(--muted-foreground))]">
+                БИК:
+              </span>
+              <div className="font-medium">042202824</div>
             </div>
           </div>
         </div>
@@ -229,11 +268,9 @@ function ContactCard({
 function AddressCard({
   title,
   address,
-  metro,
 }: {
   title: string
   address: string
-  metro: string
 }) {
   return (
     <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
@@ -241,10 +278,6 @@ function AddressCard({
 
       <p className="mb-2 text-[hsl(var(--muted-foreground))]">
         {address}
-      </p>
-
-      <p className="mb-4 text-sm text-[hsl(var(--muted-foreground))]">
-        {metro}
       </p>
 
       <button className="flex items-center gap-2 text-sm text-[hsl(var(--primary))] hover:underline">
