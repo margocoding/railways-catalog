@@ -17,6 +17,7 @@ permissions:
 jobs:
   cd:
     name: Build Test Security Docker
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -33,12 +34,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create env file
+        run: |
+          printf '%s' "${{ secrets.VITE_ENV }}" > .env.production
+
       - name: Build and Push Docker Image
         if: github.event_name == 'push'
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          secret-files: |
+            env=.env.production
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
