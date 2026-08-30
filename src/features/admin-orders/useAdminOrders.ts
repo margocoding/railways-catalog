@@ -1,90 +1,110 @@
 import { useCallback, useState, useEffect } from 'react'
-import type { Order, OrderStatus } from '@/entities/order/model/types'
-import { getOrdersApi, getOrderByIdApi, updateOrderStatusApi } from '@/entities/order/api/order.api'
+import { toast } from 'react-toastify'
+import type { Order, OrderStatus, GetOrdersParams } from '@/entities/order/model/types'
+import type { PaginationMeta } from '@/shared/api'
+import { orderApi } from '@/entities/order/api/order.api'
 
-export function useAdminOrders() {
+interface UseAdminOrdersReturn {
+  orders: Order[]
+  pagination: PaginationMeta
+  isLoading: boolean
+  error: string | null
+  selectedOrder: Order | null
+  searchQuery: string
+  statusFilter: OrderStatus | 'all'
+  setSearchQuery: (value: string) => void
+  setStatusFilter: (value: OrderStatus | 'all') => void
+  loadOrderById: (id: string) => Promise<Order | null>
+  updateOrderStatus: (id: string, status: OrderStatus) => Promise<boolean>
+  setSelectedOrder: (order: Order | null) => void
+  handlePageChange: (page: number) => void
+  reloadOrders: () => Promise<void>
+}
+
+export function useAdminOrders(): UseAdminOrdersReturn {
   const [orders, setOrders] = useState<Order[]>([])
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
-  // Фильтры и поиск
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all')
+  const [currentPage, setCurrentPage] = useState(1)
 
-  // Загрузка заказов
-  const loadOrders = useCallback(async () => {
+  const loadOrders = useCallback(async (params?: GetOrdersParams) => {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getOrdersApi()
-      setOrders(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load orders')
+      const response = await orderApi.getAll({
+        page: currentPage,
+        search: searchQuery || undefined,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        ...params,
+      })
+      setOrders(response.items)
+      setPagination(response.pagination)
+    } catch (err: any) {
+      setError(err.message || 'Ошибка загрузки заказов')
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [currentPage, searchQuery, statusFilter])
 
-  // Загрузка конкретного заказа
-  const loadOrderById = useCallback(async (id: string) => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const order = await getOrderByIdApi(id)
-      setSelectedOrder(order)
-      return order
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load order')
-      return null
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentPage(1)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
-  // Обновление статуса заказа
-  const updateOrderStatus = useCallback(async (id: string, status: OrderStatus): Promise<boolean> => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const updatedOrder = await updateOrderStatusApi(id, status)
-      setOrders(prev => prev.map(o => o.id === id ? updatedOrder : o))
-      if (selectedOrder?.id === id) {
-        setSelectedOrder(updatedOrder)
-      }
-      return true
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update order status')
-      return false
-    } finally {
-      setIsLoading(false)
-    }
-  }, [selectedOrder])
-
-  // Отфильтрованные заказы
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      searchQuery === '' ||
-      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter
-    
-    return matchesSearch && matchesStatus
-  })
-
-  // Сортировка по дате (новые сверху)
-  const sortedOrders = [...filteredOrders].sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  )
-
-  // Инициализация при монтировании
   useEffect(() => {
     loadOrders()
   }, [loadOrders])
 
+  const loadOrderById = useCallback(async (id: string): Promise<Order | null> => {
+    try {
+      const order = await orderApi.getById(id)
+      setSelectedOrder(order)
+      return order
+    } catch (err: any) {
+      toast.error(err.message || 'Ошибка загрузки заказа')
+      return null
+    }
+  }, [])
+
+  const updateOrderStatus = useCallback(
+    async (id: string, status: OrderStatus): Promise<boolean> => {
+      try {
+        const updatedOrder = await orderApi.update(id, { status })
+        setOrders((prev) => prev.map((o) => (o.id === id ? updatedOrder : o)))
+        if (selectedOrder?.id === id) {
+          setSelectedOrder(updatedOrder)
+        }
+        toast.success('Статус заказа обновлён')
+        return true
+      } catch (err: any) {
+        toast.error(err.message || 'Ошибка обновления статуса')
+        return false
+      }
+    },
+    [selectedOrder],
+  )
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page)
+  }, [])
+
   return {
-    orders: sortedOrders,
+    orders,
+    pagination,
     isLoading,
     error,
     selectedOrder,
@@ -92,9 +112,10 @@ export function useAdminOrders() {
     statusFilter,
     setSearchQuery,
     setStatusFilter,
-    loadOrders,
     loadOrderById,
     updateOrderStatus,
     setSelectedOrder,
+    handlePageChange,
+    reloadOrders: loadOrders,
   }
 }

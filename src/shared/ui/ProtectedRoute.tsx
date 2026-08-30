@@ -25,17 +25,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         return
       }
 
-      try {
-        const valid = await validateToken()
-        if (mounted) {
-          setIsValid(valid)
-          setIsChecking(false)
-        }
-      } catch {
-        if (mounted) {
-          setIsValid(false)
-          setIsChecking(false)
-        }
+      const valid = await validateToken()
+      if (mounted) {
+        setIsValid(valid)
+        setIsChecking(false)
       }
     }
 
@@ -47,7 +40,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [])
 
   if (isChecking) {
-    return null // или можно показать лоадер
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+          <p className="text-sm text-muted-foreground">Проверка авторизации...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!isValid) {

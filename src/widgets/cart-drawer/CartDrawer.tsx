@@ -217,7 +217,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                   <p className="font-semibold text-foreground">
                     {(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽
                   </p>
-                  {item.product.priceOnRequest && (
+                  {!item.product.price && (
                     <p className="text-xs text-muted-foreground">Цена по запросу</p>
                   )}
                 </div>

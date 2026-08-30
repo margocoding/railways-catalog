@@ -1,5 +1,5 @@
 export * from './model/types'
 export * from './model/auth.model'
 export * from './api/auth.api'
-export { useAuth } from './ui/useAuth'
+export { useAuth } from './model/useAuth'
 export { AdminLoginPage } from './ui/AdminLoginPage'

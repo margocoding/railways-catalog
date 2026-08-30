@@ -3,6 +3,8 @@ import { formatPrice, getSpecValue } from '@/shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
 import { Badge } from '@/shared/ui/Badge'
 import { Button } from '@/shared/ui/Button'
+import { getImageUrl } from '@/shared/lib/product-helpers'
+import { MdNoPhotography, MdEdit, MdDelete } from 'react-icons/md'
 
 interface ProductTableRowProps {
   product: Product
@@ -25,21 +27,27 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
     service: 'outline',
   }
 
+  const firstImage = product.images[0]
+  const imageUrl = firstImage ? getImageUrl(firstImage) : null
+
   return (
     <>
-      {/* Desktop table row */}
-      <tr className="group border-b border-border/50 hover:bg-muted/30 transition-colors">
+      <tr className="group border-b border-border/50 hover:bg-muted/30 transition-colors max-md:hidden">
         <td className="py-4 px-4">
           <Link
             to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
             className="flex items-center gap-3"
           >
-            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
-              <img
-                src={product.images[0] || '/placeholders/product.svg'}
-                alt={product.title}
-                className="h-full w-full object-contain"
-              />
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted flex items-center justify-center">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={product.title}
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <MdNoPhotography className="h-6 w-6 text-muted-foreground" />
+              )}
             </div>
           </Link>
         </td>
@@ -73,7 +81,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
         </td>
 
         <td className="py-4 px-4">
-          {product.priceOnRequest ? (
+          {!product.price ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-base font-bold text-primary">
@@ -91,9 +99,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
                 onClick={() => onEdit(product)}
                 className="h-8 px-2"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
+                <MdEdit className="h-4 w-4" />
               </Button>
             )}
             {onDelete && (
@@ -103,27 +109,28 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
                 onClick={() => onDelete(product.id)}
                 className="h-8 px-2 text-destructive hover:text-destructive"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+                <MdDelete className="h-4 w-4" />
               </Button>
             )}
           </div>
         </td>
       </tr>
 
-      {/* Mobile card */}
       <div className="md:hidden rounded-xl border border-border bg-card p-4 space-y-3">
         <div className="flex gap-3">
           <Link
             to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
-            className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted"
+            className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted flex items-center justify-center"
           >
-            <img
-              src={product.images[0] || '/placeholders/product.svg'}
-              alt={product.title}
-              className="h-full w-full object-contain"
-            />
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={product.title}
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <MdNoPhotography className="h-8 w-8 text-muted-foreground" />
+            )}
           </Link>
 
           <div className="min-w-0 flex-1">
@@ -150,7 +157,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
             <p className="text-xs text-muted-foreground">Масса: {weight}</p>
           </div>
           
-          {product.priceOnRequest ? (
+          {!product.price ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-lg font-bold text-primary">

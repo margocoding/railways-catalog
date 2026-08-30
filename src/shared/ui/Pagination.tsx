@@ -1,3 +1,4 @@
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { cn } from '@/shared/lib/cn'
 
 export interface PaginationProps {
@@ -17,12 +18,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        className="rounded-lg p-2 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
         aria-label="Предыдущая страница"
       >
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
+        <FiChevronLeft className="h-5 w-5" />
       </button>
 
       {pages.map((page) => (
@@ -31,10 +30,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
           onClick={() => onPageChange(page)}
           aria-current={currentPage === page ? 'page' : undefined}
           className={cn(
-            'min-w-[2.5rem] h-10 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+            'h-10 min-w-[2.5rem] rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
             currentPage === page
               ? 'bg-primary text-primary-foreground'
-              : 'hover:bg-muted text-foreground'
+              : 'text-foreground hover:bg-muted'
           )}
         >
           {page}
@@ -44,12 +43,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        className="rounded-lg p-2 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
         aria-label="Следующая страница"
       >
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
+        <FiChevronRight className="h-5 w-5" />
       </button>
     </nav>
   )

@@ -1,28 +1,31 @@
-import { useCallback, useState, useEffect } from 'react'
-import type { Product, Category, Subcategory } from '@/entities/product/model/types'
-import {
-  getProductsApi,
-  getCategoriesApi,
-  getSubcategoriesApi,
-  createProductApi,
-  updateProductApi,
-  deleteProductApi,
-} from '@/entities/product/api/product.api'
+import { categoryApi, type Category } from '@/entities/category'
+import { productApi, type CreateProductDto, type Product, type UpdateProductDto } from '@/entities/product'
+import type { PaginationMeta } from '@/shared/api'
+import { useCallback, useEffect, useState } from 'react'
+
+const ITEMS_PER_PAGE = 20
 
 export function useAdminProducts() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
-  const [subcategories, setSubcategories] = useState<Subcategory[]>([])
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    total: 0,
+    page: 1,
+    limit: ITEMS_PER_PAGE,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Загрузка продуктов
-  const loadProducts = useCallback(async () => {
+  const loadProducts = useCallback(async (page: number = 1) => {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getProductsApi()
-      setProducts(data)
+      const response = await productApi.getAll({ page, limit: ITEMS_PER_PAGE })
+      setProducts(response.items)
+      setPagination(response.pagination)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load products')
     } finally {
@@ -30,41 +33,21 @@ export function useAdminProducts() {
     }
   }, [])
 
-  // Загрузка категорий
   const loadCategories = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
     try {
-      const data = await getCategoriesApi()
-      setCategories(data)
+      const response = await categoryApi.getAll({ limit: 100 })
+      setCategories(response.items)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load categories')
-    } finally {
-      setIsLoading(false)
+      console.error('Failed to load categories:', err)
     }
   }, [])
 
-  // Загрузка субкатегорий
-  const loadSubcategories = useCallback(async () => {
+  const createProduct = useCallback(async (dto: CreateProductDto, images: File[] = []): Promise<Product | null> => {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getSubcategoriesApi()
-      setSubcategories(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load subcategories')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  // Создание продукта
-  const createProduct = useCallback(async (productData: Omit<Product, 'id'>): Promise<Product | null> => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const newProduct = await createProductApi(productData)
-      setProducts(prev => [...prev, newProduct])
+      const newProduct = await productApi.create(dto, images)
+      setProducts((prev) => [...prev, newProduct])
       return newProduct
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create product')
@@ -74,13 +57,17 @@ export function useAdminProducts() {
     }
   }, [])
 
-  // Обновление продукта
-  const updateProduct = useCallback(async (id: string, updates: Partial<Product>): Promise<boolean> => {
+  const updateProduct = useCallback(async (
+    id: string,
+    dto: UpdateProductDto,
+    newImages: File[] = [],
+    existingImages: string[] = [],
+  ): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
     try {
-      const updatedProduct = await updateProductApi(id, updates)
-      setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedProduct } : p))
+      const updatedProduct = await productApi.update(id, dto, newImages, existingImages)
+      setProducts((prev) => prev.map((p) => (p.id === id ? updatedProduct : p)))
       return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update product')
@@ -90,13 +77,12 @@ export function useAdminProducts() {
     }
   }, [])
 
-  // Удаление продукта
   const deleteProduct = useCallback(async (id: string): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
     try {
-      await deleteProductApi(id)
-      setProducts(prev => prev.filter(p => p.id !== id))
+      await productApi.delete(id)
+      setProducts((prev) => prev.filter((p) => p.id !== id))
       return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete product')
@@ -106,24 +92,26 @@ export function useAdminProducts() {
     }
   }, [])
 
-  // Инициализация при монтировании
   useEffect(() => {
     loadProducts()
     loadCategories()
-    loadSubcategories()
-  }, [loadProducts, loadCategories, loadSubcategories])
+  }, [loadProducts, loadCategories])
+
+  const handlePageChange = useCallback((page: number) => {
+    loadProducts(page)
+  }, [loadProducts])
 
   return {
     products,
     categories,
-    subcategories,
+    pagination,
     isLoading,
     error,
     loadProducts,
     loadCategories,
-    loadSubcategories,
     createProduct,
     updateProduct,
     deleteProduct,
+    handlePageChange,
   }
 }

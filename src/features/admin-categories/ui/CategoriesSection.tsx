@@ -1,108 +1,135 @@
 import { useState } from 'react'
-import type { Category, Subcategory } from '@/entities/product/model/types'
-import { CreateCategoryModal } from './CreateCategoryModal'
-import { EditCategoryModal } from './EditCategoryModal'
+import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi'
+import { CategoryFormModal } from './CategoryFormModal'
 import { DeleteCategoryDialog } from './DeleteCategoryDialog'
+import { Button } from '@/shared/ui/Button'
+import { categoryApi } from '@/entities/category'
+import type { Category } from '@/entities/category'
 
 interface CategoriesSectionProps {
   categories: Category[]
-  subcategories: Subcategory[]
   isLoading: boolean
-  onCreateCategory: (category: Omit<Category, 'id'>) => Promise<Category | null>
-  onUpdateCategory: (id: string, updates: Partial<Category>) => Promise<boolean>
-  onDeleteCategory: (id: string) => Promise<boolean>
+  onRefresh: () => void
 }
 
 export function CategoriesSection({
   categories,
-  subcategories,
   isLoading,
-  onCreateCategory,
-  onUpdateCategory,
-  onDeleteCategory,
+  onRefresh,
 }: CategoriesSectionProps) {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [modalState, setModalState] = useState<{
+    open: boolean
+    mode: 'create' | 'edit'
+    category?: Category
+  }>({ open: false, mode: 'create' })
+
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
 
-  const handleCreate = async (categoryData: Omit<Category, 'id'>) => {
-    await onCreateCategory(categoryData)
+  const openCreate = () => setModalState({ open: true, mode: 'create' })
+  const openEdit = (category: Category) =>
+    setModalState({ open: true, mode: 'edit', category })
+  const closeModal = () =>
+    setModalState({ open: false, mode: 'create' })
+
+  const handleCreate = async (
+    dto: { name: string; slug: string; description: string },
+    image: File | null,
+  ): Promise<Category | null> => {
+    const created = await categoryApi.create(dto, image)
+    onRefresh()
+    return created
   }
 
-  const getCategorySubcategoriesCount = (categoryId: string) => {
-    return subcategories.filter(sub => sub.categoryId === categoryId).length
+  const handleUpdate = async (
+    dto: { name: string; slug: string; description: string },
+    image: File | null,
+  ): Promise<boolean> => {
+    if (!modalState.category) return false
+    await categoryApi.update(modalState.category.id, dto, image)
+    onRefresh()
+    return true
+  }
+
+  const handleDelete = async (id: string): Promise<boolean> => {
+    await categoryApi.delete(id)
+    onRefresh()
+    return true
   }
 
   if (isLoading && categories.length === 0) {
     return (
-      <div className="mb-6 p-4 rounded-xl border border-border bg-card">
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">Загрузка категорий...</p>
+      <div className="mb-6 rounded-xl border border-border bg-card p-4">
+        <p className="text-sm text-muted-foreground">Загрузка категорий...</p>
       </div>
     )
   }
 
   return (
     <>
-      {/* Секция управления категориями */}
-      <div className="mb-6 p-4 rounded-xl border border-border bg-card">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-6 rounded-xl border border-border bg-card p-4">
+        <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[hsl(var(--foreground))]">Категории</h2>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              {categories.length} {categories.length === 1 ? 'категория' : categories.length < 5 ? 'категории' : 'категорий'}
+            <h2 className="text-lg font-semibold text-foreground">Категории</h2>
+            <p className="text-sm text-muted-foreground">
+              {categories.length}{' '}
+              {categories.length === 1
+                ? 'категория'
+                : categories.length < 5
+                  ? 'категории'
+                  : 'категорий'}
             </p>
           </div>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+          <Button onClick={openCreate} size="sm">
+            <FiPlus className="h-4 w-4" />
             Добавить категорию
-          </button>
+          </Button>
         </div>
 
         {categories.length === 0 ? (
-          <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+          <div className="py-8 text-center text-muted-foreground">
             <p className="text-sm">Категории ещё не созданы</p>
-            <p className="text-xs mt-1">Нажмите "Добавить категорию", чтобы создать первую</p>
+            <p className="mt-1 text-xs">
+              Нажмите "Добавить категорию", чтобы создать первую
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => {
-              const subcatCount = getCategorySubcategoriesCount(category.id)
-              
+              const subCount = category.subcategories?.length ?? 0
+
               return (
                 <div
                   key={category.id}
-                  className="group flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="group flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-[hsl(var(--foreground))] truncate">{category.name}</p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                      {subcatCount} {subcatCount === 1 ? 'субкатегория' : subcatCount < 5 ? 'субкатегории' : 'субкатегорий'}
+                    <p className="truncate font-medium text-foreground">
+                      {category.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {subCount}{' '}
+                      {subCount === 1
+                        ? 'субкатегория'
+                        : subCount < 5
+                          ? 'субкатегории'
+                          : 'субкатегорий'}
                     </p>
                   </div>
-                  
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                  <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                     <button
-                      onClick={() => setEditingCategory(category)}
-                      className="p-1.5 rounded-md hover:bg-[hsl(var(--primary))/0.1] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
+                      onClick={() => openEdit(category)}
+                      className="rounded-md p-1.5 text-muted-foreground hover:bg-primary/10 hover:text-primary"
                       title="Редактировать"
                     >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
+                      <FiEdit2 className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => setDeletingCategory(category)}
-                      className="p-1.5 rounded-md hover:bg-red-500/10 text-[hsl(var(--muted-foreground))] hover:text-red-500"
+                      className="rounded-md p-1.5 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
                       title="Удалить"
                     >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <FiTrash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -112,30 +139,20 @@ export function CategoriesSection({
         )}
       </div>
 
-      {/* Модалки */}
-      {isCreateModalOpen && (
-        <CreateCategoryModal
-          open={isCreateModalOpen}
-          onOpenChange={setIsCreateModalOpen}
-          onCreate={handleCreate}
-        />
-      )}
-
-      {editingCategory && (
-        <EditCategoryModal
-          open={!!editingCategory}
-          onOpenChange={(open) => !open && setEditingCategory(null)}
-          category={editingCategory}
-          onUpdate={onUpdateCategory}
-        />
-      )}
+      <CategoryFormModal
+        open={modalState.open}
+        onOpenChange={(open) => !open && closeModal()}
+        mode={modalState.mode}
+        category={modalState.category}
+        onSubmit={modalState.mode === 'create' ? handleCreate : handleUpdate}
+      />
 
       {deletingCategory && (
         <DeleteCategoryDialog
           open={!!deletingCategory}
           onOpenChange={(open) => !open && setDeletingCategory(null)}
           category={deletingCategory}
-          onDelete={onDeleteCategory}
+          onDelete={handleDelete}
         />
       )}
     </>

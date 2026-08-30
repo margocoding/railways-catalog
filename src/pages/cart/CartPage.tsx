@@ -1,26 +1,105 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { FiArrowLeft, FiTrash2, FiMinus, FiPlus, FiShoppingCart, FiCheck } from 'react-icons/fi'
+import { toast } from 'react-toastify'
 import { useCart } from '@/entities/cart/model/use-cart'
 import { Layout } from '@/widgets/Layout'
 import { Button } from '@/shared/ui/Button'
 import { Input } from '@/shared/ui/Input'
 import { FormField } from '@/shared/ui/FormField'
+import { PhoneInput } from '@/shared/ui/PhoneInput'
+import { Checkbox } from '@/shared/ui/Checkbox'
 import { cn } from '@/shared/lib/cn'
 import type { CartItem } from '@/entities/cart/model/types'
+import type { CreateOrderDto } from '@/entities/order/model/types'
+import { getImageUrl } from '@/shared/lib/product-helpers'
+import { orderApi } from '@/entities/order/api/order.api'
 
 export function CartPage() {
   const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'form' | 'success'>('cart')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [orderNumber, setOrderNumber] = useState<string>('')
   const navigate = useNavigate()
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    comment: '',
+    policyAccepted: false,
+  })
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      comment: '',
+      policyAccepted: false,
+    })
+  }
+
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Имитация отправки заказа
-    setTimeout(() => {
+
+    if (!formData.policyAccepted) {
+      toast.error('Необходимо согласие с политикой конфиденциальности')
+      return
+    }
+
+    if (items.length === 0) {
+      toast.error('Корзина пуста')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const dto: CreateOrderDto = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        policyAccepted: formData.policyAccepted,
+        items: items.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+        })),
+      }
+
+      if (formData.email.trim()) {
+        dto.email = formData.email.trim()
+      }
+
+      if (formData.address.trim()) {
+        dto.address = formData.address.trim()
+      }
+
+      if (formData.comment.trim()) {
+        dto.comment = formData.comment.trim()
+      }
+
+      const order = await orderApi.create(dto)
+
+      toast.success(`Заказ ${order.orderNumber} успешно оформлен!`)
+      setOrderNumber(order.orderNumber)
       clearCart()
+      resetForm()
       setCheckoutStep('success')
-    }, 500)
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Ошибка при оформлении заказа. Попробуйте позже'
+
+      const errors = Array.isArray(message) ? message : [message]
+      errors.forEach((error: string) => {
+        toast.error(error)
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleBackToCatalog = () => {
@@ -30,7 +109,6 @@ export function CartPage() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-10">
-        {/* Breadcrumbs */}
         <div className="mb-6">
           <nav className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-foreground transition-colors">
@@ -41,7 +119,6 @@ export function CartPage() {
           </nav>
         </div>
 
-        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <button
@@ -64,7 +141,6 @@ export function CartPage() {
         </div>
 
         {items.length === 0 && checkoutStep === 'cart' ? (
-          /* Empty State */
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center mb-6 animate-in fade-in zoom-in duration-300">
               <FiShoppingCart className="h-16 w-16 text-muted-foreground" />
@@ -79,12 +155,16 @@ export function CartPage() {
             </Button>
           </div>
         ) : checkoutStep === 'success' ? (
-          /* Success State */
           <div className="flex flex-col items-center justify-center py-16 text-center max-w-2xl mx-auto">
             <div className="w-32 h-32 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mb-6 animate-in fade-in zoom-in duration-300">
               <FiCheck className="h-16 w-16 text-green-600 dark:text-green-400" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-2">Заказ успешно оформлен!</h2>
+            {orderNumber && (
+              <p className="text-sm text-muted-foreground mb-2">
+                Номер заказа: <span className="font-semibold text-foreground">{orderNumber}</span>
+              </p>
+            )}
             <p className="text-muted-foreground mb-6 max-w-md">
               Наш менеджер свяжется с вами в ближайшее время для уточнения деталей заказа.
             </p>
@@ -98,36 +178,83 @@ export function CartPage() {
             </div>
           </div>
         ) : checkoutStep === 'form' ? (
-          /* Checkout Form */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Order Summary */}
             <div className="lg:col-span-2 order-2 lg:order-1">
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="text-xl font-bold text-foreground mb-6">Контактные данные</h2>
-                
+
                 <form onSubmit={handleSubmitOrder} className="space-y-4">
                   <FormField label="Имя *" error="">
-                    <Input placeholder="Иван Иванов" required />
+                    <Input
+                      placeholder="Иван Иванов"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      disabled={isSubmitting}
+                    />
                   </FormField>
 
                   <FormField label="Телефон *" error="">
-                    <Input type="tel" placeholder="+7 (___) ___-__-__" inputMode="tel" required />
+                    <PhoneInput
+                      value={formData.phone}
+                      onChange={(value) => setFormData({ ...formData, phone: value })}
+                      required
+                      disabled={isSubmitting}
+                    />
                   </FormField>
 
                   <FormField label="Email" error="">
-                    <Input type="email" placeholder="your@email.com" inputMode="email" />
+                    <Input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      disabled={isSubmitting}
+                    />
                   </FormField>
 
                   <FormField label="Адрес доставки" error="">
-                    <Input placeholder="Город, улица, дом, офис" />
+                    <Input
+                      placeholder="Город, улица, дом, офис"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      disabled={isSubmitting}
+                    />
                   </FormField>
 
                   <FormField label="Комментарий к заказу" error="">
                     <textarea
                       className="w-full rounded-lg border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 transition-colors h-24 p-3 resize-none"
                       placeholder="Дополнительная информация..."
+                      value={formData.comment}
+                      onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                      disabled={isSubmitting}
                     />
                   </FormField>
+
+                  <div className="flex items-start gap-2">
+                    <Checkbox
+                      checked={formData.policyAccepted}
+                      onChange={(e) => setFormData({ ...formData, policyAccepted: e.target.checked })}
+                      id="cart-policy"
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <label
+                      htmlFor="cart-policy"
+                      className="text-xs text-muted-foreground leading-tight cursor-pointer"
+                    >
+                      Я согласен с{' '}
+                      <a
+                        href="/privacy"
+                        className="text-primary hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        политикой конфиденциальности
+                      </a>
+                    </label>
+                  </div>
 
                   <div className="flex gap-3 pt-4">
                     <Button
@@ -135,31 +262,37 @@ export function CartPage() {
                       variant="outline"
                       className="flex-1"
                       onClick={() => setCheckoutStep('cart')}
+                      disabled={isSubmitting}
                     >
                       <FiArrowLeft className="h-4 w-4 mr-2" />
                       Назад
                     </Button>
-                    <Button type="submit" className="flex-1">
-                      <FiCheck className="h-4 w-4 mr-2" />
-                      Подтвердить заказ
+                    <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <>Оформление...</>
+                      ) : (
+                        <>
+                          <FiCheck className="h-4 w-4 mr-2" />
+                          Подтвердить заказ
+                        </>
+                      )}
                     </Button>
                   </div>
                 </form>
               </div>
             </div>
 
-            {/* Order Total */}
             <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="sticky top-24 rounded-xl border border-border bg-card p-6">
                 <h3 className="text-lg font-bold text-foreground mb-4">Ваш заказ</h3>
-                
+
                 <div className="space-y-3 mb-4 pb-4 border-b border-border">
                   {items.map((item: CartItem) => (
                     <div key={item.product.id} className="flex gap-3">
                       <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden shrink-0">
                         {item.product.images[0] ? (
                           <img
-                            src={item.product.images[0]}
+                            src={getImageUrl(item.product.images[0])}
                             alt={item.product.title}
                             className="w-full h-full object-cover"
                           />
@@ -174,12 +307,12 @@ export function CartPage() {
                           {item.product.title}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {item.quantity} шт × {item.product.price.toLocaleString('ru-RU')} ₽
+                          {item.quantity} шт × {!item.product.price ? 'По запросу' : `${item.product.price.toLocaleString('ru-RU')} ₽`}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold text-foreground">
-                          {(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽
+                          {!item.product.price ? 'По запросу' : `${(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽`}
                         </p>
                       </div>
                     </div>
@@ -200,9 +333,7 @@ export function CartPage() {
             </div>
           </div>
         ) : (
-          /* Cart Items */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items List */}
             <div className="lg:col-span-2">
               <div className="space-y-4">
                 {items.map((item: CartItem) => (
@@ -214,11 +345,10 @@ export function CartPage() {
                       'animate-in slide-in-from-bottom-2'
                     )}
                   >
-                    {/* Product Image */}
                     <div className="w-24 h-24 flex-shrink-0 bg-muted rounded-lg overflow-hidden">
                       {item.product.images[0] ? (
                         <img
-                          src={item.product.images[0]}
+                          src={getImageUrl(item.product.images[0])}
                           alt={item.product.title}
                           className="w-full h-full object-cover"
                         />
@@ -229,7 +359,6 @@ export function CartPage() {
                       )}
                     </div>
 
-                    {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <Link
                         to={`/catalog/${item.product.categorySlug}/${item.product.subcategorySlug}/product/${item.product.slug}`}
@@ -240,14 +369,13 @@ export function CartPage() {
                       <p className="text-sm text-muted-foreground mt-1">
                         Арт. {item.product.sku}
                       </p>
-                      
-                      {item.product.priceOnRequest && (
+
+                      {!item.product.price && (
                         <p className="text-xs text-primary font-medium mt-1">
                           Цена по запросу
                         </p>
                       )}
 
-                      {/* Quantity Controls */}
                       <div className="flex items-center gap-3 mt-3">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -267,7 +395,6 @@ export function CartPage() {
                       </div>
                     </div>
 
-                    {/* Price & Remove */}
                     <div className="flex flex-col items-end justify-between">
                       <button
                         onClick={() => removeFromCart(item.product.id)}
@@ -278,9 +405,9 @@ export function CartPage() {
                       </button>
                       <div className="text-right">
                         <p className="text-lg font-bold text-foreground">
-                          {(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽
+                          {!item.product.price ? 'По запросу' : `${(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽`}
                         </p>
-                        {!item.product.priceOnRequest && (
+                        {item.product.price && (
                           <p className="text-xs text-muted-foreground">
                             {item.product.price.toLocaleString('ru-RU')} ₽/шт
                           </p>
@@ -291,7 +418,6 @@ export function CartPage() {
                 ))}
               </div>
 
-              {/* Clear Cart Button */}
               {items.length > 0 && (
                 <div className="mt-6">
                   <Button
@@ -306,7 +432,6 @@ export function CartPage() {
               )}
             </div>
 
-            {/* Order Summary Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 rounded-xl border border-border bg-card p-6">
                 <h3 className="text-lg font-bold text-foreground mb-4">Итого</h3>
@@ -314,7 +439,7 @@ export function CartPage() {
                 <div className="space-y-3 mb-6 pb-6 border-b border-border">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Количество товаров</span>
-                    <span className="font-medium">{totalItems} {totalItems === 1 ? 'шт' : totalItems < 5 ? 'шт' : 'шт'}</span>
+                    <span className="font-medium">{totalItems} шт</span>
                   </div>
                   <div className="flex justify-between text-base">
                     <span className="text-muted-foreground">Стоимость товаров</span>
@@ -330,15 +455,15 @@ export function CartPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button 
-                    className="w-full gap-2" 
+                  <Button
+                    className="w-full gap-2"
                     size="lg"
                     onClick={() => setCheckoutStep('form')}
                   >
                     <FiCheck className="h-4 w-4" />
                     Оформить заказ
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full"

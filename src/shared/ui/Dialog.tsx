@@ -35,7 +35,6 @@ export function Dialog({ open, onOpenChange, title, description, children, class
     <AnimatePresence>
       {open && (
         <>
-          {/* Overlay with smooth fade animation */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -46,9 +45,8 @@ export function Dialog({ open, onOpenChange, title, description, children, class
             aria-hidden="true"
           />
 
-          {/* Dialog content with scale + fade animation */}
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? 'dialog-title' : undefined}
@@ -60,26 +58,30 @@ export function Dialog({ open, onOpenChange, title, description, children, class
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
               className={cn(
-                'relative w-full max-w-lg mx-auto rounded-xl border border-border bg-background p-6 shadow-lg',
+                'relative w-full max-w-lg mx-auto rounded-xl border border-border bg-background shadow-lg my-8',
                 className
               )}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
-              {(title || description) && (
-                <div className="mb-4">
-                  {title && (
-                    <h2 id="dialog-title" className="text-lg font-semibold">
-                      {title}
-                    </h2>
-                  )}
-                  {description && (
-                    <p id="dialog-description" className="text-sm text-muted-foreground mt-1">
-                      {description}
-                    </p>
-                  )}
+              <div className="max-h-[calc(100vh-4rem)] overflow-y-auto">
+                {(title || description) && (
+                  <div className="sticky top-0 z-10 bg-background px-6 pt-6 pb-4 border-b border-border">
+                    {title && (
+                      <h2 id="dialog-title" className="text-lg font-semibold">
+                        {title}
+                      </h2>
+                    )}
+                    {description && (
+                      <p id="dialog-description" className="text-sm text-muted-foreground mt-1">
+                        {description}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <div className="px-6 pb-6">
+                  {children}
                 </div>
-              )}
-              {children}
+              </div>
             </motion.div>
           </div>
         </>

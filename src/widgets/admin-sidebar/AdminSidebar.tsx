@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
+import { FiBarChart2, FiBox, FiMenu, FiShoppingCart, FiTool, FiInbox, FiSettings, FiX } from 'react-icons/fi'
 import { cn } from '@/shared/lib/cn'
 
 export function AdminSidebar() {
@@ -7,57 +8,60 @@ export function AdminSidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   const menuItems = [
-    { to: '/admin', label: 'Дашборд', icon: '📊' },
-    { to: '/admin/products', label: 'Продукты', icon: '📦' },
-    { to: '/admin/orders', label: 'Заказы', icon: '🛒' },
+    { to: '/admin', label: 'Дашборд', icon: FiBarChart2 },
+    { to: '/admin/products', label: 'Продукты', icon: FiBox },
+    { to: '/admin/services', label: 'Услуги', icon: FiTool },
+    { to: '/admin/requests', label: 'Заявки', icon: FiInbox },
+    { to: '/admin/orders', label: 'Заказы', icon: FiShoppingCart },
+    { to: '/admin/settings', label: 'Настройки', icon: FiSettings },
   ]
 
   return (
     <>
-      {/* Мобильная кнопка открытия */}
       <button
         type="button"
-        className="lg:hidden fixed left-4 top-20 z-40 p-2 rounded-lg bg-[hsl(var(--background))] border border-border shadow-sm"
+        className="fixed left-4 top-20 z-40 rounded-lg border border-border bg-[hsl(var(--background))] p-2 shadow-sm lg:hidden"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
       >
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        {isMobileOpen ? (
+          <FiX className="h-6 w-6" />
+        ) : (
+          <FiMenu className="h-6 w-6" />
+        )}
       </button>
 
-      {/* Затемнение фона для мобильных */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       <aside
         className={cn(
-          'fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[hsl(var(--background))] border-r border-border overflow-y-auto transition-transform duration-300 z-50',
+          'fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-64 overflow-y-auto border-r border-border bg-[hsl(var(--background))] transition-transform duration-300',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
-          'lg:translate-x-0 lg:z-30'
+          'lg:z-30 lg:translate-x-0'
         )}
       >
-        <nav className="p-4 space-y-2">
-          {/* Основные пункты меню */}
+        <nav className="space-y-2 p-4">
           <div className="space-y-1">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.to
+              const Icon = item.icon
               return (
                 <Link
                   key={item.to}
                   to={item.to}
                   onClick={() => setIsMobileOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))]'
                       : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
                   )}
                 >
-                  <span className="text-lg">{item.icon}</span>
+                  <Icon className="h-5 w-5" />
                   <span>{item.label}</span>
                 </Link>
               )

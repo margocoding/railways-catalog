@@ -1,4 +1,4 @@
-import { Header } from './header/Header'
+import { Header } from './header/ui/Header'
 import { Footer } from './footer/Footer'
 
 export function Layout({ children }: { children: React.ReactNode }) {

@@ -1,32 +1,56 @@
-import type { AuthTokens, LoginCredentials } from '../model/types'
+import { baseApi } from '@/shared/api'
+import { removeToken } from '../model/auth.model'
 
-// Мок API для авторизации
-export async function loginApi(credentials: LoginCredentials): Promise<AuthTokens> {
-  // Имитация задержки сети
-  await new Promise(resolve => setTimeout(resolve, 500))
+export interface LoginDto {
+  username: string
+  password: string
+}
 
-  // Проверка тестовых данных
-  if (credentials.username === 'admin' && credentials.password === 'admin') {
-    return {
-      accessToken: 'mock-jwt-access-token-' + Date.now(),
-      refreshToken: 'mock-jwt-refresh-token-' + Date.now()
-    }
+export interface LoginResponse {
+  token: string
+  user: Profile
+}
+
+export interface Profile {
+  id: string
+  username: string
+  role: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string
+  newPassword: string
+}
+
+export interface ChangeUsernameDto {
+  currentPassword: string
+  newUsername: string
+}
+
+export const authApi = {
+  async login(dto: LoginDto): Promise<LoginResponse> {
+    const { data } = await baseApi.post<LoginResponse>('/auth/login', dto)
+    return data
+  },
+
+  async getProfile(): Promise<Profile> {
+    const { data } = await baseApi.get<Profile>('/auth/profile')
+    return data
+  },
+
+  async changePassword(dto: ChangePasswordDto): Promise<Profile> {
+    const { data } = await baseApi.post<Profile>('/auth/change-password', dto)
+    return data
+  },
+
+  async changeUsername(dto: ChangeUsernameDto): Promise<Profile> {
+    const { data } = await baseApi.post<Profile>('/auth/change-username', dto)
+    return data
+  },
+
+  async logout() {
+    removeToken();
   }
-
-  throw new Error('Неверный логин или пароль')
-}
-
-export async function validateTokenApi(token: string): Promise<boolean> {
-  // Имитация задержки сети
-  await new Promise(resolve => setTimeout(resolve, 300))
-
-  // Простая валидация - токен должен начинаться с mock-jwt-access-token
-  return token.startsWith('mock-jwt-access-token')
-}
-
-export async function logoutApi(): Promise<void> {
-  // Имитация задержки сети
-  await new Promise(resolve => setTimeout(resolve, 300))
-  // В реальном проекте здесь был бы запрос к серверу для инвалидации токена
-  return Promise.resolve()
 }

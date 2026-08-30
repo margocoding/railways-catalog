@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Dialog } from '@/shared/ui/Dialog'
 import { Button } from '@/shared/ui/Button'
-import type { Category } from '@/entities/product/model/types'
+import type { Category } from '@/entities/category'
 
 interface DeleteCategoryDialogProps {
   open: boolean

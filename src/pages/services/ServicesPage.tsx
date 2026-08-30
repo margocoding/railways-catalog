@@ -1,53 +1,18 @@
-import { FiCheck, FiPhone } from 'react-icons/fi'
-import type { Service } from '../../entities/service/model/mocks'
-import { SERVICES } from '../../entities/service/model/mocks'
-import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
-import { Button } from '../../shared/ui/Button'
-import { Input } from '../../shared/ui/Input'
-import { Textarea } from '../../shared/ui/Textarea'
-import { Layout } from '../../widgets/Layout'
-import { Link } from 'react-router'
-import { useState } from 'react'
+// src/pages/services/ui/ServicesPage.tsx
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { Layout } from '@/widgets/Layout'
+import { useServices } from '@/entities/service/model/hooks/useServices'
+import { ServiceListItem } from '@/entities/service/ui/ServiceListItem'
+import { HowWeWork } from '@/widgets/how-we-work/ui/HowWeWork'
+import { ServiceRequestForm } from '@/features/service-request/ServiceRequestForm'
 
 export function ServicesPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-    comment: ''
-  })
+  const { services, isLoading, error } = useServices()
 
   const breadcrumbs = [
     { label: 'Главная', href: '/' },
     { label: 'Услуги', href: undefined },
   ]
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    // Мок запроса на бекенд без serviceId (null)
-    const payload = {
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      address: formData.address,
-      comment: formData.comment,
-      serviceId: null // Нет конкретной услуги
-    }
-    
-    console.log('Отправка общей заявки:', payload)
-    
-    // Имитация запроса к API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    setIsSubmitting(false)
-    setSubmitted(true)
-    setFormData({ name: '', phone: '', email: '', address: '', comment: '' })
-  }
 
   return (
     <Layout>
@@ -59,245 +24,36 @@ export function ServicesPage() {
           Не только поставка, но и обработка и монтаж
         </p>
 
-        {/* Services List - Vertical layout instead of grid */}
-        <div className="space-y-4 mb-12">
-          {SERVICES.map((service) => (
-            <ServiceListItem key={service.slug} service={service} />
-          ))}
-        </div>
-
-        {/* How we work */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Как мы работаем</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StepCard 
-              number="01" 
-              title="Заявка" 
-              description="Оставляете заявку на сайте или по телефону" 
-            />
-            <StepCard 
-              number="02" 
-              title="Расчёт" 
-              description="Рассчитываем стоимость и сроки" 
-            />
-            <StepCard 
-              number="03" 
-              title="Договор" 
-              description="Заключаем договор, выставляем счёт" 
-            />
-            <StepCard 
-              number="04" 
-              title="Выполнение" 
-              description="Выполняем работы, отгружаем результат" 
-            />
+        {isLoading && (
+          <div className="py-12 text-center">
+            <p className="text-[hsl(var(--muted-foreground))]">Загрузка услуг...</p>
           </div>
-        </div>
+        )}
 
-        {/* CTA Form */}
-        <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 md:p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Заказать услугу</h2>
-              <p className="text-[hsl(var(--muted-foreground))] mb-6">
-                Оставьте заявку — перезвоним в течение 15 минут
-              </p>
-              <ul className="space-y-3 text-sm text-[hsl(var(--muted-foreground))]">
-                <li className="flex items-center gap-2">
-                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
-                  Бесплатный расчёт стоимости
-                </li>
-                <li className="flex items-center gap-2">
-                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
-                  Консультация специалиста
-                </li>
-                <li className="flex items-center gap-2">
-                  <FiCheck className="w-4 h-4 text-[hsl(var(--primary))]" />
-                  Гибкие условия оплаты
-                </li>
-              </ul>
-            </div>
-            
-            {submitted ? (
-              <div className="text-center py-8">
-                <div className="text-5xl mb-4">✅</div>
-                <h3 className="text-lg font-bold mb-2">Заявка отправлена!</h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">
-                  Мы свяжемся с вами в ближайшее время
-                </p>
-                <Button 
-                  variant="primary" 
-                  onClick={() => {
-                    setSubmitted(false)
-                    setFormData({ name: '', phone: '', email: '', address: '', comment: '' })
-                  }}
-                  className="w-full"
-                >
-                  Отправить ещё заявку
-                </Button>
-              </div>
-            ) : (
-              <form className="space-y-4" onSubmit={handleSubmit}>
-                <Input 
-                  placeholder="Ваше имя" 
-                  size="lg"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-                <Input 
-                  type="tel" 
-                  placeholder="Телефон" 
-                  size="lg"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  required
-                />
-                <Input 
-                  type="email" 
-                  placeholder="Email" 
-                  size="lg"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-                <Input 
-                  placeholder="Адрес доставки" 
-                  size="lg"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                />
-                <Textarea 
-                  placeholder="Комментарий к заказу" 
-                  rows={3}
-                  value={formData.comment}
-                  onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                />
-                <Button 
-                  variant="primary" 
-                  size="lg" 
-                  className="w-full"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>Отправка...</>
-                  ) : (
-                    <>
-                      <FiPhone className="w-5 h-5" />
-                      Заказать услугу
-                    </>
-                  )}
-                </Button>
-              </form>
-            )}
+        {error && (
+          <div className="py-12 text-center">
+            <p className="text-red-500">{error}</p>
           </div>
-        </div>
+        )}
+
+        {!isLoading && !error && services.length > 0 && (
+          <div className="space-y-4 mb-12">
+            {services.map((service) => (
+              <ServiceListItem key={service.id} service={service} />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && !error && services.length === 0 && (
+          <div className="py-12 text-center">
+            <p className="text-[hsl(var(--muted-foreground))]">Услуги не найдены</p>
+          </div>
+        )}
+
+        <HowWeWork />
+
+        <ServiceRequestForm />
       </div>
     </Layout>
-  )
-}
-
-function ServiceListItem({ service }: { service: Service }) {
-  return (
-    <Link to={`/services/${service.slug}`} className="block">
-      <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 hover:border-[hsl(var(--primary))/0.5] transition-all duration-300">
-        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-          {/* Icon */}
-          <div className="text-4xl flex-shrink-0">{service.icon}</div>
-          
-          {/* Content */}
-          <div className="flex-grow">
-            <h3 className="text-xl font-bold mb-2 hover:text-[hsl(var(--primary))] transition-colors">
-              {service.title}
-            </h3>
-            <p className="text-[hsl(var(--muted-foreground))] mb-3">{service.description}</p>
-            
-            <ul className="space-y-1 text-sm text-[hsl(var(--muted-foreground))]">
-              {service.slug === 'cutting' && (
-                <>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Резка ж/д и крановых рельсов
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Точность ±1 мм
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Любая длина под заказ
-                  </li>
-                </>
-              )}
-              {service.slug === 'drilling' && (
-                <>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Отверстия любого диаметра
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    По чертежу заказчика
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Сверление без перегрева
-                  </li>
-                </>
-              )}
-              {service.slug === 'grinding' && (
-                <>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Устранение износа головки
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Восстановление профиля
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Продление срока службы
-                  </li>
-                </>
-              )}
-              {service.slug === 'dismantling' && (
-                <>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Полный комплекс работ
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Собственная техника
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
-                    Работы по всей России
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-          
-          {/* Button */}
-          <div className="flex-shrink-0">
-            <Link to={`/services/${service.slug}`} className="block w-full md:w-auto py-3 px-6 bg-accent-gradient rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-center">
-              <FiPhone className="w-5 h-5" />
-              Заказать
-            </Link>
-          </div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function StepCard({ number, title, description }: { number: string; title: string; description: string }) {
-  return (
-    <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6 text-center">
-      <div className="text-4xl font-black text-[hsl(var(--primary))] mb-2">{number}</div>
-      <h4 className="font-bold mb-2">{title}</h4>
-      <p className="text-sm text-[hsl(var(--muted-foreground))]">{description}</p>
-    </div>
   )
 }

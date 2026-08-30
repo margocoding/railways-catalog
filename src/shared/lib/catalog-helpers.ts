@@ -1,17 +1,8 @@
 import type { Product } from '../../entities/product/model/types'
-import {categories, subcategories} from "@/entities/product/model/mockData.ts";
 
 export interface BreadcrumbItem {
   label: string
   href?: string
-}
-
-export function getCategoryName(slug: string): string {
-  return categories.find(category => category.slug === slug)?.name ?? slug
-}
-
-export function getSubcategoryName(slug: string): string {
-  return subcategories.find(subcategory => subcategory.slug === slug)?.name ?? slug
 }
 
 export function getCategoryUrl(categorySlug: string) {
@@ -51,7 +42,7 @@ export function getSubcategoryUrl(
 }
 
 
-export function getProductBreadcrumbs(product: Product): BreadcrumbItem[] {
+export function getProductBreadcrumbs(product: Product, categoryName: string, subcategoryName?: string): BreadcrumbItem[] {
   const items: BreadcrumbItem[] = [
     {
       label: 'Главная',
@@ -62,15 +53,15 @@ export function getProductBreadcrumbs(product: Product): BreadcrumbItem[] {
       href: '/catalog',
     },
     {
-      label: getCategoryName(product.categorySlug),
-      href: `/catalog/${product.categorySlug}`,
+      label: categoryName,
+      href: `/catalog?category=${product.categorySlug}`,
     },
   ]
 
-  if (product.subcategorySlug) {
+  if (product.subcategorySlug && subcategoryName) {
     items.push({
-      label: getSubcategoryName(product.subcategorySlug),
-      href: `/catalog/${product.categorySlug}/${product.subcategorySlug}`,
+      label: subcategoryName,
+      href: `/catalog?category=${product.categorySlug}&subcategory=${product.subcategorySlug}`,
     })
   }
 
@@ -83,7 +74,9 @@ export function getProductBreadcrumbs(product: Product): BreadcrumbItem[] {
 
 export function getCategoryBreadcrumbs(
     categorySlug: string,
+    categoryName: string,
     subcategorySlug?: string,
+    subcategoryName?: string
 ): BreadcrumbItem[] {
   const items: BreadcrumbItem[] = [
     {
@@ -95,14 +88,14 @@ export function getCategoryBreadcrumbs(
       href: '/catalog',
     },
     {
-      label: getCategoryName(categorySlug),
+      label: categoryName,
       href: `/catalog?category=${categorySlug}`,
     },
   ]
 
-  if (subcategorySlug) {
+  if (subcategorySlug && subcategoryName) {
     items.push({
-      label: getSubcategoryName(subcategorySlug),
+      label: subcategoryName,
       href: `/catalog?category=${categorySlug}&subcategory=${subcategorySlug}`,
     })
   }
@@ -135,17 +128,4 @@ export function getConditionBadgeColor(condition: string): string {
       colors[condition] ??
       'bg-gray-500/20 text-gray-400 border-gray-500/30'
   )
-}
-export function getCategoryIcon(categoryId: string): string {
-  const icons: Record<string, string> = {
-    rails: '🛤️',
-    sleepers: '🟫',
-    fasteners: '🔩',
-    shoes: '👞',
-    buffers: '🛑',
-    metal: '📐',
-    tools: '🔨',
-  }
-
-  return icons[categoryId] || '📦'
 }

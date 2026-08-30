@@ -1,68 +1,145 @@
-import type { Product, Category, Subcategory } from '@/entities/product/model/types'
-import { categories, subcategories, products } from '@/entities/product/model/mockData'
+import { baseApi, type PaginatedResponse } from '@/shared/api';
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+  GetProductsParams,
+} from '../model/types';
 
-// Мок API для получения всех категорий
-export async function getCategoriesApi(): Promise<Category[]> {
-  return Promise.resolve(categories)
+export interface ProductDetailed extends Product {
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    image: string;
+  };
+  subcategory?: {
+    id: string;
+    name: string;
+    slug: string;
+    categoryId: string;
+    categorySlug: string;
+  };
+  similarProducts?: Product[];
 }
 
-// Мок API для получения всех субкатегорий
-export async function getSubcategoriesApi(): Promise<Subcategory[]> {
-  return Promise.resolve(subcategories)
-}
+export const productApi = {
+  async getAll(params?: GetProductsParams): Promise<PaginatedResponse<Product>> {
+    const queryParams: Record<string, any> = {
+      page: params?.page,
+      limit: params?.limit,
+      categorySlug: params?.category,
+      subcategorySlug: params?.subcategory,
+      search: params?.search,
+      sort: params?.sort,
+      condition: params?.condition !== 'all' ? params?.condition : undefined,
+      stock: params?.stock !== 'all' ? params?.stock : undefined,
+    };
 
-// Мок API для получения всех продуктов
-export async function getProductsApi(): Promise<Product[]> {
-  return Promise.resolve(products)
-}
+    if (params?.attributes) {
+      Object.entries(params.attributes).forEach(([key, value]) => {
+        if (value && value !== 'all') {
+          queryParams[`attribute_${key}`] = value;
+        }
+      });
+    }
 
-// Мок API для получения продуктов по категории и субкатегории
-export async function getProductsByCategoryApi(
-  categorySlug: string,
-  subcategorySlug?: string
-): Promise<Product[]> {
-  await new Promise(resolve => setTimeout(resolve, 300)) // Имитация задержки сети
-  
-  let filtered = products.filter(p => p.categorySlug === categorySlug)
-  
-  if (subcategorySlug) {
-    filtered = filtered.filter(p => p.subcategorySlug === subcategorySlug)
-  }
-  
-  return Promise.resolve(filtered)
-}
+    Object.keys(queryParams).forEach((key) => {
+      if (queryParams[key] === undefined) {
+        delete queryParams[key];
+      }
+    });
 
-// Мок API для создания продукта
-export async function createProductApi(product: Omit<Product, 'id'>): Promise<Product> {
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  const newProduct: Product = {
-    ...product,
-    id: `new-${Date.now()}`,
-  }
-  
-  return Promise.resolve(newProduct)
-}
+    const { data } = await baseApi.get<PaginatedResponse<Product>>('/product', {
+      params: queryParams,
+    });
+    return data;
+  },
 
-// Мок API для обновления продукта
-export async function updateProductApi(id: string, updates: Partial<Product>): Promise<Product> {
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  const product = products.find(p => p.id === id)
-  if (!product) {
-    throw new Error('Product not found')
-  }
-  
-  return Promise.resolve({ ...product, ...updates })
-}
+  async getBySlug(slug: string): Promise<ProductDetailed> {
+    const { data } = await baseApi.get<ProductDetailed>(`/product/${slug}`);
+    return data;
+  },
 
-// Мок API для удаления продукта
-export async function deleteProductApi(id: string): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 300))
-  const product = products.find(p => p.id === id)
-  if (!product) {
-    throw new Error('Product not found')
-  }
-  // В мок-реализации просто логируем
-  console.log('Deleting product:', id)
-}
+  async create(dto: CreateProductDto, images: File[] = []): Promise<Product> {
+    const formData = new FormData();
+
+    formData.append('sku', dto.sku);
+    formData.append('title', dto.title);
+    formData.append('slug', dto.slug);
+    formData.append('gost', dto.gost);
+    formData.append('price', String(dto.price));
+    formData.append('stock', String(dto.stock));
+    formData.append('condition', dto.condition);
+    formData.append('categorySlug', dto.categorySlug);
+
+    if (dto.subcategorySlug) {
+      formData.append('subcategorySlug', dto.subcategorySlug);
+    }
+
+    if (dto.description) {
+      formData.append('description', dto.description);
+    }
+
+    if (dto.specs && dto.specs.length > 0) {
+      formData.append('specs', JSON.stringify(dto.specs));
+    }
+
+    if (dto.analogues && dto.analogues.length > 0) {
+      formData.append('analogues', JSON.stringify(dto.analogues));
+    }
+
+    images.forEach((image) => {
+      formData.append('images', image);
+    });
+
+    const { data } = await baseApi.post<Product>('/product', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  },
+
+  async update(
+    id: string,
+    dto: UpdateProductDto,
+    newImages: File[] = [],
+    existingImages: string[] = [],
+  ): Promise<Product> {
+    const formData = new FormData();
+
+    if (dto.sku !== undefined) formData.append('sku', dto.sku);
+    if (dto.title !== undefined) formData.append('title', dto.title);
+    if (dto.slug !== undefined) formData.append('slug', dto.slug);
+    if (dto.gost !== undefined) formData.append('gost', dto.gost);
+    if (dto.price !== undefined) formData.append('price', String(dto.price));
+    if (dto.stock !== undefined) formData.append('stock', String(dto.stock));
+    if (dto.condition !== undefined) formData.append('condition', dto.condition);
+    if (dto.categorySlug !== undefined) formData.append('categorySlug', dto.categorySlug);
+    if (dto.subcategorySlug !== undefined) formData.append('subcategorySlug', dto.subcategorySlug);
+    if (dto.description !== undefined) formData.append('description', dto.description);
+    if (dto.specs !== undefined) formData.append('specs', JSON.stringify(dto.specs));
+    if (dto.analogues !== undefined) formData.append('analogues', JSON.stringify(dto.analogues));
+
+    existingImages.forEach((img) => {
+      formData.append('images', img);
+    });
+
+    newImages.forEach((image) => {
+      formData.append('images', image);
+    });
+
+    const { data } = await baseApi.put<Product>(`/product/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await baseApi.delete(`/product/${id}`);
+  },
+};

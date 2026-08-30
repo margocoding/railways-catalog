@@ -6,14 +6,34 @@ import { Badge } from '@/shared/ui/Badge'
 import { Button } from '@/shared/ui/Button'
 import { Input } from '@/shared/ui/Input'
 import { Select } from '@/shared/ui/Select'
-import { Skeleton } from '@/shared/ui/Skeleton'
 import { EmptyState } from '@/shared/ui/EmptyState'
+import { Pagination } from '@/shared/ui/Pagination'
+import { getImageUrl } from '@/shared/lib'
 import type { OrderStatus } from '@/entities/order/model/types'
 import { ORDER_STATUS_LABELS, ORDER_STATUS_VARIANTS } from '@/entities/order/model/types'
+
+const statusOptions = [
+  { value: 'all', label: 'Все статусы' },
+  { value: 'new', label: 'Новый' },
+  { value: 'processing', label: 'В обработке' },
+  { value: 'completed', label: 'Выполнен' },
+  { value: 'cancelled', label: 'Отменён' },
+]
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 
 export function AdminOrdersPage() {
   const {
     orders,
+    pagination,
     isLoading,
     error,
     selectedOrder,
@@ -24,6 +44,7 @@ export function AdminOrdersPage() {
     loadOrderById,
     updateOrderStatus,
     setSelectedOrder,
+    handlePageChange,
   } = useAdminOrders()
 
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -46,33 +67,18 @@ export function AdminOrdersPage() {
     setIsChangingStatus(false)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+  const getTotalItems = () => {
+    if (!selectedOrder) return 0
+    return selectedOrder.items.reduce((sum, item) => sum + item.quantity, 0)
   }
-
-  const statusOptions = [
-    { value: 'all', label: 'Все статусы' },
-    { value: 'new', label: 'Новый' },
-    { value: 'processing', label: 'В обработке' },
-    { value: 'completed', label: 'Выполнен' },
-    { value: 'cancelled', label: 'Отменён' },
-  ]
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-black mb-2 text-[hsl(var(--foreground))]">Заказы</h1>
         <p className="text-[hsl(var(--muted-foreground))]">Управление заказами клиентов</p>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="flex-1 relative">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -91,12 +97,9 @@ export function AdminOrdersPage() {
         />
       </div>
 
-      {/* Content */}
       {isLoading && orders.length === 0 ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-xl" />
-          ))}
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground">Загрузка заказов...</p>
         </div>
       ) : error ? (
         <EmptyState
@@ -110,43 +113,66 @@ export function AdminOrdersPage() {
         />
       ) : orders.length === 0 ? (
         <EmptyState
-          title="Заказов пока нет"
-          description="Когда пользователи оформят заказы, они появятся здесь"
+          title={
+            searchQuery || statusFilter !== 'all'
+              ? 'Заказы не найдены'
+              : 'Заказов пока нет'
+          }
+          description={
+            searchQuery || statusFilter !== 'all'
+              ? 'Измените параметры фильтрации или поиска'
+              : 'Когда пользователи оформят заказы, они появятся здесь'
+          }
         />
       ) : (
-        /* Orders Table */
-        <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden">
-          <div className="overflow-x-auto">
+        <>
+          <div className="hidden md:block overflow-x-auto rounded-xl border border-border bg-card">
             <table className="w-full">
-              <thead className="bg-[hsl(var(--muted))]">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Заказ</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Клиент</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Товары</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Сумма</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Статус</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Дата</th>
-                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider">Действия</th>
+              <thead className="bg-muted/30">
+                <tr className="border-b border-border">
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Заказ
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Клиент
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Товары
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Сумма
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Статус
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Дата
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Действия
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[hsl(var(--border))]">
+              <tbody className="divide-y divide-border">
                 {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[hsl(var(--muted))/50] transition-colors">
+                  <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-4">
-                      <span className="font-mono font-semibold text-[hsl(var(--primary))]">
+                      <span className="font-mono font-semibold text-primary">
                         {order.orderNumber}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm font-medium">{order.customer.name}</div>
-                      <div className="text-xs text-muted-foreground">{order.customer.phone}</div>
+                      <div className="text-sm font-medium">{order.name}</div>
+                      <div className="text-xs text-muted-foreground">{order.phone}</div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm">{order.totalItems} шт.</span>
+                      <span className="text-sm">
+                        {order.items.reduce((s, i) => s + i.quantity, 0)} шт.
+                      </span>
                     </td>
                     <td className="px-4 py-4">
                       <span className="font-semibold">
-                        {order.totalPrice.toLocaleString('ru-RU')} ₽
+                        {order.totalAmount.toLocaleString('ru-RU')} ₽
                       </span>
                     </td>
                     <td className="px-4 py-4">
@@ -173,19 +199,73 @@ export function AdminOrdersPage() {
               </tbody>
             </table>
           </div>
-        </div>
+
+          <div className="md:hidden space-y-4">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="rounded-xl border border-border bg-card p-4 space-y-3"
+              >
+                <div className="flex justify-between items-start gap-3">
+                  <div>
+                    <span className="font-mono font-semibold text-primary">
+                      {order.orderNumber}
+                    </span>
+                    <div className="text-sm font-medium mt-1">{order.name}</div>
+                    <div className="text-xs text-muted-foreground">{order.phone}</div>
+                  </div>
+                  <Badge variant={ORDER_STATUS_VARIANTS[order.status]}>
+                    {ORDER_STATUS_LABELS[order.status]}
+                  </Badge>
+                </div>
+
+                <div className="flex justify-between items-center pt-2 border-t border-border/50">
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">
+                      {order.items.reduce((s, i) => s + i.quantity, 0)} шт.
+                    </span>
+                  </div>
+                  <span className="font-semibold text-primary">
+                    {order.totalAmount.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center pt-2 border-t border-border/50">
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(order.createdAt)}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewOrder(order.id)}
+                    className="gap-2"
+                  >
+                    <FiEye className="h-4 w-4" />
+                    Просмотр
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
       )}
 
-      {/* Order Detail Dialog */}
       {selectedOrder && (
         <Dialog
           open={isDetailOpen}
           onOpenChange={handleCloseDetail}
           title={`Заказ ${selectedOrder.orderNumber}`}
-          className="max-w-2xl max-h-[90vh] overflow-y-auto"
+          className="max-w-2xl"
         >
           <div className="space-y-6">
-            {/* Status & Date */}
             <div className="flex items-center justify-between">
               <Badge variant={ORDER_STATUS_VARIANTS[selectedOrder.status]}>
                 {ORDER_STATUS_LABELS[selectedOrder.status]}
@@ -195,53 +275,51 @@ export function AdminOrdersPage() {
               </span>
             </div>
 
-            {/* Customer Info */}
-            <div className="rounded-lg border border-[hsl(var(--border))] p-4 bg-[hsl(var(--muted))/30]">
+            <div className="rounded-lg border border-border p-4 bg-muted/30">
               <h3 className="font-bold mb-3">Контактные данные</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Клиент:</span>
-                  <span className="font-medium">{selectedOrder.customer.name}</span>
+                  <span className="font-medium">{selectedOrder.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Телефон:</span>
-                  <span>{selectedOrder.customer.phone}</span>
+                  <span>{selectedOrder.phone}</span>
                 </div>
-                {selectedOrder.customer.email && (
+                {selectedOrder.email && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Email:</span>
-                    <span>{selectedOrder.customer.email}</span>
+                    <span>{selectedOrder.email}</span>
                   </div>
                 )}
-                {selectedOrder.customer.address && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Адрес:</span>
-                    <span className="text-right max-w-[200px]">{selectedOrder.customer.address}</span>
+                {selectedOrder.address && (
+                  <div className="flex justify-between gap-4">
+                    <span className="text-muted-foreground shrink-0">Адрес:</span>
+                    <span className="text-right">{selectedOrder.address}</span>
                   </div>
                 )}
-                {selectedOrder.customer.comment && (
-                  <div className="pt-2 mt-2 border-t border-[hsl(var(--border))]">
+                {selectedOrder.comment && (
+                  <div className="pt-2 mt-2 border-t border-border">
                     <span className="text-muted-foreground block mb-1">Комментарий:</span>
-                    <p className="text-sm">{selectedOrder.customer.comment}</p>
+                    <p className="text-sm">{selectedOrder.comment}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Order Items */}
             <div>
               <h3 className="font-bold mb-3">Товары в заказе</h3>
               <div className="space-y-3">
-                {selectedOrder.items.map((item, index) => (
+                {selectedOrder.items.map((item) => (
                   <div
-                    key={index}
-                    className="flex gap-4 p-3 rounded-lg border border-[hsl(var(--border))] bg-card"
+                    key={item.id}
+                    className="flex gap-4 p-3 rounded-lg border border-border bg-card"
                   >
                     <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden shrink-0">
-                      {item.product.images[0] ? (
+                      {item.productImage ? (
                         <img
-                          src={item.product.images[0]}
-                          alt={item.product.title}
+                          src={getImageUrl(item.productImage)}
+                          alt={item.productTitle}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -251,10 +329,12 @@ export function AdminOrdersPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{item.product.title}</p>
-                      <p className="text-xs text-muted-foreground">Арт. {item.product.sku}</p>
+                      <p className="font-medium truncate">{item.productTitle}</p>
+                      <p className="text-xs text-muted-foreground">Арт. {item.productSku}</p>
                       <div className="flex items-center gap-4 mt-1 text-sm">
-                        <span>{item.quantity} шт × {item.price.toLocaleString('ru-RU')} ₽</span>
+                        <span>
+                          {item.quantity} шт × {item.price.toLocaleString('ru-RU')} ₽
+                        </span>
                       </div>
                     </div>
                     <div className="text-right font-semibold">
@@ -265,18 +345,16 @@ export function AdminOrdersPage() {
               </div>
             </div>
 
-            {/* Total */}
-            <div className="border-t border-[hsl(var(--border))] pt-4">
+            <div className="border-t border-border pt-4">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Итого ({selectedOrder.totalItems} шт):</span>
-                <span className="text-xl font-bold text-[hsl(var(--primary))]">
-                  {selectedOrder.totalPrice.toLocaleString('ru-RU')} ₽
+                <span className="text-muted-foreground">Итого ({getTotalItems()} шт):</span>
+                <span className="text-xl font-bold text-primary">
+                  {selectedOrder.totalAmount.toLocaleString('ru-RU')} ₽
                 </span>
               </div>
             </div>
 
-            {/* Status Change */}
-            <div className="border-t border-[hsl(var(--border))] pt-4">
+            <div className="border-t border-border pt-4">
               <h3 className="font-bold mb-3">Изменить статус</h3>
               <div className="flex flex-wrap gap-2">
                 {(Object.keys(ORDER_STATUS_LABELS) as OrderStatus[]).map((status) => {
@@ -296,7 +374,6 @@ export function AdminOrdersPage() {
               </div>
             </div>
 
-            {/* Close button */}
             <div className="flex justify-end pt-2">
               <Button variant="outline" onClick={handleCloseDetail} className="gap-2">
                 <FiX className="h-4 w-4" />

@@ -2,18 +2,19 @@ import { useState } from 'react'
 import { FiFilter, FiSearch, FiX } from 'react-icons/fi'
 
 import type {
-  FilterOption,
   ProductCondition,
+  SortOption,
 } from '../../entities/product/model/types'
 import { Button } from '../../shared/ui/Button'
 import { Input } from '../../shared/ui/Input'
 import { Select } from '../../shared/ui/Select'
+import type { FilterOption } from '@/entities/category'
 
 export interface FilterState {
   search: string
   condition: ProductCondition | 'all'
   stock: 'in-stock' | 'on-order' | 'all'
-  sort: 'name' | 'price-asc' | 'price-desc' | 'popular'
+  sort: SortOption
   attributes: Record<string, string>
 }
 
@@ -36,6 +37,10 @@ const conditionOptions: FilterOption[] = [
     key: 'used',
     label: 'Б/У',
   },
+  {
+    key: 'service',
+    label: 'Сервис',
+  },
 ]
 
 const sortOptions: FilterOption[] = [
@@ -46,6 +51,10 @@ const sortOptions: FilterOption[] = [
   {
     key: 'popular',
     label: 'По популярности',
+  },
+  {
+    key: 'newest',
+    label: 'Сначала новые',
   },
   {
     key: 'price-asc',
@@ -126,96 +135,93 @@ export function ProductFilter({
 
   return (
     <>
-   <div className="mb-6 hidden flex-wrap items-center gap-3 lg:flex">
-  <div className="relative min-w-[320px] flex-[1_1_420px]">
-    <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="mb-6 hidden flex-wrap items-center gap-3 lg:flex">
+        <div className="relative min-w-[320px] flex-[1_1_420px]">
+          <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
-    <Input
-      value={currentFilters.search}
-      onChange={(event) =>
-        handleChange('search', event.target.value)
-      }
-      placeholder="Поиск по названию, артикулу или ГОСТу"
-      className="h-12 w-full bg-card pl-9 pr-9"
-    />
+          <Input
+            value={currentFilters.search}
+            onChange={(event) =>
+              handleChange('search', event.target.value)
+            }
+            placeholder="Поиск по названию, артикулу или ГОСТу"
+            className="h-12 w-full bg-card pl-9 pr-9"
+          />
 
-    {currentFilters.search && (
-      <button
-        type="button"
-        onClick={() => handleChange('search', '')}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-        aria-label="Очистить поиск"
-      >
-        <FiX className="h-4 w-4" />
-      </button>
-    )}
-  </div>
+          {currentFilters.search && (
+            <button
+              type="button"
+              onClick={() => handleChange('search', '')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Очистить поиск"
+            >
+              <FiX className="h-4 w-4" />
+            </button>
+          )}
+        </div>
 
-  {filters.map((filter) => (
-    <div
-      key={filter.key}
-      className="w-48 shrink-0"
-    >
-      <Select
-        size="md"
-        value={
-          currentFilters.attributes[filter.key] ?? 'all'
-        }
-        onChange={(event) =>
-          handleAttributeChange(
-            filter.key,
-            event.target.value,
-          )
-        }
-        options={[
-          {
-            value: 'all',
-            label: filter.label,
-          },
-          ...(filter.options ?? []),
-        ]}
-      />
-    </div>
-  ))}
+        {filters.map((filter) => (
+          <div
+            key={filter.key}
+            className="w-48 shrink-0"
+          >
+            <Select
+              size="md"
+              value={
+                currentFilters.attributes[filter.key] ?? 'all'
+              }
+              onChange={(event) =>
+                handleAttributeChange(
+                  filter.key,
+                  event.target.value,
+                )
+              }
+              options={[
+                {
+                  value: 'all',
+                  label: filter.label,
+                },
+                ...(filter.options ?? []),
+              ]}
+            />
+          </div>
+        ))}
 
-  <div className="w-48 shrink-0">
-    <Select
-      size="md"
-      value={currentFilters.condition}
-      onChange={(event) =>
-        handleChange(
-          'condition',
-          event.target.value as FilterState['condition'],
-        )
-      }
-      options={conditionOptions.map((option) => ({
-        value: option.key,
-        label: option.label,
-      }))}
-    />
-  </div>
+        <div className="w-48 shrink-0">
+          <Select
+            size="md"
+            value={currentFilters.condition}
+            onChange={(event) =>
+              handleChange(
+                'condition',
+                event.target.value as FilterState['condition'],
+              )
+            }
+            options={conditionOptions.map((option) => ({
+              value: option.key,
+              label: option.label,
+            }))}
+          />
+        </div>
 
-  <div className="w-52 shrink-0">
-    <Select
-      size="md"
-      value={currentFilters.sort}
-      onChange={(event) =>
-        handleChange(
-          'sort',
-          event.target.value as FilterState['sort'],
-        )
-      }
-      options={sortOptions.map((option) => ({
-        value: option.key,
-        label: option.label,
-      }))}
-    />
-  </div>
-</div>
+        <div className="w-52 shrink-0">
+          <Select
+            size="md"
+            value={currentFilters.sort}
+            onChange={(event) =>
+              handleChange(
+                'sort',
+                event.target.value as FilterState['sort'],
+              )
+            }
+            options={sortOptions.map((option) => ({
+              value: option.key,
+              label: option.label,
+            }))}
+          />
+        </div>
+      </div>
 
-      {/* =========================================================
-          MOBILE
-      ========================================================= */}
       <div className="mb-5 flex gap-2 lg:hidden">
         <div className="relative min-w-0 flex-1">
           <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -259,12 +265,8 @@ export function ProductFilter({
         </Button>
       </div>
 
-      {/* =========================================================
-          MOBILE DRAWER
-      ========================================================= */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          {/* Backdrop */}
           <button
             type="button"
             aria-label="Закрыть фильтры"
@@ -272,7 +274,6 @@ export function ProductFilter({
             onClick={() => setMobileOpen(false)}
           />
 
-          {/* Drawer */}
           <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-card p-5 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -298,7 +299,6 @@ export function ProductFilter({
             </div>
 
             <div className="space-y-5">
-              {/* Dynamic filters */}
               {filters.map((filter) => (
                 <div key={filter.key}>
                   <label className="mb-2 block text-sm font-medium text-foreground">
@@ -326,7 +326,6 @@ export function ProductFilter({
                 </div>
               ))}
 
-              {/* Condition */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-foreground">
                   Состояние
@@ -359,7 +358,6 @@ export function ProductFilter({
                 </div>
               </div>
 
-              {/* Sort */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-foreground">
                   Сортировка
@@ -380,7 +378,6 @@ export function ProductFilter({
                 />
               </div>
 
-              {/* Actions */}
               <div className="flex gap-2 pt-2">
                 {activeFiltersCount > 0 && (
                   <Button

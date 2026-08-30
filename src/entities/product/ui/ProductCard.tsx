@@ -1,8 +1,10 @@
 import { Link } from 'react-router'
+import { MdNoPhotography } from 'react-icons/md'
 
 import { formatPrice, getSpecValue } from '../../../shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
 import { AddToCartButton } from '../../../features/cart/ui/AddToCartButton'
+import { getImageUrl } from '@/shared/lib/product-helpers'
 
 interface ProductCardProps {
     product: Product
@@ -13,6 +15,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const weight = getSpecValue(product, 'weight')
 
+    const firstImage = product.images[0]
+    const imageUrl = firstImage ? getImageUrl(firstImage) : null
+
     return (
         <div className="group border-t border-border">
             <div className="hidden min-h-25 grid-cols-[80px_minmax(220px,1.8fr)_minmax(180px,1.2fr)_120px_120px_56px] items-center gap-4 md:grid">
@@ -20,14 +25,15 @@ export function ProductCard({ product }: ProductCardProps) {
                     to={productUrl}
                     className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg bg-muted"
                 >
-                    <img
-                        src={
-                            product.images[0] ||
-                            '/placeholders/product.svg'
-                        }
-                        alt={product.title}
-                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={product.title}
+                            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
+                    ) : (
+                        <MdNoPhotography className="h-10 w-10 text-muted-foreground" />
+                    )}
                 </Link>
 
                 <Link
@@ -49,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 <div>
-                    {product.priceOnRequest ? (
+                    {!product.price ? (
                         <span className="font-semibold text-primary">
                             По запросу
                         </span>
@@ -68,14 +74,15 @@ export function ProductCard({ product }: ProductCardProps) {
                     to={productUrl}
                     className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted"
                 >
-                    <img
-                        src={
-                            product.images[0] ||
-                            '/placeholders/product.svg'
-                        }
-                        alt={product.title}
-                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={product.title}
+                            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
+                    ) : (
+                        <MdNoPhotography className="h-12 w-12 text-muted-foreground" />
+                    )}
                 </Link>
 
                 <div className="min-w-0 flex-1">
@@ -99,7 +106,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
                     <div className="mt-3 flex items-center justify-between gap-3">
                         <div>
-                            {product.priceOnRequest ? (
+                            {!product.price ? (
                                 <span className="text-sm font-semibold text-primary">
                                     По запросу
                                 </span>

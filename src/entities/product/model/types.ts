@@ -1,56 +1,58 @@
-export type ProductCondition = 'new' | 'used' | 'service'
+// src/entities/product/model/types.ts
+export type ProductCondition = 'new' | 'used' | 'service';
 
-interface ProductSpecs {
-  id: string, value: number | string; unit?: string; label: string;
+export interface ProductSpec {
+  id: string;
+  label: string;
+  unit?: string;
+  value: number | string;
 }
 
 export interface Product {
-  id: string
-  sku: string
-  title: string
-  slug: string
-
-  gost: string
-  price: number
-  priceOnRequest?: boolean
-
-  stock: number
-  condition: ProductCondition
-
-  images: string[]
-
-  categorySlug: string
-  subcategorySlug: string
-
-  description?: string
-  specs?: ProductSpecs[];
-  analogues?: string[]
+  id: string;
+  sku: string;
+  title: string;
+  slug: string;
+  gost: string;
+  price: number;
+  stock: number;
+  condition: ProductCondition;
+  images: string[];
+  categorySlug: string;
+  subcategorySlug?: string;
+  description?: string;
+  specs?: ProductSpec[];
+  analogues?: string[];
 }
 
-export interface FilterOption {
-  key: string
-  label: string
-  type?: 'select' | 'range'
-    options?: Array<{
-    value: string
-    label: string
-  }>
+export interface CreateProductDto {
+  sku: string;
+  title: string;
+  slug: string;
+  gost: string;
+  price?: number;
+  stock: number;
+  condition: ProductCondition;
+  categorySlug: string;
+  subcategorySlug?: string;
+  description?: string;
+  specs?: Omit<ProductSpec, "id">[];
+  analogues?: string[];
 }
 
-export interface Category {
-  id: string
-  name: string
-  slug: string
-  description: string
-  image: string;
-  filters?: FilterOption[]
-}
+export type UpdateProductDto = Partial<CreateProductDto>;
 
-export interface Subcategory {
-  id: string
-  name: string
-  categoryId: string
-  categorySlug: string
-  slug: string
-  filters?: FilterOption[]
+export type SortOption = 'name' | 'price-asc' | 'price-desc' | 'popular' | 'newest';
+export type StockFilter = 'all' | 'in-stock' | 'on-order';
+
+export interface GetProductsParams {
+  page?: number;
+  limit?: number;
+  category?: string;
+  subcategory?: string;
+  search?: string;
+  condition?: ProductCondition | 'all';
+  stock?: StockFilter;
+  sort?: SortOption;
+  attributes?: Record<string, string>;
 }
