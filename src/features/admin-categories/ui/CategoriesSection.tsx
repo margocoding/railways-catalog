@@ -36,7 +36,7 @@ export function CategoriesSection({
     image: File | null,
   ): Promise<Category | null> => {
     const created = await categoryApi.create(dto, image)
-    onRefresh()
+    await onRefresh()
     return created
   }
 
