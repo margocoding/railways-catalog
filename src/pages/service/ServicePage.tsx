@@ -6,10 +6,68 @@ import { Layout } from '@/widgets/Layout'
 import { useService } from '@/entities/service/model/hooks/useService'
 import { getImageUrl } from '@/shared/lib'
 import { ServiceRequestForm } from '@/features/service-request/ServiceRequestForm'
+import { useSeo } from '@/shared/lib/use-seo'
 
 export function ServicePage() {
   const { slug } = useParams<{ slug: string }>()
   const { service, isLoading, error, notFound } = useService(slug)
+
+  const seoConfig = service
+    ? {
+        title: `${service.title} — заказать услугу в INVIA | tatrels.ru`,
+        description: `${service.description} Заказать услугу по выгодной цене. Доставка по всей России. Звоните: +7 (843) 259-73-00`,
+        keywords: `${service.title.toLowerCase()}, ${service.title.toLowerCase()} заказать, ${service.title.toLowerCase()} цена, услуги ЖД, верхнее строение пути, INVIA`,
+        canonical: `https://tatrels.ru/services/${service.slug}`,
+        ogTitle: service.title,
+        ogDescription: service.description,
+        ogUrl: `https://tatrels.ru/services/${service.slug}`,
+        ogImage: service.image ? getImageUrl(service.image) : 'https://tatrels.ru/og-image.jpg',
+        jsonLd: [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: service.title,
+            description: service.fullDescription || service.description,
+            provider: {
+              '@type': 'Organization',
+              name: 'ООО «ИНВИА»',
+              url: 'https://tatrels.ru',
+              telephone: '+7-843-259-73-00',
+              email: 'zakaz@ttr2.ru',
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: 'ул. Московская, зд. 4, помещ. 1',
+                addressLocality: 'Зеленодольск',
+                addressRegion: 'Республика Татарстан',
+                postalCode: '422549',
+                addressCountry: 'RU',
+              },
+            },
+            areaServed: {
+              '@type': 'Country',
+              name: 'Россия',
+            },
+            image: service.image ? getImageUrl(service.image) : undefined,
+            url: `https://tatrels.ru/services/${service.slug}`,
+            serviceType: service.title,
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: service.features?.slice(0, 5).map((feature) => ({
+              '@type': 'Question',
+              name: feature,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: `Мы предоставляем услугу «${service.title}» с гарантией качества. ${service.description}`,
+              },
+            })) || [],
+          },
+        ],
+      }
+    : null
+
+  useSeo(seoConfig)
 
   const breadcrumbs = service
     ? [
@@ -28,14 +86,14 @@ export function ServicePage() {
         <Breadcrumbs items={breadcrumbs} />
 
         {isLoading && (
-          <div className="py-16 text-center">
+          <div className="py-16 text-center" role="status" aria-live="polite">
             <p className="text-[hsl(var(--muted-foreground))]">Загрузка услуги...</p>
           </div>
         )}
 
         {error && !isLoading && (
           <div className="py-16 text-center">
-            <p className="text-red-500 mb-4">{error}</p>
+            <p className="text-red-500 mb-4" role="alert">{error}</p>
             <Link to="/services">
               <Button variant="primary">
                 <FiArrowLeft className="w-4 h-4 mr-2" />
@@ -59,12 +117,13 @@ export function ServicePage() {
 
         {service && !isLoading && !error && !notFound && (
           <>
-            <div className="mb-8">
+            <header className="mb-8">
               <Link
                 to="/services"
                 className="inline-flex items-center text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] transition-colors mb-4"
+                aria-label="Вернуться к списку услуг"
               >
-                <FiArrowLeft className="w-4 h-4 mr-1" />
+                <FiArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" />
                 Назад к услугам
               </Link>
 
@@ -73,12 +132,13 @@ export function ServicePage() {
                   {service.image ? (
                     <img
                       src={getImageUrl(service.image)}
-                      alt={service.title}
+                      alt={`${service.title} — услуга от компании INVIA`}
                       className="h-full w-full object-cover"
+                      loading="eager"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                      <svg className="h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex h-full w-full items-center justify-center text-muted-foreground" role="img" aria-label="Изображение услуги отсутствует">
+                      <svg className="h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
@@ -89,13 +149,13 @@ export function ServicePage() {
                   <p className="text-lg text-[hsl(var(--muted-foreground))]">{service.description}</p>
                 </div>
               </div>
-            </div>
+            </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               <div className="lg:col-span-2 space-y-8">
                 {service.fullDescription && (
-                  <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6">
-                    <h2 className="text-xl font-bold mb-4">Описание услуги</h2>
+                  <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6" aria-labelledby="service-description-heading">
+                    <h2 id="service-description-heading" className="text-xl font-bold mb-4">Описание услуги</h2>
                     <p className="text-[hsl(var(--muted-foreground))] leading-relaxed whitespace-pre-line">
                       {service.fullDescription}
                     </p>
@@ -103,12 +163,12 @@ export function ServicePage() {
                 )}
 
                 {service.features && service.features.length > 0 && (
-                  <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6">
-                    <h2 className="text-xl font-bold mb-4">Преимущества</h2>
-                    <ul className="space-y-3">
+                  <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6" aria-labelledby="service-features-heading">
+                    <h2 id="service-features-heading" className="text-xl font-bold mb-4">Преимущества</h2>
+                    <ul className="space-y-3" role="list">
                       {service.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-3">
-                          <FiCheck className="w-5 h-5 text-[hsl(var(--primary))] flex-shrink-0 mt-0.5" />
+                          <FiCheck className="w-5 h-5 text-[hsl(var(--primary))] flex-shrink-0 mt-0.5" aria-hidden="true" />
                           <span className="text-[hsl(var(--muted-foreground))]">{feature}</span>
                         </li>
                       ))}
@@ -116,34 +176,34 @@ export function ServicePage() {
                   </section>
                 )}
 
-                <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6">
-                  <h2 className="text-xl font-bold mb-4">Как мы работаем</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2">01</div>
-                      <h4 className="font-bold text-sm mb-1">Заявка</h4>
+                <section className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] p-6" aria-labelledby="service-process-heading">
+                  <h2 id="service-process-heading" className="text-xl font-bold mb-4">Как мы работаем</h2>
+                  <ol className="grid grid-cols-2 md:grid-cols-4 gap-4" role="list">
+                    <li className="text-center" role="listitem">
+                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2" aria-hidden="true">01</div>
+                      <h3 className="font-bold text-sm mb-1">Заявка</h3>
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">Оставляете заявку на сайте</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2">02</div>
-                      <h4 className="font-bold text-sm mb-1">Расчёт</h4>
+                    </li>
+                    <li className="text-center" role="listitem">
+                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2" aria-hidden="true">02</div>
+                      <h3 className="font-bold text-sm mb-1">Расчёт</h3>
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">Рассчитываем стоимость</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2">03</div>
-                      <h4 className="font-bold text-sm mb-1">Договор</h4>
+                    </li>
+                    <li className="text-center" role="listitem">
+                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2" aria-hidden="true">03</div>
+                      <h3 className="font-bold text-sm mb-1">Договор</h3>
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">Заключаем договор</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2">04</div>
-                      <h4 className="font-bold text-sm mb-1">Выполнение</h4>
+                    </li>
+                    <li className="text-center" role="listitem">
+                      <div className="text-3xl font-black text-[hsl(var(--primary))] mb-2" aria-hidden="true">04</div>
+                      <h3 className="font-bold text-sm mb-1">Выполнение</h3>
                       <p className="text-xs text-[hsl(var(--muted-foreground))]">Выполняем работу</p>
-                    </div>
-                  </div>
+                    </li>
+                  </ol>
                 </section>
               </div>
 
-              <div className="lg:col-span-1">
+              <aside className="lg:col-span-1" aria-label="Форма заказа услуги">
                 <div className="sticky top-20">
                   <ServiceRequestForm
                     serviceId={service.id}
@@ -151,7 +211,7 @@ export function ServicePage() {
                     compact
                   />
                 </div>
-              </div>
+              </aside>
             </div>
           </>
         )}
