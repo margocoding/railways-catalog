@@ -137,7 +137,7 @@ export function PopularProducts() {
 
                           {getSpecValue(product, 'weight') && (
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Масса: {getSpecValue(product, 'weight')}
+                              Масса: {getSpecValue(product, 'Масса')}
                             </p>
                           )}
                         </div>

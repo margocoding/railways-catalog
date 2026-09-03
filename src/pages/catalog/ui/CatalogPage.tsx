@@ -17,7 +17,6 @@ export function CatalogPage() {
     products,
     currentCategory,
     currentSubcategory,
-    filters,
     filterValue,
     pagination,
     loading,
@@ -55,7 +54,6 @@ export function CatalogPage() {
 
           <div className="min-w-0 flex-1">
             <ProductFilter
-              filters={filters}
               value={filterValue}
               onFilterChange={handleFilterChange}
             />

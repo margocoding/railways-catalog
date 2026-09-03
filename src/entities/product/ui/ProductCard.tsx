@@ -13,7 +13,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
     const productUrl = `/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`
 
-    const weight = getSpecValue(product, 'weight')
+    const weight = getSpecValue(product, "Масса")
 
     const firstImage = product.images[0]
     const imageUrl = firstImage ? getImageUrl(firstImage) : null

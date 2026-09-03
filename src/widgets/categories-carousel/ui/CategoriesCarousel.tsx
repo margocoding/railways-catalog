@@ -1,55 +1,53 @@
-import { motion } from 'framer-motion'
-import useEmblaCarousel from 'embla-carousel-react'
-import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router'
-import { FiArrowUpRight } from 'react-icons/fi'
-import { CarouselArrows } from '@/shared/ui/CarouselArrows'
-import { getImageUrl } from '@/shared/lib/product-helpers'
-import { useCategoriesCarousel } from '../model/use-categories-carousel'
-
-const PLACEHOLDER_IMAGE = '/placeholders/category.svg'
+import { motion } from "framer-motion";
+import useEmblaCarousel from "embla-carousel-react";
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router";
+import { FiArrowUpRight, FiImage } from "react-icons/fi";
+import { CarouselArrows } from "@/shared/ui/CarouselArrows";
+import { getImageUrl } from "@/shared/lib/product-helpers";
+import { useCategoriesCarousel } from "../model/use-categories-carousel";
 
 export function CategoriesCarousel() {
-  const { categories, loading } = useCategoriesCarousel()
+  const { categories, loading } = useCategoriesCarousel();
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
-    containScroll: 'trimSnaps',
-  })
+    align: "start",
+    containScroll: "trimSnaps",
+  });
 
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
 
   const updateButtons = useCallback(() => {
-    if (!emblaApi) return
+    if (!emblaApi) return;
 
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
-  }, [emblaApi])
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return
+    if (!emblaApi) return;
 
-    updateButtons()
+    updateButtons();
 
-    emblaApi.on('select', updateButtons)
-    emblaApi.on('reInit', updateButtons)
+    emblaApi.on("select", updateButtons);
+    emblaApi.on("reInit", updateButtons);
 
     return () => {
-      emblaApi.off('select', updateButtons)
-      emblaApi.off('reInit', updateButtons)
-    }
-  }, [emblaApi, updateButtons])
+      emblaApi.off("select", updateButtons);
+      emblaApi.off("reInit", updateButtons);
+    };
+  }, [emblaApi, updateButtons]);
 
   const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev()
-  }, [emblaApi])
+    emblaApi?.scrollPrev();
+  }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext()
-  }, [emblaApi])
+    emblaApi?.scrollNext();
+  }, [emblaApi]);
 
-  if (!loading && !categories.length) return null
+  if (!loading && !categories.length) return null;
 
   return (
     <section className="bg-background py-14">
@@ -84,10 +82,6 @@ export function CategoriesCarousel() {
                   </div>
                 ))
               : categories.map((category, index) => {
-                  const imageUrl = category.image
-                    ? getImageUrl(category.image)
-                    : PLACEHOLDER_IMAGE
-
                   return (
                     <div
                       key={category.id}
@@ -117,15 +111,19 @@ export function CategoriesCarousel() {
                           <div
                             className="absolute -inset-6.25 scale-110 bg-cover bg-center blur-2xl transition-transform duration-700 group-hover:scale-125"
                             style={{
-                              backgroundImage: `url(${imageUrl})`,
+                              backgroundImage: getImageUrl(category.image),
                             }}
                           />
 
-                          <img
-                            src={imageUrl}
-                            alt={category.name}
-                            className="absolute inset-0 h-full w-full object-cover"
-                          />
+                          {category.image ? (
+                            <img
+                              src={getImageUrl(category.image)}
+                              alt={category.name}
+                              className="absolute inset-0 h-full w-full object-cover"
+                            />
+                          ) : (
+                            <FiImage className="absolute inset-0 h-20 my-auto w-full object-cover" />
+                          )}
 
                           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-black/10" />
 
@@ -142,11 +140,11 @@ export function CategoriesCarousel() {
                         </Link>
                       </motion.div>
                     </div>
-                  )
+                  );
                 })}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

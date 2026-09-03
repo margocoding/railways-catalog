@@ -16,10 +16,10 @@ export function getCategoryUrl(categorySlug: string) {
 
 export function getSpecValue(
     product: Product,
-    id: string,
+    name: string,
 ) {
     const spec = product.specs?.find(
-        (item) => item.id === id,
+        (item) => item.label.includes(name),
     )
 
     if (!spec) {
