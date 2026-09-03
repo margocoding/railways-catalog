@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
-import { productApi, type Product, type GetProductsParams } from '@/entities/product'
-import { categoryApi, type Category, type FilterOption } from '@/entities/category'
-import type { PaginationMeta } from '@/shared/api'
+import { categoryApi, type Category } from '@/entities/category'
+import { productApi, type GetProductsParams, type Product } from '@/entities/product'
 import type { SortOption } from '@/entities/product/model/types'
+import type { PaginationMeta } from '@/shared/api'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 
 type FilterCondition = 'new' | 'used' | 'service' | 'all'
 type FilterStock = 'all' | 'in-stock' | 'on-order'
@@ -21,7 +21,6 @@ export interface UseCatalogReturn {
   categories: Category[]
   currentCategory?: Category
   currentSubcategory?: Category['subcategories'] extends (infer U)[] | undefined ? U : never
-  filters: FilterOption[]
   filterValue: FilterState
   pagination: PaginationMeta
   loading: boolean
@@ -129,44 +128,6 @@ export function useCatalog(): UseCatalogReturn {
     }
   }, [page, limit, categorySlug, subcategorySlug, search, condition, stock, sort, attributeFilters])
 
-  const filters = useMemo<FilterOption[]>(() => {
-    const specsById = new Map<
-      string,
-      {
-        label: string
-        values: Map<string, string>
-      }
-    >()
-
-    for (const product of products) {
-      if (!product.specs) continue
-
-      for (const spec of product.specs) {
-        if (spec.value === undefined || spec.value === null) continue
-
-        const value = String(spec.value)
-        const displayValue = spec.unit ? `${value} ${spec.unit}` : value
-
-        if (!specsById.has(spec.id)) {
-          specsById.set(spec.id, {
-            label: spec.label,
-            values: new Map(),
-          })
-        }
-
-        specsById.get(spec.id)!.values.set(value, displayValue)
-      }
-    }
-
-    return Array.from(specsById.entries()).map(([id, spec]) => ({
-      key: id,
-      label: spec.label,
-      type: 'select',
-      options: Array.from(spec.values.entries())
-        .sort((a, b) => a[1].localeCompare(b[1], 'ru', { numeric: true }))
-        .map(([value, label]) => ({ value, label })),
-    }))
-  }, [products])
 
   const handleFilterChange = (nextFilters: FilterState) => {
     const params = new URLSearchParams(searchParams)
@@ -234,7 +195,6 @@ export function useCatalog(): UseCatalogReturn {
     categories,
     currentCategory,
     currentSubcategory,
-    filters,
     filterValue,
     pagination,
     loading,
