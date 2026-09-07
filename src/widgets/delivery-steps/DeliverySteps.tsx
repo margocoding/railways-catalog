@@ -1,13 +1,13 @@
 // src/widgets/delivery-steps/DeliverySteps.tsx
 import { Card, CardContent } from '../../shared/ui/Card'
 import { SectionHeading } from '../../shared/ui/SectionHeading'
-import { cn } from '../../shared/lib/cn'
 
 const STEPS = [
   {
     number: '01',
     title: 'Заявка и уточнение объёма',
-    description: 'Оставляете заявку на сайте или по телефону, уточняем детали и объём партии',
+    description:
+      'Оставляете заявку на сайте или по телефону, уточняем детали и объём партии',
     accent: 'from-primary to-accent',
   },
   {
@@ -25,7 +25,8 @@ const STEPS = [
   {
     number: '04',
     title: 'Доставка на объект + документы',
-    description: 'Доставляем груз на объект, передаём полный пакет сопроводительных документов',
+    description:
+      'Доставляем груз на объект, передаём полный пакет сопроводительных документов',
     accent: 'from-primary to-red-400',
   },
 ]
@@ -33,29 +34,22 @@ const STEPS = [
 export function DeliverySteps() {
   return (
     <section className="py-12 md:py-16">
-      <SectionHeading
-        title="Как происходит доставка"
-      />
+      <SectionHeading title="Как происходит доставка" />
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {STEPS.map((step) => (
           <Card key={step.number} className="relative p-3 overflow-hidden">
-            {/* Цветная полоска сверху */}
-            <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', step.accent)} />
+            <div className="absolute inset-x-0 top-0 h-1 bg-accent" />
 
             <CardContent className="flex h-full flex-col p-6">
-              {/* Номер шага в градиентной подложке */}
-              <div
-                className={cn(
-                  'flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-xl font-black text-white shadow-lg mb-4',
-                  step.accent,
-                )}
-              >
+              <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-accent text-xl font-bold text-accent-foreground mb-4">
                 {step.number}
               </div>
 
               <h3 className="font-bold text-foreground mb-2">{step.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {step.description}
+              </p>
             </CardContent>
           </Card>
         ))}
