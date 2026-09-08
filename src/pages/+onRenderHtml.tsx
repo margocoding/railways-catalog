@@ -1,0 +1,28 @@
+import { renderToString } from 'react-dom/server'
+import { escapeInject, dangerouslySkipEscape } from 'vike/server'
+import type { PageContextServer } from 'vike/types'
+import { AppRoot } from '@/renderer/AppRoot'
+import { getMetadata } from '@/shared/seo/metadata'
+import type { PageData } from '@/shared/seo/route-data'
+import { siteUrl } from '@/renderer/server-config'
+import { jsonForHtml } from '@/shared/lib/plain-text'
+
+export function onRenderHtml(pageContext: PageContextServer) {
+  const data = (pageContext.data ?? pageContext.abortReason ?? { url: pageContext.urlOriginal, siteUrl, status: pageContext.is404 ? 404 : 500, ssr: true }) as PageData
+  const meta = getMetadata(data.url, data)
+  const html = data.ssr ? renderToString(<AppRoot data={data} server />) : ''
+  return {
+    documentHtml: escapeInject`<!DOCTYPE html>
+      <html lang="ru"><head>
+      <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="theme-color" content="#1c1f22" /><link rel="icon" href="/favicon.ico" />
+      <title>${meta.title}</title><meta name="description" content="${meta.description}" />
+      <meta name="robots" content="${meta.robots}" /><link rel="canonical" href="${meta.canonical}" />
+      <meta property="og:type" content="website" /><meta property="og:site_name" content="ИНВИА" /><meta property="og:locale" content="ru_RU" />
+      <meta property="og:title" content="${meta.title}" /><meta property="og:description" content="${meta.description}" /><meta property="og:url" content="${meta.canonical}" /><meta property="og:image" content="${meta.image}" />
+      <meta name="twitter:card" content="summary" /><meta name="twitter:title" content="${meta.title}" /><meta name="twitter:description" content="${meta.description}" /><meta name="twitter:image" content="${meta.image}" />
+      ${meta.jsonLd.length ? escapeInject`<script id="seo-json-ld" type="application/ld+json">${dangerouslySkipEscape(jsonForHtml(meta.jsonLd))}</script>` : ''}
+      </head><body><div id="root">${dangerouslySkipEscape(html)}</div></body></html>`,
+    pageContext: { data },
+  }
+}

@@ -1,7 +1,7 @@
 import { getToken, removeToken } from '@/entities/auth';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const baseApi = axios.create({
   baseURL: API_BASE_URL,
@@ -23,7 +23,7 @@ baseApi.interceptors.response.use(
   (error) => {
     if (error?.response?.status === 401) {
       removeToken()
-      if (window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/login')) {
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/login')) {
         window.location.href = '/admin/login'
       }
     }
