@@ -82,7 +82,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
         </td>
 
         <td className="py-4 px-4">
-          {product.price == null ? (
+          {!product.price ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-base font-bold text-primary">
@@ -160,7 +160,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
             <p className="text-xs text-muted-foreground">Масса: {weight}</p>
           </div>
           
-          {product.price == null ? (
+          {!product.price ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-lg font-bold text-primary">

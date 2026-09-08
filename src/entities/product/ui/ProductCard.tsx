@@ -59,7 +59,7 @@ export function ProductCard({ product }: { product: Product }) {
         </dl>
         <div className="mt-auto">
           <p className="mb-4 text-xl font-bold">
-            {product.price == null
+            {!product.price
               ? 'Цена по запросу'
               : `${formatPrice(product.price)} ₽`}
             {product.price != null && unit && (

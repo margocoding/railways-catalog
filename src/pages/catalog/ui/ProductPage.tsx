@@ -174,7 +174,7 @@ export function ProductPage() {
             )}
 
             <div className="mb-5">
-              {product.price == null ? (
+              {!product.price ? (
                 <span className="text-2xl font-bold text-primary">
                   По запросу
                 </span>
