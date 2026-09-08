@@ -58,7 +58,7 @@ export function AdminLoginPage() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-accent-gradient">
               <span className="text-2xl">🛤️</span>
             </div>
-            <h1 className="text-2xl font-black">СтальПуть</h1>
+            <h1 className="text-2xl font-black">ИНВИА</h1>
             <p className="text-sm text-muted-foreground mt-1">
               Панель управления
             </p>

@@ -1,14 +1,16 @@
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { MessengerLinks } from '@/shared/ui/MessengerLinks'
 import { Button } from '@/shared/ui/Button'
-import { Input } from '@/shared/ui/Input'
+import { RequestFormModal } from '@/shared/ui/RequestFormModal'
 import { Layout } from '@/widgets/Layout'
+import { useState } from 'react'
 import {
   FiClock,
   FiDownload,
   FiMail,
   FiMessageCircle,
   FiPhone,
-  FiSend
+  FiFileText,
 } from 'react-icons/fi'
 
 const PARTNER_CARD_URL = '/data/Карта партнера ИНВИА1.pdf'
@@ -54,8 +56,7 @@ const CONTACTS = [
     id: 'messengers',
     icon: FiMessageCircle,
     title: 'Мессенджеры',
-    value: 'Telegram, WhatsApp',
-    href: '#',
+    value: <MessengerLinks showPhone />,
   },
 ]
 
@@ -74,7 +75,7 @@ const ADDRESSES = [
 ]
 
 const REQUISITES = [
-  { label: 'Наименование', value: 'ООО «СтальПуть»' },
+  { label: 'Наименование', value: 'ООО «ИНВИА»' },
   { label: 'ИНН', value: '1648052000' },
   { label: 'КПП', value: '164801001' },
   { label: 'ОГРН', value: '1201600037055' },
@@ -103,12 +104,12 @@ export function ContactsPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 py-10 xl:px-8">
         <Breadcrumbs items={breadcrumbs} />
 
-        <h1 className="mb-8 text-3xl font-black text-foreground">Контакты</h1>
+        <h1 className="page-title mb-8">Контакты</h1>
 
-        <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {CONTACTS.map((contact) => (
             <ContactCard key={contact.id} {...contact} />
           ))}
@@ -122,12 +123,12 @@ export function ContactsPage() {
 
         <div className="mb-12 rounded-xl border border-border bg-card p-6">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-2xl font-bold text-foreground">Реквизиты</h2>
+            <h2 className="section-title">Реквизиты</h2>
 
             <a
               href={encodeURI(PARTNER_CARD_URL)}
               download={PARTNER_CARD_FILENAME}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent-gradient px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-base font-bold text-white transition-opacity hover:opacity-90"
             >
               <FiDownload className="h-4 w-4" />
               Скачать реквизиты
@@ -159,12 +160,12 @@ function ContactCard({
 }: {
   icon: React.ElementType
   title: string
-  value: string
+  value: React.ReactNode
   subvalue?: string
   href?: string
 }) {
   const content = (
-    <div className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50">
+    <div className="h-full rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50">
       <div className="mb-3 text-primary">
         <Icon className="h-6 w-6" />
       </div>
@@ -179,7 +180,7 @@ function ContactCard({
 
   if (href) {
     return (
-      <a href={href} className="block">
+      <a href={href} className="block h-full">
         {content}
       </a>
     )
@@ -188,13 +189,7 @@ function ContactCard({
   return content
 }
 
-function AddressCard({
-  title,
-  address,
-}: {
-  title: string
-  address: string
-}) {
+function AddressCard({ title, address }: { title: string; address: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-6">
       <h3 className="mb-4 font-bold text-foreground">{title}</h3>
@@ -205,37 +200,23 @@ function AddressCard({
 }
 
 function FeedbackForm() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-  }
-
+  const [open, setOpen] = useState(false)
   return (
-    <div className="rounded-xl border border-border bg-card p-6 md:p-8">
-      <h2 className="mb-6 text-2xl font-bold text-foreground">
-        Обратная связь
-      </h2>
-
-      <form
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
-        onSubmit={handleSubmit}
-      >
-        <Input type="text" placeholder="Ваше имя *" required />
-        <Input type="tel" placeholder="Телефон *" required />
-        <Input type="email" placeholder="Email *" required />
-        <Input type="text" placeholder="Тема" />
-
-        <textarea
-          placeholder="Сообщение *"
-          required
-          rows={4}
-          className="resize-none rounded-lg border border-border bg-muted px-4 py-3 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary md:col-span-2"
-        />
-
-        <Button type="submit" size="lg" className="gap-2 md:col-span-2">
-          <FiSend className="h-5 w-5" />
-          Отправить
-        </Button>
-      </form>
-    </div>
+    <section className="rounded-lg border border-border bg-muted p-6 md:p-8">
+      <h2 className="section-title mb-4">Отправьте спецификацию</h2>
+      <p className="mb-6 max-w-2xl text-muted-foreground">
+        Укажите нужные материалы и объём поставки. В заявке можно прикрепить
+        спецификацию и карту партнёра.
+      </p>
+      <Button onClick={() => setOpen(true)}>
+        <FiFileText className="h-5 w-5 shrink-0" />
+        Отправить заявку
+      </Button>
+      <RequestFormModal
+        open={open}
+        onOpenChange={setOpen}
+        title="Отправить спецификацию"
+      />
+    </section>
   )
 }

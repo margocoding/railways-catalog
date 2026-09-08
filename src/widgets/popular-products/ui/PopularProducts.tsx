@@ -1,152 +1,111 @@
-import { motion } from 'framer-motion'
-import useEmblaCarousel from 'embla-carousel-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router'
-import { FiArrowRight } from 'react-icons/fi'
-
-import { CarouselArrows } from '@/shared/ui/CarouselArrows'
-import { getSpecValue } from '@/shared/lib'
+import { ProductCard } from '@/entities/product/ui/ProductCard'
 import { usePopularProducts } from '../model/use-popular-products'
-import { getImageUrl } from '@/shared/lib/product-helpers'
-
+const tabs = [
+  ['Рельсы', 'zheleznodorozhnye-relsy'],
+  ['Шпалы', 'zhd-shpaly'],
+  ['Скрепления', 'relsovoe-skreplenie-zhbr-ars'],
+]
 export function PopularProducts() {
-  const { products, loading } = usePopularProducts()
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
-    containScroll: 'trimSnaps',
-  })
-
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
-
-  const updateButtons = useCallback(() => {
-    if (!emblaApi) return
-
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
-  }, [emblaApi])
-
-  useEffect(() => {
-    if (!emblaApi) return
-
-    updateButtons()
-
-    emblaApi.on('select', updateButtons)
-    emblaApi.on('reInit', updateButtons)
-
-    return () => {
-      emblaApi.off('select', updateButtons)
-      emblaApi.off('reInit', updateButtons)
-    }
-  }, [emblaApi, updateButtons])
-
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev()
-  }, [emblaApi])
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext()
-  }, [emblaApi])
-
-  if (!products.length) return;
-
+  const [active, setActive] = useState(0)
+  const { products, loading, error } = usePopularProducts(tabs[active][1])
   return (
-    <section className="bg-background py-14">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="mb-7 flex items-center justify-between gap-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl font-black tracking-tight text-foreground md:text-4xl"
-          >
+    <section
+      className="border-y border-border bg-muted py-12 md:py-16"
+      aria-labelledby="popular-title"
+    >
+      <div className="container mx-auto px-6 xl:px-8">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
+          <h2 id="popular-title" className="section-title">
             Популярные материалы
-          </motion.h2>
-
-          <CarouselArrows
-            onPrev={scrollPrev}
-            onNext={scrollNext}
-            canScrollPrev={canScrollPrev}
-            canScrollNext={canScrollNext}
-          />
+          </h2>
+          <div
+            role="tablist"
+            aria-label="Тип популярных материалов"
+            className="flex max-w-full gap-1 overflow-x-auto rounded-lg border border-border bg-white p-1"
+          >
+            {tabs.map(([label], index) => (
+              <button
+                key={label}
+                type="button"
+                role="tab"
+                id={`popular-tab-${index}`}
+                aria-controls="popular-panel"
+                aria-selected={active === index}
+                tabIndex={active === index ? 0 : -1}
+                onClick={() => setActive(index)}
+                onKeyDown={(event) => {
+                  const next =
+                    event.key === 'ArrowRight'
+                      ? (active + 1) % tabs.length
+                      : event.key === 'ArrowLeft'
+                        ? (active + tabs.length - 1) % tabs.length
+                        : event.key === 'Home'
+                          ? 0
+                          : event.key === 'End'
+                            ? tabs.length - 1
+                            : null
+                  if (next !== null) {
+                    event.preventDefault()
+                    setActive(next)
+                    document.getElementById(`popular-tab-${next}`)?.focus()
+                  }
+                }}
+                className={`min-h-11 whitespace-nowrap rounded px-3 text-sm font-bold transition-colors ${active === index ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
-
-        <div ref={emblaRef} className="overflow-hidden">
-          <div className="-ml-4 flex">
-            {loading
-              ? [1, 2, 3, 4].map((i) => (
+        <div
+          id="popular-panel"
+          role="tabpanel"
+          aria-labelledby={`popular-tab-${active}`}
+          aria-busy={loading}
+          className="min-h-80"
+        >
+          {loading ? (
+            <div
+              role="status"
+              className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+            >
+              {Array.from({ length: 4 }, (_, i) => (
                 <div
                   key={i}
-                  className="min-w-0 flex-[0_0_85%] pl-4 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_25%]"
-                >
-                  <div className="aspect-4/3 animate-pulse rounded-xl bg-muted" />
-                  <div className="mt-4 h-4 w-3/4 animate-pulse rounded bg-muted" />
-                  <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-muted" />
-                </div>
-              ))
-              : products.map((product, index) => (
-                <div
-                  key={product.id}
-                  className="min-w-0 flex-[0_0_85%] pl-4 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_25%]"
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: index * 0.05,
-                      duration: 0.35,
-                    }}
-                  >
-                    <Link
-                      to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
-                      className="group block"
-                    >
-                      <article className="overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
-                        <div className="relative aspect-4/3 overflow-hidden bg-muted">
-                          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-muted to-background">
-                            {product.images[0] ? (
-                              <img
-                                src={getImageUrl(product.images[0])}
-                                alt={product.title}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                                Нет изображения
-                              </div>
-                            )}
-                          </div>
-
-                          <span className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-border/80 bg-white/95 text-foreground shadow-sm transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
-                            <FiArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-                          </span>
-                        </div>
-
-                        <div className="p-4">
-                          <h3 className="line-clamp-2 text-base font-bold leading-snug text-foreground transition-colors group-hover:text-primary">
-                            {product.title}
-                          </h3>
-
-                          {product.gost && (
-                            <p className="mt-2 text-xs text-muted-foreground">
-                              {product.gost}
-                            </p>
-                          )}
-
-                          {getSpecValue(product, 'weight') && (
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              Масса: {getSpecValue(product, 'Масса')}
-                            </p>
-                          )}
-                        </div>
-                      </article>
-                    </Link>
-                  </motion.div>
-                </div>
+                  className="h-96 animate-pulse rounded-lg border border-border bg-white"
+                />
               ))}
-          </div>
+              <span className="sr-only">Загрузка товаров</span>
+            </div>
+          ) : error ? (
+            <p role="alert">
+              Не удалось загрузить товары.{' '}
+              <Link to="/catalog" className="text-primary underline">
+                Открыть каталог
+              </Link>
+            </p>
+          ) : products.length ? (
+            <div
+              key={active}
+              className="results-enter grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4"
+            >
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <p>В этой категории пока нет товаров.</p>
+          )}
+        </div>
+        <div className="mt-7 text-right">
+          <Link
+            to={`/catalog?category=${tabs[active][1]}`}
+            className="inline-flex min-h-11 items-center font-bold text-primary"
+          >
+            Все товары категории →
+          </Link>
         </div>
       </div>
     </section>

@@ -20,7 +20,7 @@ export function AddToCartButton({product}: AddToCartButtonProps) {
             type="button"
             onClick={handleAddToCart}
             aria-label={`Добавить в корзину: ${product.title}`}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--accent))] text-white transition-all hover:scale-105 hover:opacity-90"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-foreground transition-colors hover:border-primary hover:text-primary"
         >
             <FiShoppingCart className="h-5 w-5"/>
         </button>

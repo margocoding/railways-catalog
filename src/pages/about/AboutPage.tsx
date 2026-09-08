@@ -42,7 +42,7 @@ const CLIENT_PARAGRAPHS = [
 ]
 
 const REQUISITES = [
-  { label: 'Наименование', value: 'ООО «СтальПуть»' },
+  { label: 'Наименование', value: 'ООО «ИНВИА»' },
   { label: 'ИНН', value: '1648052000' },
   { label: 'КПП', value: '164801001' },
   { label: 'ОГРН', value: '1201600037055' },
@@ -82,10 +82,10 @@ export function AboutPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="about-copy container mx-auto px-6 py-10 xl:px-8">
         <Breadcrumbs items={breadcrumbs} />
 
-        <h1 className="mb-8 text-3xl font-black text-foreground">О компании</h1>
+        <h1 className="page-title mb-8">О компании</h1>
 
         <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div>
@@ -100,10 +100,10 @@ export function AboutPage() {
               </p>
             ))}
           </div>
-          <div className="aspect-video overflow-hidden rounded-xl bg-muted">
+          <div className="aspect-[1280/595] overflow-hidden rounded-xl bg-muted">
             <img
-              src="/placeholders/about.svg"
-              alt="О компании"
+              src="/about-building.png"
+              alt="Вход в здание на Московской улице в Зеленодольске"
               className="h-full w-full object-cover"
             />
           </div>
@@ -132,7 +132,7 @@ export function AboutPage() {
 
         <TextSection title="Работаем под задачу клиента" paragraphs={CLIENT_PARAGRAPHS} />
 
-        <div className="mb-12 rounded-xl bg-accent-gradient p-8 text-center text-white">
+        <div className="mb-12 rounded-lg border border-border bg-muted p-8 text-foreground">
           <p className="text-xl font-bold">
             Материалы для пути. Логистика до объекта. Решение задачи в комплексе.
           </p>

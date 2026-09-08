@@ -1,150 +1,131 @@
-import { motion } from "framer-motion";
-import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
-import { FiArrowUpRight, FiImage } from "react-icons/fi";
-import { CarouselArrows } from "@/shared/ui/CarouselArrows";
-import { getImageUrl } from "@/shared/lib/product-helpers";
-import { useCategoriesCarousel } from "../model/use-categories-carousel";
+import { useCallback, useSyncExternalStore } from 'react'
+import useEmblaCarousel from 'embla-carousel-react'
+import { Link } from 'react-router'
+import { FiArrowUpRight } from 'react-icons/fi'
+import { useCategoriesCarousel } from '../model/use-categories-carousel'
+import { CatalogImage } from '@/shared/ui/CatalogImage'
+import { CarouselArrows } from '@/shared/ui/CarouselArrows'
 
+const slideClassName =
+  'min-w-0 flex-[0_0_85%] pl-4 sm:flex-[0_0_50%] lg:flex-[0_0_33.333333%] xl:flex-[0_0_25%]'
+
+const countLabel = (count: number) => {
+  const mod = count % 100
+  return `${count} ${mod >= 11 && mod <= 14 ? 'позиций' : count % 10 === 1 ? 'позиция' : count % 10 >= 2 && count % 10 <= 4 ? 'позиции' : 'позиций'}`
+}
 export function CategoriesCarousel() {
-  const { categories, loading } = useCategoriesCarousel();
-
+  const { categories, loading } = useCategoriesCarousel()
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    containScroll: "trimSnaps",
-  });
-
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-
-  const updateButtons = useCallback(() => {
-    if (!emblaApi) return;
-
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    updateButtons();
-
-    emblaApi.on("select", updateButtons);
-    emblaApi.on("reInit", updateButtons);
-
-    return () => {
-      emblaApi.off("select", updateButtons);
-      emblaApi.off("reInit", updateButtons);
-    };
-  }, [emblaApi, updateButtons]);
-
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext();
-  }, [emblaApi]);
-
-  if (!loading && !categories.length) return null;
+    align: 'start',
+    containScroll: 'trimSnaps',
+  })
+  const subscribeToScroll = useCallback(
+    (onChange: () => void) => {
+      emblaApi?.on('select', onChange)
+      emblaApi?.on('reInit', onChange)
+      return () => {
+        emblaApi?.off('select', onChange)
+        emblaApi?.off('reInit', onChange)
+      }
+    },
+    [emblaApi],
+  )
+  const canScrollPrev = useSyncExternalStore(
+    subscribeToScroll,
+    () => emblaApi?.canScrollPrev() ?? false,
+    () => false,
+  )
+  const canScrollNext = useSyncExternalStore(
+    subscribeToScroll,
+    () => emblaApi?.canScrollNext() ?? false,
+    () => false,
+  )
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
 
   return (
-    <section className="bg-background py-14">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="mb-7 flex items-center justify-between gap-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl font-black tracking-tight text-foreground md:text-4xl"
-          >
-            Каталог продукции
-          </motion.h2>
-
-          <CarouselArrows
-            onPrev={scrollPrev}
-            onNext={scrollNext}
-            canScrollPrev={canScrollPrev}
-            canScrollNext={canScrollNext}
-          />
-        </div>
-
-        <div ref={emblaRef} className="overflow-hidden">
-          <div className="-ml-3 flex">
-            {loading
-              ? [1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="min-w-0 flex-[0_0_75%] pl-3 sm:flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_20%]"
-                  >
-                    <div className="aspect-3/4 animate-pulse rounded-3xl bg-muted" />
-                  </div>
-                ))
-              : categories.map((category, index) => {
-                  return (
-                    <div
-                      key={category.id}
-                      className="min-w-0 flex-[0_0_75%] pl-3 sm:flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_20%]"
-                    >
-                      <motion.div
-                        initial={{
-                          opacity: 0,
-                          y: 20,
-                        }}
-                        whileInView={{
-                          opacity: 1,
-                          y: 0,
-                        }}
-                        viewport={{
-                          once: true,
-                        }}
-                        transition={{
-                          delay: index * 0.04,
-                          duration: 0.35,
-                        }}
-                      >
-                        <Link
-                          to={`/catalog?category=${category.slug}`}
-                          className="group relative block aspect-3/4 overflow-hidden rounded-3xl"
-                        >
-                          <div
-                            className="absolute -inset-6.25 scale-110 bg-cover bg-center blur-2xl transition-transform duration-700 group-hover:scale-125"
-                            style={{
-                              backgroundImage: getImageUrl(category.image),
-                            }}
-                          />
-
-                          {category.image ? (
-                            <img
-                              src={getImageUrl(category.image)}
-                              alt={category.name}
-                              className="absolute inset-0 h-full w-full object-cover"
-                            />
-                          ) : (
-                            <FiImage className="absolute inset-0 h-20 my-auto w-full object-cover" />
-                          )}
-
-                          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-black/10" />
-
-                          <div className="absolute bottom-3 left-3 right-3 rounded-2xl border border-white/20 bg-white/80 p-4 backdrop-blur-xl transition-all duration-300 group-hover:bg-white">
-                            <div className="flex items-center justify-between gap-3">
-                              <h3 className="text-base font-bold leading-tight text-foreground">
-                                {category.name}
-                              </h3>
-                              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-                                <FiArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      </motion.div>
-                    </div>
-                  );
-                })}
+    <section
+      className="bg-white py-12 md:py-16"
+      aria-labelledby="categories-title"
+      aria-roledescription="карусель"
+    >
+      <div className="container mx-auto px-6 xl:px-8">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+          <h2 id="categories-title" className="section-title">
+            Каталог материалов
+          </h2>
+          <div className="flex w-full items-center justify-between gap-6 sm:w-auto">
+            <Link
+              to="/catalog"
+              className="inline-flex min-h-11 items-center gap-2 font-bold text-primary"
+            >
+              Весь каталог
+              <FiArrowUpRight />
+            </Link>
+            {(loading || categories.length > 1) && (
+              <CarouselArrows
+                onPrev={scrollPrev}
+                onNext={scrollNext}
+                canScrollPrev={!loading && canScrollPrev}
+                canScrollNext={!loading && canScrollNext}
+              />
+            )}
           </div>
         </div>
+        {loading ? (
+          <div role="status" className="overflow-hidden">
+            <div className="-ml-4 flex">
+              {Array.from({ length: 4 }, (_, i) => (
+                <div key={i} className={slideClassName}>
+                  <div className="h-80 animate-pulse rounded-lg bg-muted" />
+                </div>
+              ))}
+            </div>
+            <span className="sr-only">Загрузка категорий</span>
+          </div>
+        ) : categories.length ? (
+          <div ref={emblaRef} className="overflow-hidden">
+            <ul className="-ml-4 flex touch-pan-y touch-pinch-zoom">
+              {categories.map((category) => (
+                <li key={category.slug} className={slideClassName}>
+                  <Link
+                    to={`/catalog?category=${category.slug}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-border transition-colors duration-200 hover:border-accent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <div className="aspect-[3/2] shrink-0 overflow-hidden border-b border-border bg-muted p-3">
+                      <CatalogImage
+                        src={category.image}
+                        alt={category.name}
+                        className="mix-blend-darken"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="mb-4 text-xl font-bold leading-tight xl:text-2xl">
+                        {category.name}
+                      </h3>
+                      <div className="mt-auto flex items-center justify-between gap-3">
+                        <span className="text-sm text-muted-foreground">
+                          {category.productCount === undefined
+                            ? 'Посмотреть товары'
+                            : countLabel(category.productCount)}
+                        </span>
+                        <FiArrowUpRight className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="rounded-lg border border-border p-6 text-muted-foreground">
+            Категории пока недоступны.{' '}
+            <Link to="/catalog" className="text-primary underline">
+              Перейти в каталог
+            </Link>
+          </p>
+        )}
       </div>
     </section>
-  );
+  )
 }

@@ -1,249 +1,66 @@
-// src/widgets/hero/ui/Hero.tsx
-import { motion } from 'framer-motion'
-import { useState } from 'react'
 import { Link } from 'react-router'
-import { FiArrowRight, FiChevronDown, FiDownload, FiX } from 'react-icons/fi'
-import { useHero } from '../model/use-hero'
-
+import { FiArrowRight, FiFileText } from 'react-icons/fi'
 
 export function Hero() {
-  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
-  const { categories, loading } = useHero()
-
   return (
-    <section className="relative min-h-155 lg:min-h-170 flex items-center overflow-hidden bg-background">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <div
-          className="h-full w-full bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1920&q=80')",
-          }}
-        />
-
-        {/* Light overlay */}
-        <div className="absolute inset-0 bg-linear-to-r from-white via-white/90 to-white/20" />
-
-        {/* Soft bottom transition */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background/70 to-transparent" />
-      </div>
-
-      {/* Decorative rails pattern */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]">
-        <svg
-          className="h-full w-full"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,50 Q25,45 50,50 T100,50"
-            stroke="hsl(var(--primary))"
-            strokeWidth="0.5"
-            fill="none"
-          />
-          <path
-            d="M0,55 Q25,50 50,55 T100,55"
-            stroke="hsl(var(--primary))"
-            strokeWidth="0.5"
-            fill="none"
-          />
-          <path
-            d="M0,60 Q25,55 50,60 T100,60"
-            stroke="hsl(var(--primary))"
-            strokeWidth="0.5"
-            fill="none"
-          />
-        </svg>
-      </div>
-
-      {/* Content */}
-      <div className="container relative z-10 mx-auto px-4 py-10 sm:px-6 lg:px-10 lg:py-12">
-        <div className="flex flex-col items-start gap-8 lg:flex-row">
-          {/* Categories Sidebar - Desktop */}
-          <motion.aside
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="hidden w-56 shrink-0 lg:block"
+    <section className="hero-section relative flex min-h-[560px] items-center overflow-hidden bg-foreground text-white lg:min-h-[680px]">
+      <div
+        className="hero-photo absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1920&q=80')",
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 bg-linear-to-r from-[#1C1F22]/95 via-[#1C1F22]/80 to-[#1C1F22]/25"
+        aria-hidden="true"
+      />
+      <div className="container relative mx-auto px-6 py-12 xl:px-8 xl:py-16">
+        <p className="hero-enter mb-5 text-sm font-bold tracking-[.05em] text-white/85">
+          ИНВИА · МАТЕРИАЛЫ ВСП
+        </p>
+        <h1 className="hero-title hero-enter hero-delay-1">
+          Материалы верхнего строения пути со склада в Татарстане
+        </h1>
+        <p className="hero-enter hero-delay-2 mt-6 max-w-2xl text-base leading-relaxed text-white/90 md:text-lg">
+          Рельсы, шпалы, накладки и скрепления. Новые и б/у. Поставки по
+          Поволжью, России и СНГ.
+        </p>
+        <div className="hero-enter hero-delay-2 mt-8 flex flex-wrap gap-3">
+          <Link
+            to="/catalog"
+            className="inline-flex min-h-14 items-center justify-center gap-3 rounded-lg bg-accent px-6 py-3 font-bold text-accent-foreground transition-colors hover:bg-[#E85E14]"
           >
-            <nav className="space-y-1">
-              {loading
-                ? [1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="h-10 animate-pulse rounded-lg bg-white/60"
-                    />
-                  ))
-                : categories.map((category, index) => {
-                    return (
-                      <motion.div
-                        key={category.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <Link
-                          to={`/catalog?category=${category.slug}`}
-                          className="group flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium transition-colors hover:bg-white/80"
-                        >
-                          <span className="text-sm text-foreground transition-colors group-hover:text-primary">
-                            {category.name}
-                          </span>
-                        </Link>
-                      </motion.div>
-                    )
-                  })}
-            </nav>
-          </motion.aside>
-
-          {/* Mobile Categories Button */}
-          <div className="w-full lg:hidden">
-            <button
-              onClick={() => setMobileCategoriesOpen(true)}
-              className="flex w-full items-center justify-between rounded-lg border border-border bg-white/90 px-4 py-3 shadow-sm backdrop-blur-sm"
-            >
-              <span className="font-medium text-foreground">
-                Категории
-              </span>
-
-              <FiChevronDown className="h-5 w-5 text-foreground" />
-            </button>
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 lg:pt-2">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-white/90 px-4 py-2 shadow-sm backdrop-blur-sm"
-              >
-                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-
-                <span className="text-sm font-medium text-foreground">
-                  Отгрузка в течение 48 часов
-                </span>
-              </motion.div>
-
-              {/* H1 */}
-              <h1 className="mb-4 max-w-2xl text-2xl font-black leading-tight text-foreground md:text-3xl lg:text-4xl">
-                Материалы ВСП для железных дорог{' '}
-                <span className="text-primary">
-                  России и СНГ
-                </span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="mb-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                Рельсы, шпалы, крепёж и башмаки с собственных складов.
-                Поставки от 1 тонны с полным пакетом документов.
-              </p>
-
-              {/* CTA */}
-              <div className="mb-7 flex flex-wrap gap-3">
-                <Link
-                  to="/catalog"
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
-                >
-                  Открыть каталог
-                  <FiArrowRight className="h-5 w-5" />
-                </Link>
-
-                <Link
-                  to="/price"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-white/90 px-6 py-3 text-base font-bold text-foreground shadow-sm backdrop-blur-sm transition-all hover:bg-white"
-                >
-                  <FiDownload className="h-5 w-5" />
-                  Скачать прайс
-                </Link>
-              </div>
-
-              {/* Stats */}
-              <div className="flex flex-wrap gap-x-8 gap-y-4 border-t border-border pt-5">
-                {[
-                  { value: '16+', label: 'лет на рынке' },
-                  { value: '5000+', label: 'партнёров' },
-                  { value: '48ч', label: 'отгрузка' },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <div className="text-2xl font-black text-primary md:text-3xl">
-                      {stat.value}
-                    </div>
-
-                    <div className="text-sm text-muted-foreground">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+            Открыть каталог
+            <FiArrowRight />
+          </Link>
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent('open-request-form'))
+            }
+            className="inline-flex min-h-14 items-center justify-center gap-3 rounded-lg border border-white/70 px-6 py-3 font-bold transition-colors hover:bg-white/10"
+          >
+            <FiFileText />
+            Запросить спецификацию
+          </button>
         </div>
-      </div>
-
-      {/* Mobile Categories Drawer */}
-      {mobileCategoriesOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setMobileCategoriesOpen(false)}
-          />
-
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="absolute bottom-0 left-0 top-0 w-72 overflow-y-auto bg-card shadow-2xl"
-          >
-            <div className="flex items-center justify-between border-b border-border p-4">
-              <h2 className="text-lg font-bold text-foreground">
-                Категории
-              </h2>
-
-              <button
-                onClick={() => setMobileCategoriesOpen(false)}
-                className="rounded-lg p-2 transition-colors hover:bg-muted"
-                aria-label="Закрыть меню"
-              >
-                <FiX className="h-5 w-5 text-foreground" />
-              </button>
+        <dl className="hero-enter hero-delay-3 mt-10 grid max-w-3xl grid-cols-3 gap-4 border-t border-white/25 pt-7 md:gap-10">
+          {[
+            ['16+', 'лет на рынке'],
+            ['5000+', 'партнёров'],
+            ['48ч', 'отгрузка'],
+          ].map(([value, label]) => (
+            <div key={label} className="flex flex-col">
+              <dt className="mt-2 text-xs text-white/85 sm:text-sm">{label}</dt>
+              <dd className="-order-1 text-[30px] font-bold leading-none text-accent [font-variant-numeric:tabular-nums] sm:text-5xl">
+                {value}
+              </dd>
             </div>
-
-            <nav className="space-y-1 p-4">
-              {loading
-                ? [1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="h-10 animate-pulse rounded-lg bg-muted"
-                    />
-                  ))
-                : categories.map((category) => 
-                      <Link
-                        key={category.id}
-                        to={`/catalog?category=${category.slug}`}
-                        className="flex items-center gap-3 rounded-lg px-4 py-2.5 transition-colors hover:bg-muted"
-                        onClick={() => setMobileCategoriesOpen(false)}
-                      >
-                        <span className="font-medium text-foreground">
-                          {category.name}
-                        </span>
-                      </Link>
-                    
-                  )}
-            </nav>
-          </motion.div>
-        </div>
-      )}
+          ))}
+        </dl>
+      </div>
     </section>
   )
 }

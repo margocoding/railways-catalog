@@ -1,410 +1,267 @@
-import { useState } from 'react'
-import { FiFilter, FiSearch, FiX } from 'react-icons/fi'
-
+import { useState, type FormEvent } from 'react'
+import { FiFilter } from 'react-icons/fi'
+import type { Category, FilterOption } from '@/entities/category'
 import type {
   ProductCondition,
   SortOption,
-} from '../../entities/product/model/types'
-import { Button } from '../../shared/ui/Button'
-import { Input } from '../../shared/ui/Input'
-import { Select } from '../../shared/ui/Select'
-import type { FilterOption } from '@/entities/category'
+} from '@/entities/product/model/types'
+import { Button } from '@/shared/ui/Button'
+import { Input } from '@/shared/ui/Input'
+import { Drawer } from '@/shared/ui/Drawer'
 
 export interface FilterState {
   search: string
+  gost: string
+  priceMin: string
+  priceMax: string
   condition: ProductCondition | 'all'
   stock: 'in-stock' | 'on-order' | 'all'
   sort: SortOption
   attributes: Record<string, string>
 }
+const emptyFilters: FilterState = {
+  search: '',
+  gost: '',
+  priceMin: '',
+  priceMax: '',
+  condition: 'all',
+  stock: 'all',
+  sort: 'name',
+  attributes: {},
+}
+const selectClass =
+  'min-h-12 w-full min-w-0 rounded-lg border border-border bg-white px-3 text-base font-normal text-foreground'
 
 interface ProductFilterProps {
+  value: FilterState
+  onFilterChange: (filters: FilterState, category?: string) => void
+  categories: Category[]
+  category: string
   filters?: FilterOption[]
-  value?: FilterState
-  onFilterChange: (filters: FilterState) => void
 }
-
-const conditionOptions: FilterOption[] = [
-  {
-    key: 'all',
-    label: 'Все состояния',
-  },
-  {
-    key: 'new',
-    label: 'Новый',
-  },
-  {
-    key: 'used',
-    label: 'Б/У',
-  },
-  {
-    key: 'service',
-    label: 'Сервис',
-  },
-]
-
-const sortOptions: FilterOption[] = [
-  {
-    key: 'name',
-    label: 'По названию',
-  },
-  {
-    key: 'popular',
-    label: 'По популярности',
-  },
-  {
-    key: 'newest',
-    label: 'Сначала новые',
-  },
-  {
-    key: 'price-asc',
-    label: 'Сначала дешевле',
-  },
-  {
-    key: 'price-desc',
-    label: 'Сначала дороже',
-  },
-]
-
-function createInitialFilters(
-  definitions: FilterOption[] = [],
-): FilterState {
-  return {
-    search: '',
-    condition: 'all',
-    stock: 'all',
-    sort: 'name',
-    attributes: Object.fromEntries(
-      definitions.map((filter) => [filter.key, 'all']),
-    ),
-  }
-}
-
 export function ProductFilter({
-  filters = [],
   value,
   onFilterChange,
+  categories,
+  category,
+  filters = [],
 }: ProductFilterProps) {
-  const [internalFilters, setInternalFilters] =
-    useState<FilterState>(
-      value ?? createInitialFilters(filters),
-    )
-
-  const [mobileOpen, setMobileOpen] = useState(false)
-
-  const currentFilters = value ?? internalFilters
-
-  const updateFilters = (nextFilters: FilterState) => {
-    setInternalFilters(nextFilters)
-    onFilterChange(nextFilters)
+  const [draft, setDraft] = useState(value)
+  const [draftCategory, setDraftCategory] = useState(category)
+  const [open, setOpen] = useState(false)
+  const invalidRange =
+    draft.priceMin !== '' &&
+    draft.priceMax !== '' &&
+    Number(draft.priceMin) > Number(draft.priceMax)
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
+    if (invalidRange) return
+    onFilterChange(draft, draftCategory)
+    setOpen(false)
   }
-
-  const handleChange = <K extends keyof FilterState>(
-    key: K,
-    nextValue: FilterState[K],
-  ) => {
-    updateFilters({
-      ...currentFilters,
-      [key]: nextValue,
-    })
+  const reset = () => {
+    const next = { ...emptyFilters, sort: value.sort }
+    setDraft(next)
+    setDraftCategory(category)
+    onFilterChange(next, category)
+    setOpen(false)
   }
-
-  const handleAttributeChange = (
-    key: string,
-    nextValue: string,
-  ) => {
-    updateFilters({
-      ...currentFilters,
-      attributes: {
-        ...currentFilters.attributes,
-        [key]: nextValue,
-      },
-    })
-  }
-
-  const resetFilters = () => {
-    updateFilters(createInitialFilters(filters))
-  }
-
-  const activeFiltersCount =
-    Number(currentFilters.condition !== 'all') +
-    Number(currentFilters.stock !== 'all') +
-    Object.values(currentFilters.attributes).filter(
-      (value) => value !== 'all',
-    ).length
-
-  return (
-    <>
-      <div className="mb-6 hidden flex-wrap items-center gap-3 lg:flex">
-        <div className="relative min-w-[320px] flex-[1_1_420px]">
-          <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-
-          <Input
-            value={currentFilters.search}
-            onChange={(event) =>
-              handleChange('search', event.target.value)
-            }
-            placeholder="Поиск по названию, артикулу или ГОСТу"
-            className="h-12 w-full bg-card pl-9 pr-9"
-          />
-
-          {currentFilters.search && (
-            <button
-              type="button"
-              onClick={() => handleChange('search', '')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="Очистить поиск"
-            >
-              <FiX className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        {filters.map((filter) => (
-          <div
-            key={filter.key}
-            className="w-48 shrink-0"
-          >
-            <Select
-              size="md"
-              value={
-                currentFilters.attributes[filter.key] ?? 'all'
+  const activeCount = [
+    value.search,
+    value.gost,
+    value.priceMin,
+    value.priceMax,
+    value.condition !== 'all',
+    value.stock !== 'all',
+    ...Object.values(value.attributes).filter((v) => v && v !== 'all'),
+  ].filter(Boolean).length
+  const form = (prefix: string) => (
+    <form onSubmit={submit} className="space-y-5">
+      <label className="block text-sm font-bold">
+        Тип материала
+        <select
+          aria-label="Тип материала"
+          value={draftCategory}
+          onChange={(e) => {
+            setDraftCategory(e.target.value)
+            setDraft((current) => ({ ...current, attributes: {} }))
+          }}
+          className={`${selectClass} mt-2`}
+        >
+          <option value="">Все материалы</option>
+          {categories.map((item) => (
+            <option key={item.slug} value={item.slug}>
+              {item.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="block text-sm font-bold">
+        Название или артикул
+        <Input
+          value={draft.search}
+          onChange={(e) => setDraft({ ...draft, search: e.target.value })}
+          placeholder="Например, Р65"
+          className="mt-2 h-12 bg-white text-base font-normal"
+        />
+      </label>
+      <label className="block text-sm font-bold">
+        ГОСТ
+        <Input
+          value={draft.gost}
+          onChange={(e) => setDraft({ ...draft, gost: e.target.value })}
+          placeholder="Например, 16017-79"
+          className="mt-2 h-12 bg-white text-base font-normal"
+        />
+      </label>
+      <label className="block text-sm font-bold">
+        Состояние
+        <select
+          value={draft.condition}
+          onChange={(e) =>
+            setDraft({
+              ...draft,
+              condition: e.target.value as FilterState['condition'],
+            })
+          }
+          className={`${selectClass} mt-2`}
+        >
+          <option value="all">Любое состояние</option>
+          <option value="new">Новый</option>
+          <option value="used">Б/у</option>
+          <option value="service">Услуга</option>
+        </select>
+      </label>
+      <label className="block text-sm font-bold">
+        Наличие
+        <select
+          value={draft.stock}
+          onChange={(e) =>
+            setDraft({
+              ...draft,
+              stock: e.target.value as FilterState['stock'],
+            })
+          }
+          className={`${selectClass} mt-2`}
+        >
+          <option value="all">Любое наличие</option>
+          <option value="in-stock">В наличии</option>
+          <option value="on-order">Под заказ</option>
+        </select>
+      </label>
+      <fieldset>
+        <legend className="mb-2 text-sm font-bold">Цена, ₽</legend>
+        <div className="grid grid-cols-2 gap-2">
+          <label className="min-w-0">
+            <span className="sr-only">Цена от</span>
+            <Input
+              type="number"
+              min="0"
+              step="any"
+              value={draft.priceMin}
+              onChange={(e) => setDraft({ ...draft, priceMin: e.target.value })}
+              placeholder="От"
+              aria-invalid={invalidRange}
+              aria-describedby={
+                invalidRange ? `${prefix}-price-error` : undefined
               }
-              onChange={(event) =>
-                handleAttributeChange(
-                  filter.key,
-                  event.target.value,
-                )
-              }
-              options={[
-                {
-                  value: 'all',
-                  label: filter.label,
-                },
-                ...(filter.options ?? []),
-              ]}
+              className="h-12 bg-white px-3 text-base"
             />
-          </div>
-        ))}
-
-        <div className="w-48 shrink-0">
-          <Select
-            size="md"
-            value={currentFilters.condition}
-            onChange={(event) =>
-              handleChange(
-                'condition',
-                event.target.value as FilterState['condition'],
-              )
-            }
-            options={conditionOptions.map((option) => ({
-              value: option.key,
-              label: option.label,
-            }))}
-          />
+          </label>
+          <label className="min-w-0">
+            <span className="sr-only">Цена до</span>
+            <Input
+              type="number"
+              min="0"
+              step="any"
+              value={draft.priceMax}
+              onChange={(e) => setDraft({ ...draft, priceMax: e.target.value })}
+              placeholder="До"
+              aria-invalid={invalidRange}
+              aria-describedby={
+                invalidRange ? `${prefix}-price-error` : undefined
+              }
+              className="h-12 bg-white px-3 text-base"
+            />
+          </label>
         </div>
-
-        <div className="w-52 shrink-0">
-          <Select
-            size="md"
-            value={currentFilters.sort}
-            onChange={(event) =>
-              handleChange(
-                'sort',
-                event.target.value as FilterState['sort'],
-              )
-            }
-            options={sortOptions.map((option) => ({
-              value: option.key,
-              label: option.label,
-            }))}
-          />
-        </div>
-      </div>
-
-      <div className="mb-5 flex gap-2 lg:hidden">
-        <div className="relative min-w-0 flex-1">
-          <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-
-          <Input
-            value={currentFilters.search}
-            onChange={(event) =>
-              handleChange('search', event.target.value)
-            }
-            placeholder="Поиск..."
-            className="h-11 w-full bg-card pl-9 pr-9"
-          />
-
-          {currentFilters.search && (
-            <button
-              type="button"
-              onClick={() => handleChange('search', '')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              aria-label="Очистить поиск"
+        {invalidRange && (
+          <p
+            id={`${prefix}-price-error`}
+            role="alert"
+            className="mt-2 text-sm text-destructive"
+          >
+            Цена «до» должна быть не меньше цены «от».
+          </p>
+        )}
+      </fieldset>
+      {filters
+        .filter((filter) => filter.options?.length)
+        .map((filter) => (
+          <label key={filter.key} className="block text-sm font-bold">
+            {filter.label}
+            <select
+              value={draft.attributes[filter.key] ?? 'all'}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  attributes: {
+                    ...draft.attributes,
+                    [filter.key]: e.target.value,
+                  },
+                })
+              }
+              className={`${selectClass} mt-2`}
             >
-              <FiX className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
+              <option value="all">Все значения</option>
+              {filter.options?.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ))}
+      <div className="space-y-2 border-t border-border pt-5">
+        <Button type="submit" disabled={invalidRange} className="w-full">
+          Применить
+        </Button>
         <Button
           type="button"
-          variant="secondary"
-          size="md"
-          onClick={() => setMobileOpen(true)}
-          className="shrink-0"
+          variant="ghost"
+          onClick={reset}
+          className="w-full"
         >
-          <FiFilter className="h-4 w-4" />
-          <span>Фильтры</span>
-
-          {activeFiltersCount > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
-              {activeFiltersCount}
-            </span>
-          )}
+          Сбросить фильтры
         </Button>
       </div>
-
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            type="button"
-            aria-label="Закрыть фильтры"
-            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
-            onClick={() => setMobileOpen(false)}
-          />
-
-          <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-card p-5 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-foreground">
-                  Фильтры
-                </h2>
-
-                {activeFiltersCount > 0 && (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Активно фильтров: {activeFiltersCount}
-                  </p>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                aria-label="Закрыть"
-              >
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="space-y-5">
-              {filters.map((filter) => (
-                <div key={filter.key}>
-                  <label className="mb-2 block text-sm font-medium text-foreground">
-                    {filter.label}
-                  </label>
-
-                  <Select
-                    value={
-                      currentFilters.attributes[filter.key] ?? 'all'
-                    }
-                    onChange={(event) =>
-                      handleAttributeChange(
-                        filter.key,
-                        event.target.value,
-                      )
-                    }
-                    options={[
-                      {
-                        value: 'all',
-                        label: 'Все варианты',
-                      },
-                      ...(filter.options ?? []),
-                    ]}
-                  />
-                </div>
-              ))}
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">
-                  Состояние
-                </label>
-
-                <div className="grid grid-cols-3 gap-2">
-                  {conditionOptions.map((option) => (
-                    <Button
-                      key={option.key}
-                      type="button"
-                      size="sm"
-                      variant={
-                        currentFilters.condition === option.key
-                          ? 'primary'
-                          : 'secondary'
-                      }
-                      onClick={() =>
-                        handleChange(
-                          'condition',
-                          option.key as FilterState['condition'],
-                        )
-                      }
-                      className="w-full"
-                    >
-                      {option.key === 'all'
-                        ? 'Все'
-                        : option.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">
-                  Сортировка
-                </label>
-
-                <Select
-                  value={currentFilters.sort}
-                  onChange={(event) =>
-                    handleChange(
-                      'sort',
-                      event.target.value as FilterState['sort'],
-                    )
-                  }
-                  options={sortOptions.map((option) => ({
-                    value: option.key,
-                    label: option.label,
-                  }))}
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                {activeFiltersCount > 0 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="md"
-                    onClick={resetFilters}
-                    className="flex-1"
-                  >
-                    Сбросить
-                  </Button>
-                )}
-
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex-1"
-                >
-                  Показать товары
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+    </form>
+  )
+  return (
+    <>
+      <div className="hidden rounded-lg border border-border bg-muted p-5 lg:block">
+        <h2 className="mb-5 text-xl font-bold">Фильтры</h2>
+        {form('desktop')}
+      </div>
+      <Button
+        variant="outline"
+        className="w-full lg:hidden"
+        onClick={() => setOpen(true)}
+      >
+        <FiFilter />
+        Фильтры
+        {activeCount > 0 && (
+          <span className="rounded bg-muted px-2">{activeCount}</span>
+        )}
+      </Button>
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        side="bottom"
+        title="Фильтры каталога"
+      >
+        {form('mobile')}
+      </Drawer>
     </>
   )
 }

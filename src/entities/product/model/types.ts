@@ -51,6 +51,9 @@ export interface GetProductsParams {
   category?: string;
   subcategory?: string;
   search?: string;
+  gost?: string;
+  priceMin?: number;
+  priceMax?: number;
   condition?: ProductCondition | 'all';
   stock?: StockFilter;
   sort?: SortOption;

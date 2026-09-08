@@ -1,6 +1,12 @@
+import { formatSpec, plainText } from '@/shared/lib/plain-text'
 import { useCart } from '@/entities/cart'
 import { ProductCard } from '@/entities/product/ui/ProductCard'
-import { formatPrice, getConditionBadgeColor, getConditionLabel, getProductBreadcrumbs } from '@/shared/lib/catalog-helpers'
+import {
+  formatPrice,
+  getConditionBadgeColor,
+  getConditionLabel,
+  getProductBreadcrumbs,
+} from '@/shared/lib/catalog-helpers'
 import { getImageUrl } from '@/shared/lib/product-helpers'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { Button } from '@/shared/ui/Button'
@@ -9,12 +15,7 @@ import { ProductImage } from '@/shared/ui/ProductImage'
 import { RequestFormModal } from '@/shared/ui/RequestFormModal'
 import { Layout } from '@/widgets/Layout'
 import { useState } from 'react'
-import {
-  FiFileText,
-  FiSettings,
-  FiShoppingCart,
-  FiTruck,
-} from 'react-icons/fi'
+import { FiFileText, FiSettings, FiShoppingCart, FiTruck } from 'react-icons/fi'
 import { Link, useParams } from 'react-router'
 import { useProduct } from '../model/use-product'
 
@@ -75,7 +76,10 @@ export function ProductPage() {
           <h1 className="text-3xl font-bold text-foreground">
             {error ?? 'Товар не найден'}
           </h1>
-          <Link to="/catalog" className="mt-4 inline-block text-primary hover:underline">
+          <Link
+            to="/catalog"
+            className="mt-4 inline-block text-primary hover:underline"
+          >
             ← Вернуться в каталог
           </Link>
         </div>
@@ -87,7 +91,11 @@ export function ProductPage() {
     addToCart(product, 1)
   }
 
-  const breadcrumbs = getProductBreadcrumbs(product, product.category?.name || 'Все', product.subcategory?.name)
+  const breadcrumbs = getProductBreadcrumbs(
+    product,
+    product.category?.name || 'Все',
+    product.subcategory?.name,
+  )
 
   return (
     <Layout>
@@ -103,7 +111,7 @@ export function ProductPage() {
         </div>
 
         <div className="mb-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div>
+          <div className="min-w-0">
             <div className="mb-4 aspect-4/3 overflow-hidden rounded-xl border border-border bg-muted">
               <ProductImage
                 src={getImageUrl(selectedProductImage)}
@@ -140,7 +148,7 @@ export function ProductPage() {
             )}
           </div>
 
-          <div>
+          <div className="min-w-0">
             <div className="mb-3 flex flex-wrap items-center gap-3">
               <span
                 className={`rounded-md border px-2 py-1 text-xs font-medium ${getConditionBadgeColor(
@@ -166,7 +174,7 @@ export function ProductPage() {
             )}
 
             <div className="mb-5">
-              {!product.price ? (
+              {product.price == null ? (
                 <span className="text-2xl font-bold text-primary">
                   По запросу
                 </span>
@@ -184,9 +192,7 @@ export function ProductPage() {
             </div>
 
             <div className="mb-6 rounded-lg bg-muted p-4">
-              <div className="mb-1 text-sm text-muted-foreground">
-                Наличие
-              </div>
+              <div className="mb-1 text-sm text-muted-foreground">Наличие</div>
 
               <div className="font-bold text-foreground">
                 {product.stock > 100
@@ -201,7 +207,7 @@ export function ProductPage() {
               <div className="mb-4 flex items-center gap-2">
                 <FiSettings className="h-5 w-5 text-primary" />
 
-                <h2 className="text-xl font-bold text-foreground">
+                <h2 className="text-2xl font-bold text-foreground">
                   Характеристики
                 </h2>
               </div>
@@ -213,12 +219,11 @@ export function ProductPage() {
                     className="flex items-center justify-between gap-6 border-b border-border px-4 py-3 last:border-b-0"
                   >
                     <span className="text-sm text-muted-foreground">
-                      {specLabels[spec.id] ?? spec.label}
+                      {specLabels[spec.id] ?? plainText(spec.label)}
                     </span>
 
                     <span className="text-right text-sm font-medium text-foreground">
-                      {spec.value}
-                      {spec.unit ? ` ${spec.unit}` : ''}
+                      {formatSpec(spec.value, spec.unit)}
                     </span>
                   </div>
                 ))}
@@ -249,14 +254,14 @@ export function ProductPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
               <Button
                 type="button"
                 size="lg"
                 onClick={() => setRequestFormOpen(true)}
                 className="flex-1"
               >
-                Отправить заявку или запрос
+                Запросить спецификацию
               </Button>
 
               <Button
@@ -276,9 +281,7 @@ export function ProductPage() {
           <div className="mb-5 flex items-center gap-2">
             <FiFileText className="h-5 w-5 text-primary" />
 
-            <h2 className="text-2xl font-bold text-foreground">
-              Описание
-            </h2>
+            <h2 className="section-title">Описание</h2>
           </div>
 
           <div className="max-w-4xl text-base leading-7 text-muted-foreground">
@@ -288,17 +291,15 @@ export function ProductPage() {
             </p>
 
             <p className="mb-4">
-              Наша компания осуществляет поставку данной
-              продукции по всей России и странам СНГ. Возможны
-              различные условия оплаты и гибкая система скидок
-              для постоянных клиентов.
+              Наша компания осуществляет поставку данной продукции по всей
+              России и странам СНГ. Возможны различные условия оплаты и гибкая
+              система скидок для постоянных клиентов.
             </p>
 
             <p>
-              Для получения детальной информации о технических
-              характеристиках, условиях доставки и актуальных
-              ценах свяжитесь с нашими менеджерами или запросите
-              коммерческое предложение.
+              Для получения детальной информации о технических характеристиках,
+              условиях доставки и актуальных ценах свяжитесь с нашими
+              менеджерами или запросите коммерческое предложение.
             </p>
           </div>
         </section>
@@ -307,20 +308,18 @@ export function ProductPage() {
           <div className="mb-5 flex items-center gap-2">
             <FiTruck className="h-5 w-5 text-primary" />
 
-            <h2 className="text-2xl font-bold text-foreground">
-              Доставка
-            </h2>
+            <h2 className="section-title">Доставка</h2>
           </div>
 
           <div className="max-w-4xl text-base leading-7 text-muted-foreground">
             <p className="mb-4">
-              Осуществляем доставку всеми видами транспорта:
-              ж/д, автомобильным, смешанным. Отгрузка со склада
-              в течение 1-3 дней при наличии на складе.
+              Осуществляем доставку всеми видами транспорта: ж/д, автомобильным,
+              смешанным. Отгрузка со склада в течение 1-3 дней при наличии на
+              складе.
             </p>
 
             <ul className="mb-4 list-inside list-disc space-y-2">
-              <li>Самовывоз со склада в Екатеринбурге</li>
+              <li>Самовывоз со склада в Зеленодольске</li>
               <li>Доставка ж/д транспортом для крупных партий</li>
               <li>Автомобильная доставка по России</li>
               <li>Возможна упаковка и консервация груза</li>
@@ -393,11 +392,9 @@ export function ProductPage() {
 
         {similarProducts.length > 0 && (
           <section className="border-t border-border pt-10">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
-              Похожие товары
-            </h2>
+            <h2 className="section-title mb-6">Похожие товары</h2>
 
-            <div className="space-y-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {similarProducts.map((item) => (
                 <ProductCard key={item.id} product={item} />
               ))}
