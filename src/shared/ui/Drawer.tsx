@@ -1,6 +1,7 @@
-import { useEffect, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/shared/lib/cn'
+import { useModalFocus } from '@/shared/lib/use-modal-focus'
 
 export interface DrawerProps {
   open: boolean
@@ -19,23 +20,8 @@ export function Drawer({
   className,
   side = 'right',
 }: DrawerProps) {
-  useEffect(() => {
-    if (!open) return
-
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onOpenChange(false)
-      }
-    }
-
-    document.addEventListener('keydown', handleEsc)
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = ''
-    }
-  }, [open, onOpenChange])
+  const panelRef = useModalFocus(open, onOpenChange)
+  const titleId = useId()
 
   if (!open) return null
 
@@ -58,7 +44,7 @@ export function Drawer({
       className="fixed inset-0 z-50"
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? 'drawer-title' : undefined}
+      aria-labelledby={title ? titleId : undefined}
     >
       {/* Overlay */}
       <div
@@ -69,28 +55,41 @@ export function Drawer({
 
       {/* Drawer content */}
       <div
+        ref={panelRef}
+        tabIndex={-1}
         className={cn(
           'fixed z-50 bg-background shadow-lg animate-in',
           slideAnimation[side],
           'duration-200',
           sideClasses[side],
-          className
+          className,
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col h-full">
           {title && (
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h2 id="drawer-title" className="text-lg font-semibold">
+              <h2 id={titleId} className="text-lg font-semibold">
                 {title}
               </h2>
               <button
                 onClick={() => onOpenChange(false)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                type="button"
+                className="flex h-11 w-11 shrink-0 items-center justify-center hover:bg-muted rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 aria-label="Закрыть"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -99,6 +98,6 @@ export function Drawer({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }

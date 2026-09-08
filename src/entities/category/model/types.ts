@@ -18,6 +18,7 @@ export interface Category {
   slug: string;
   description: string;
   image: string;
+  productCount?: number;
   subcategories: Subcategory[];
   filters?: FilterOption[];
 }

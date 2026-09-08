@@ -1,5 +1,9 @@
 import { categoryApi, type Category } from '@/entities/category'
-import { productApi, type GetProductsParams, type Product } from '@/entities/product'
+import {
+  productApi,
+  type GetProductsParams,
+  type Product,
+} from '@/entities/product'
 import type { SortOption } from '@/entities/product/model/types'
 import type { PaginationMeta } from '@/shared/api'
 import { useEffect, useMemo, useState } from 'react'
@@ -8,24 +12,21 @@ import { useSearchParams } from 'react-router'
 type FilterCondition = 'new' | 'used' | 'service' | 'all'
 type FilterStock = 'all' | 'in-stock' | 'on-order'
 
-export interface FilterState {
-  search: string
-  condition: FilterCondition
-  stock: FilterStock
-  sort: SortOption
-  attributes: Record<string, string>
-}
+import type { FilterState } from '@/features/product-filter/ProductFilter'
+export type { FilterState } from '@/features/product-filter/ProductFilter'
 
 export interface UseCatalogReturn {
   products: Product[]
   categories: Category[]
   currentCategory?: Category
-  currentSubcategory?: Category['subcategories'] extends (infer U)[] | undefined ? U : never
+  currentSubcategory?: Category['subcategories'] extends (infer U)[] | undefined
+    ? U
+    : never
   filterValue: FilterState
   pagination: PaginationMeta
   loading: boolean
   error: string | null
-  handleFilterChange: (nextFilters: FilterState) => void
+  handleFilterChange: (nextFilters: FilterState, category?: string) => void
   handlePageChange: (page: number) => void
 }
 
@@ -50,6 +51,9 @@ export function useCatalog(): UseCatalogReturn {
   const page = parseInt(searchParams.get('page') ?? '1', 10)
   const limit = parseInt(searchParams.get('limit') ?? '20', 10)
   const search = searchParams.get('search') ?? ''
+  const gost = searchParams.get('gost') ?? ''
+  const priceMin = searchParams.get('priceMin') ?? ''
+  const priceMax = searchParams.get('priceMax') ?? ''
   const condition = (searchParams.get('condition') as FilterCondition) ?? 'all'
   const sort = (searchParams.get('sort') as SortOption) ?? 'name'
   const stock = (searchParams.get('stock') as FilterStock) ?? 'all'
@@ -99,6 +103,9 @@ export function useCatalog(): UseCatalogReturn {
           category: categorySlug,
           subcategory: subcategorySlug,
           search: search || undefined,
+          gost: gost || undefined,
+          priceMin: priceMin === '' ? undefined : Number(priceMin),
+          priceMax: priceMax === '' ? undefined : Number(priceMax),
           condition: condition !== 'all' ? condition : undefined,
           stock: stock !== 'all' ? stock : undefined,
           sort,
@@ -126,13 +133,34 @@ export function useCatalog(): UseCatalogReturn {
     return () => {
       cancelled = true
     }
-  }, [page, limit, categorySlug, subcategorySlug, search, condition, stock, sort, attributeFilters])
+  }, [
+    page,
+    limit,
+    categorySlug,
+    subcategorySlug,
+    search,
+    gost,
+    priceMin,
+    priceMax,
+    condition,
+    stock,
+    sort,
+    attributeFilters,
+  ])
 
-
-  const handleFilterChange = (nextFilters: FilterState) => {
+  const handleFilterChange = (nextFilters: FilterState, category?: string) => {
     const params = new URLSearchParams(searchParams)
 
     params.set('page', '1')
+    if (category !== undefined && category !== (categorySlug ?? '')) {
+      if (category) params.set('category', category)
+      else params.delete('category')
+      params.delete('subcategory')
+    }
+    for (const key of ['gost', 'priceMin', 'priceMax'] as const) {
+      if (nextFilters[key].trim()) params.set(key, nextFilters[key].trim())
+      else params.delete(key)
+    }
 
     if (nextFilters.search) {
       params.set('search', nextFilters.search)
@@ -184,6 +212,9 @@ export function useCatalog(): UseCatalogReturn {
 
   const filterValue: FilterState = {
     search,
+    gost,
+    priceMin,
+    priceMax,
     condition,
     stock,
     sort,

@@ -1,5 +1,5 @@
 // src/features/admin-products/ui/ProductFormModal.tsx
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import type { Category } from '@/entities/category'
 import type { Subcategory } from '@/entities/subcategory'
@@ -36,7 +36,12 @@ function clampNonNegative(value: string): string {
   return String(num)
 }
 
-export function ProductFormModal({
+export function ProductFormModal(props: ProductFormModalProps) {
+  if (!props.open) return null
+  return <ProductFormModalContent key={props.product?.id ?? 'new'} {...props} />
+}
+
+function ProductFormModalContent({
   open,
   onOpenChange,
   product,
@@ -46,21 +51,21 @@ export function ProductFormModal({
 }: ProductFormModalProps) {
   const isEditMode = !!product
 
-  const [sku, setSku] = useState('')
-  const [title, setTitle] = useState('')
-  const [slug, setSlug] = useState('')
-  const [slugTouched, setSlugTouched] = useState(false)
-  const [gost, setGost] = useState('')
-  const [price, setPrice] = useState('')
-  const [priceOnRequest, setPriceOnRequest] = useState(false)
-  const [stock, setStock] = useState('1')
-  const [condition, setCondition] = useState<Product['condition']>('new')
-  const [categorySlug, setCategorySlug] = useState('')
-  const [subcategorySlug, setSubcategorySlug] = useState('')
-  const [description, setDescription] = useState('')
-  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [sku, setSku] = useState(product?.sku ?? '')
+  const [title, setTitle] = useState(product?.title ?? '')
+  const [slug, setSlug] = useState(product?.slug ?? '')
+  const [slugTouched, setSlugTouched] = useState(!!product)
+  const [gost, setGost] = useState(product?.gost ?? '')
+  const [price, setPrice] = useState(product?.price == null ? '' : String(product.price))
+  const [priceOnRequest, setPriceOnRequest] = useState(!!product && product.price == null)
+  const [stock, setStock] = useState(String(product?.stock ?? 1))
+  const [condition, setCondition] = useState<Product['condition']>(product?.condition ?? 'new')
+  const [categorySlug, setCategorySlug] = useState(product?.categorySlug ?? '')
+  const [subcategorySlug, setSubcategorySlug] = useState(product?.subcategorySlug ?? '')
+  const [description, setDescription] = useState(product?.description ?? '')
+  const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? [])
   const [newImages, setNewImages] = useState<File[]>([])
-  const [specs, setSpecs] = useState<SpecDraft[]>([])
+  const [specs, setSpecs] = useState<SpecDraft[]>(() => (product?.specs ?? []).map(spec => ({ id: crypto.randomUUID(), label: spec.label, value: String(spec.value), unit: spec.unit ?? '' })))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -68,35 +73,6 @@ export function ProductFormModal({
     () => categories.find((category) => category.slug === categorySlug) || null,
     [categories, categorySlug],
   )
-
-  useEffect(() => {
-    if (!open) return
-
-    if (product) {
-      setSku(product.sku)
-      setTitle(product.title)
-      setSlug(product.slug)
-      setSlugTouched(true)
-      setGost(product.gost ?? '')
-      setStock(String(product.stock))
-      setCondition(product.condition)
-      setCategorySlug(product.categorySlug)
-      setSubcategorySlug(product.subcategorySlug ?? '')
-      setDescription(product.description ?? '')
-      setExistingImages(product.images ?? [])
-      setNewImages([])
-      setSpecs(
-        (product.specs ?? []).map((s) => ({
-          id: crypto.randomUUID(),
-          label: s.label,
-          value: String(s.value),
-          unit: s.unit ?? '',
-        })),
-      )
-    } else {
-      resetForm()
-    }
-  }, [open, product])
 
   const handleTitleChange = (value: string) => {
     setTitle(value)
@@ -181,7 +157,7 @@ export function ProductFormModal({
         }
       })
 
-      const finalPrice = priceOnRequest ? undefined : Math.max(0, Number(price) || 0)
+      const finalPrice = priceOnRequest ? null : Math.max(0, Number(price) || 0)
       const finalStock = Math.max(0, Number(stock) || 0)
 
       const baseDto = {
@@ -193,15 +169,17 @@ export function ProductFormModal({
         stock: finalStock,
         condition,
         categorySlug,
-        subcategorySlug: subcategorySlug || undefined,
-        description: description.trim() || undefined,
-        specs: productSpecs.length > 0 ? productSpecs : undefined,
+        subcategorySlug,
+        description: description.trim(),
+        specs: productSpecs,
       }
 
       if (isEditMode && product && onUpdate) {
-        await onUpdate(product.id, baseDto, newImages)
+        const saved = await onUpdate(product.id, { ...baseDto, retainedImages: existingImages }, newImages)
+        if (!saved) throw new Error('Не удалось сохранить товар. Изменения оставлены в форме. Проверьте данные и повторите попытку.')
       } else {
-        await onCreate(baseDto, newImages)
+        const saved = await onCreate(baseDto, newImages)
+        if (!saved) throw new Error('Не удалось создать товар. Проверьте данные и повторите попытку.')
       }
 
       resetForm()
@@ -439,9 +417,10 @@ export function ProductFormModal({
                   />
                   <button
                     type="button"
+                    aria-label={`Удалить изображение ${index + 1}`}
                     onClick={() => handleRemoveExistingImage(index)}
                     disabled={isSubmitting}
-                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity hover:bg-red-500 group-hover:opacity-100 disabled:cursor-not-allowed"
+                    className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed"
                   >
                     <FiX className="h-3 w-3" />
                   </button>
@@ -456,6 +435,7 @@ export function ProductFormModal({
           onChange={setNewImages}
           disabled={isSubmitting}
           label={isEditMode ? 'Добавить новые изображения' : 'Изображения'}
+          maxFiles={Math.max(0, 10 - existingImages.length)}
         />
 
         <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-4">

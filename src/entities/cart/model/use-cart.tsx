@@ -15,23 +15,24 @@ const STORAGE_KEY = 'cart_items'
 
 function calculateTotals(items: CartItem[]): Pick<CartState, 'totalItems' | 'totalPrice'> {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-    const totalPrice = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+    const totalPrice = items.reduce((sum, item) => sum + ((item.product.price ?? 0) * item.quantity), 0)
     return {totalItems, totalPrice}
 }
 
 export function CartProvider({children}: { children: ReactNode }) {
-    const [items, setItems] = useState<CartItem[]>(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY)
-            return stored ? JSON.parse(stored) : []
-        } catch {
-            return []
-        }
-    })
-
+    const [items, setItems] = useState<CartItem[]>([])
+    const [storageReady, setStorageReady] = useState(false)
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-    }, [items])
+        try {
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+            if (Array.isArray(stored)) setItems(stored.filter(item => item?.product?.id && Number.isFinite(item.quantity) && item.quantity > 0))
+        } catch { /* Storage can be unavailable in private browsing. */ }
+        setStorageReady(true)
+    }, [])
+    useEffect(() => {
+        if (!storageReady) return
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)) } catch { /* Keep the cart usable without storage. */ }
+    }, [items, storageReady])
 
     const {totalItems, totalPrice} = calculateTotals(items)
 

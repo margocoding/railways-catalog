@@ -1,7 +1,8 @@
-import { useEffect, useId, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/shared/lib/cn'
+import { useModalFocus } from '@/shared/lib/use-modal-focus'
 
 export interface DialogProps {
   open: boolean
@@ -12,28 +13,18 @@ export interface DialogProps {
   className?: string
 }
 
-export function Dialog({ open, onOpenChange, title, description, children, className }: DialogProps) {
+export function Dialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  children,
+  className,
+}: DialogProps) {
   const titleId = useId()
   const descriptionId = useId()
 
-  useEffect(() => {
-    if (!open) return
-
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onOpenChange(false)
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', handleEsc)
-
-    return () => {
-      document.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = previousOverflow
-    }
-  }, [open, onOpenChange])
+  const panelRef = useModalFocus(open, onOpenChange)
 
   if (typeof document === 'undefined') {
     return null
@@ -59,6 +50,8 @@ export function Dialog({ open, onOpenChange, title, description, children, class
             }}
           >
             <motion.div
+              ref={panelRef}
+              tabIndex={-1}
               role="dialog"
               aria-modal="true"
               aria-labelledby={title ? titleId : undefined}
@@ -69,7 +62,7 @@ export function Dialog({ open, onOpenChange, title, description, children, class
               transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
               className={cn(
                 'relative w-full max-w-lg overflow-hidden rounded-xl border border-border bg-background shadow-lg',
-                className
+                className,
               )}
               onClick={(event: any) => event.stopPropagation()}
             >
@@ -77,9 +70,15 @@ export function Dialog({ open, onOpenChange, title, description, children, class
                 type="button"
                 aria-label="Закрыть"
                 onClick={() => onOpenChange(false)}
-                className="absolute right-4 top-4 z-20 inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
                   <path
                     d="M12.5 3.5L3.5 12.5M3.5 3.5L12.5 12.5"
                     stroke="currentColor"
@@ -98,13 +97,21 @@ export function Dialog({ open, onOpenChange, title, description, children, class
                       </h2>
                     )}
                     {description && (
-                      <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">
+                      <p
+                        id={descriptionId}
+                        className="mt-1 text-sm text-muted-foreground"
+                      >
                         {description}
                       </p>
                     )}
                   </div>
                 )}
-                <div className={cn('px-6 pb-6', title || description ? 'pt-4' : 'pt-14')}>
+                <div
+                  className={cn(
+                    'px-6 pb-6',
+                    title || description ? 'pt-4' : 'pt-14',
+                  )}
+                >
                   {children}
                 </div>
               </div>
@@ -113,6 +120,6 @@ export function Dialog({ open, onOpenChange, title, description, children, class
         </motion.div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   )
 }

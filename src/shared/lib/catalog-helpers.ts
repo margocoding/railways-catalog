@@ -1,3 +1,4 @@
+import { formatSpec } from './plain-text'
 import type { Product } from '../../entities/product/model/types'
 
 export interface BreadcrumbItem {
@@ -26,7 +27,7 @@ export function getSpecValue(
         return '—'
     }
 
-    return `${spec.value}${spec.unit ? ` ${spec.unit}` : ''}`
+    return formatSpec(spec.value, spec.unit)
 }
 
 export function getSubcategoryUrl(
@@ -119,9 +120,9 @@ export function getConditionLabel(condition: string): string {
 
 export function getConditionBadgeColor(condition: string): string {
   const colors: Record<string, string> = {
-    new: 'bg-green-500/20 text-green-400 border-green-500/30',
-    used: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    service: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    new: 'bg-muted text-muted-foreground border-border',
+    used: 'bg-muted text-muted-foreground border-border',
+    service: 'bg-muted text-muted-foreground border-border',
   }
 
   return (

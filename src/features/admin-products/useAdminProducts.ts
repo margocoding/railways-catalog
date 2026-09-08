@@ -61,12 +61,11 @@ export function useAdminProducts() {
     id: string,
     dto: UpdateProductDto,
     newImages: File[] = [],
-    existingImages: string[] = [],
   ): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
     try {
-      const updatedProduct = await productApi.update(id, dto, newImages, existingImages)
+      const updatedProduct = await productApi.update(id, dto, newImages)
       setProducts((prev) => prev.map((p) => (p.id === id ? updatedProduct : p)))
       return true
     } catch (err) {

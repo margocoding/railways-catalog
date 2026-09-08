@@ -6,68 +6,10 @@ import { Layout } from '@/widgets/Layout'
 import { useService } from '@/entities/service/model/hooks/useService'
 import { getImageUrl } from '@/shared/lib'
 import { ServiceRequestForm } from '@/features/service-request/ServiceRequestForm'
-import { useSeo } from '@/shared/lib/use-seo'
 
 export function ServicePage() {
   const { slug } = useParams<{ slug: string }>()
   const { service, isLoading, error, notFound } = useService(slug)
-
-  const seoConfig = service
-    ? {
-        title: `${service.title} — заказать услугу в INVIA | tatrels.ru`,
-        description: `${service.description} Заказать услугу по выгодной цене. Доставка по всей России. Звоните: +7 (843) 259-73-00`,
-        keywords: `${service.title.toLowerCase()}, ${service.title.toLowerCase()} заказать, ${service.title.toLowerCase()} цена, услуги ЖД, верхнее строение пути, INVIA`,
-        canonical: `https://tatrels.ru/services/${service.slug}`,
-        ogTitle: service.title,
-        ogDescription: service.description,
-        ogUrl: `https://tatrels.ru/services/${service.slug}`,
-        ogImage: service.image ? getImageUrl(service.image) : 'https://tatrels.ru/og-image.jpg',
-        jsonLd: [
-          {
-            '@context': 'https://schema.org',
-            '@type': 'Service',
-            name: service.title,
-            description: service.fullDescription || service.description,
-            provider: {
-              '@type': 'Organization',
-              name: 'ООО «ИНВИА»',
-              url: 'https://tatrels.ru',
-              telephone: '+7-843-259-73-00',
-              email: 'zakaz@ttr2.ru',
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: 'ул. Московская, зд. 4, помещ. 1',
-                addressLocality: 'Зеленодольск',
-                addressRegion: 'Республика Татарстан',
-                postalCode: '422549',
-                addressCountry: 'RU',
-              },
-            },
-            areaServed: {
-              '@type': 'Country',
-              name: 'Россия',
-            },
-            image: service.image ? getImageUrl(service.image) : undefined,
-            url: `https://tatrels.ru/services/${service.slug}`,
-            serviceType: service.title,
-          },
-          {
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: service.features?.slice(0, 5).map((feature) => ({
-              '@type': 'Question',
-              name: feature,
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: `Мы предоставляем услугу «${service.title}» с гарантией качества. ${service.description}`,
-              },
-            })) || [],
-          },
-        ],
-      }
-    : null
-
-  useSeo(seoConfig)
 
   const breadcrumbs = service
     ? [

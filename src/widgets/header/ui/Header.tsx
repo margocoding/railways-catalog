@@ -1,212 +1,162 @@
-import { useEffect, useState } from "react";
-import {
-  FiMenu,
-  FiPhone,
-  FiSearch,
-  FiShoppingCart,
-  FiMail,
-} from "react-icons/fi";
-import { Link, useNavigate } from "react-router";
-import { Button } from "../../../shared/ui/Button";
-import { MobileMenu } from "@/widgets/header/ui/MobileMenu";
-import { CatalogMegaMenu } from "@/widgets/header/ui/CatalogMegaMenu";
-import { HeaderNavLink } from "@/widgets/header/ui/HeaderNavLink";
-import { useCart } from "@/entities/cart/model/use-cart";
-import { RequestFormModal } from "../../../shared/ui/RequestFormModal";
+import { useEffect, useRef, useState } from 'react'
+import { FiMenu, FiPhone, FiShoppingCart } from 'react-icons/fi'
+import { Link, NavLink } from 'react-router'
+import { Button } from '@/shared/ui/Button'
+import { MobileMenu } from './MobileMenu'
+import { CatalogMegaMenu } from './CatalogMegaMenu'
+import { CatalogSearch } from './CatalogSearch'
+import { useCart } from '@/entities/cart/model/use-cart'
+import { RequestFormModal } from '@/shared/ui/RequestFormModal'
+import { MessengerLinks } from '@/shared/ui/MessengerLinks'
+
+const links = [
+  ['Услуги', '/services'],
+  ['Доставка', '/delivery'],
+  ['Прайс', '/price'],
+  ['О компании', '/about'],
+  ['Контакты', '/contacts'],
+]
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [requestFormOpen, setRequestFormOpen] = useState(false);
-  const { totalItems } = useCart();
-  const navigate = useNavigate();
-
+  const headerRef = useRef<HTMLElement>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [requestOpen, setRequestOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { totalItems } = useCart()
   useEffect(() => {
-    const handleOpenRequestForm = () => {
-      setRequestFormOpen(true);
-    };
+    const scroll = () => {
+      const scrollY = Math.max(0, window.scrollY)
+      const headerHeight = headerRef.current?.offsetHeight
+      if (headerHeight === undefined) return
 
-    window.addEventListener("open-request-form", handleOpenRequestForm);
-
+      // Keep the thresholds apart so scroll anchoring during the height
+      // transition cannot immediately trigger the opposite state.
+      setScrolled((wasScrolled) =>
+        wasScrolled ? scrollY > 8 : scrollY > headerHeight,
+      )
+    }
+    const request = () => setRequestOpen(true)
+    scroll()
+    window.addEventListener('scroll', scroll, { passive: true })
+    window.addEventListener('resize', scroll)
+    window.addEventListener('open-request-form', request)
     return () => {
-      window.removeEventListener("open-request-form", handleOpenRequestForm);
-    };
-  }, []);
-
+      window.removeEventListener('scroll', scroll)
+      window.removeEventListener('resize', scroll)
+      window.removeEventListener('open-request-form', request)
+    }
+  }, [])
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-3 lg:px-10">
-        <Link
-          to="/"
-          className="flex shrink-0 items-center gap-3"
-          aria-label="INVIA — главная"
-        >
-          <img src="/logo.png" alt="INVIA" className="w-30" />
-        </Link>
-
-        <nav
-          className="hidden items-center gap-1 lg:flex"
-          aria-label="Основная навигация"
-        >
-          <CatalogMegaMenu />
-
-          <HeaderNavLink to="/services">Услуги</HeaderNavLink>
-
-          <HeaderNavLink to="/delivery">Доставка</HeaderNavLink>
-
-          <HeaderNavLink to="/price">Прайс</HeaderNavLink>
-
-          <HeaderNavLink to="/about">О компании</HeaderNavLink>
-
-          <HeaderNavLink to="/contacts">Контакты</HeaderNavLink>
-        </nav>
-
-        <div className="hidden items-center gap-2 md:flex lg:gap-3">
-          <button
-            type="button"
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-lg
-              text-muted-foreground
-              transition-colors
-              hover:bg-muted
-              hover:text-foreground
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary/50
-            "
-            aria-label="Поиск"
+    <header
+      ref={headerRef}
+      className={`site-header sticky top-0 z-40 border-b border-border bg-white ${scrolled ? 'is-scrolled' : ''}`}
+    >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:p-3 focus:text-foreground"
+      >
+        Перейти к содержимому
+      </a>
+      <div
+        className="header-meta bg-muted text-muted-foreground"
+        inert={scrolled}
+      >
+        <div>
+          <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-2 text-[13px] xl:px-8">
+            <span>Зеленодольск · Поставки по России и СНГ</span>
+            <nav
+              aria-label="Основная навигация"
+              className="hidden items-center gap-4 xl:flex"
+            >
+              {links.map(([label, to]) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    `whitespace-nowrap rounded-sm hover:text-primary ${isActive ? 'font-bold text-primary' : ''}`
+                  }
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </nav>
+            <div className="hidden items-center gap-5 md:flex">
+              <a href="mailto:zakaz@ttr2.ru" className="hover:text-primary">
+                zakaz@ttr2.ru
+              </a>
+              <span>Пн–Пт, 9:00–18:00</span>
+              <MessengerLinks compact />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="container relative mx-auto px-6 xl:px-8">
+        <div className="header-main flex items-center gap-3 xl:gap-5">
+          <Link
+            to="/"
+            aria-label="ИНВИА — главная"
+            className="shrink-0 rounded bg-white px-1 py-1"
           >
-            <FiSearch className="h-5 w-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate("/cart")}
-            className="
-              relative
-              flex h-10 w-10 items-center justify-center
-              rounded-lg
-              text-muted-foreground
-              transition-colors
-              hover:bg-muted
-              hover:text-foreground
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary/50
-            "
-            aria-label="Корзина"
-          >
-            <FiShoppingCart className="h-5 w-5" />
-            {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
-                {totalItems > 9 ? "9+" : totalItems}
-              </span>
-            )}
-          </button>
-
+            <img src="/logo.png" alt="ИНВИА" className="w-25 xl:w-28" />
+          </Link>
+          <div className="hidden xl:block">
+            <CatalogMegaMenu />
+          </div>
+          <div className="hidden min-w-0 flex-1 md:block">
+            <CatalogSearch />
+          </div>
           <a
             href="tel:+78432597300"
-            className="
-              hidden items-center gap-2
-              px-2
-              text-sm font-semibold
-              text-foreground
-              transition-colors
-              hover:text-primary
-              xl:flex
-            "
+            className="ml-auto flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2 font-bold hover:opacity-75"
+            aria-label="Позвонить: +7 (843) 259-73-00"
           >
-            <FiPhone className="h-4 w-4 text-primary" />
-            <span>+7 (843) 259-73-00</span>
+            <FiPhone className="h-5 w-5" />
+            <span className="hidden xl:inline">+7 (843) 259-73-00</span>
           </a>
-
-          <a
-            href="mailto:zakaz@ttr2.ru"
-            className="
-              hidden items-center gap-2
-              px-2
-              text-sm font-semibold
-              text-foreground
-              transition-colors
-              hover:text-primary
-              xl:flex
-            "
-            aria-label="Email"
-          >
-            <FiMail className="h-4 w-4 text-primary" />
-            <span>zakaz@ttr2.ru</span>
-          </a>
-
-          <Button onClick={() => setRequestFormOpen(true)}>Получить КП</Button>
-        </div>
-
-        <div className="flex items-center gap-1 md:hidden">
-          <button
-            type="button"
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-lg
-              text-muted-foreground
-              transition-colors
-              hover:bg-muted
-              hover:text-foreground
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary/50
-            "
-            aria-label="Поиск"
-          >
-            <FiSearch className="h-5 w-5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate("/cart")}
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-lg
-              text-foreground
-              transition-colors
-              hover:bg-muted
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary/50
-            "
-            aria-label="Корзина"
+          <Link
+            to="/cart"
+            aria-label={`Корзина${totalItems ? `, товаров: ${totalItems}` : ''}`}
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-current/20 hover:opacity-75"
           >
             <FiShoppingCart className="h-5 w-5" />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
-                {totalItems > 9 ? "9+" : totalItems}
+              <span className="absolute -right-1 -top-1 rounded bg-accent px-1 text-xs font-bold text-accent-foreground">
+                {totalItems > 99 ? '99+' : totalItems}
               </span>
             )}
-          </button>
-
+          </Link>
+          <div className="hidden shrink-0 xl:block">
+            <Button
+              className="whitespace-nowrap"
+              onClick={() => setRequestOpen(true)}
+            >
+              Запросить спецификацию
+            </Button>
+          </div>
           <button
             type="button"
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-lg
-              text-foreground
-              transition-colors
-              hover:bg-muted
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary/50
-            "
-            onClick={() => setMobileMenuOpen(true)}
             aria-label="Открыть меню"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen(true)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-current/20 xl:hidden"
           >
             <FiMenu className="h-6 w-6" />
           </button>
         </div>
+        <div className="header-meta" inert={scrolled}>
+          <div>
+            <div className="pb-3 md:hidden">
+              <CatalogSearch />
+            </div>
+          </div>
+        </div>
       </div>
-      <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
-
+      <MobileMenu open={mobileOpen} onOpenChange={setMobileOpen} />
       <RequestFormModal
-        open={requestFormOpen}
-        onOpenChange={setRequestFormOpen}
+        open={requestOpen}
+        onOpenChange={setRequestOpen}
+        title="Запросить спецификацию"
       />
     </header>
-  );
+  )
 }

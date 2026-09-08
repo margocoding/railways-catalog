@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FiImage, FiPlus, FiX } from 'react-icons/fi'
 
 interface MultipleImageUploadProps {
@@ -17,11 +17,18 @@ export function MultipleImageUpload({
   maxFiles = 10,
 }: MultipleImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState('')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || [])
-    const combined = [...value, ...newFiles].slice(0, maxFiles)
-    onChange(combined)
+    setError('')
+    if (newFiles.some((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024)) {
+      setError('Выберите JPG, PNG или WebP размером не более 5 МБ.')
+    } else if (value.length + newFiles.length > maxFiles) {
+      setError(`Можно добавить ещё ${Math.max(0, maxFiles - value.length)} изображений. Всего у товара — не более 10.`)
+    } else {
+      onChange([...value, ...newFiles])
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -40,7 +47,7 @@ export function MultipleImageUpload({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         multiple
         onChange={handleFileChange}
         disabled={disabled || value.length >= maxFiles}
@@ -48,24 +55,18 @@ export function MultipleImageUpload({
       />
 
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
-        {value.map((file, index) => {
-          const previewUrl = URL.createObjectURL(file)
-
-          return (
+        {value.map((file, index) => (
             <div
               key={`${file.name}-${index}`}
               className="group relative aspect-square overflow-hidden rounded-lg border border-border"
             >
-              <img
-                src={previewUrl}
-                alt={file.name}
-                className="h-full w-full object-cover"
-              />
+              <ImagePreview file={file} />
               <button
                 type="button"
+                aria-label={`Удалить новое изображение ${index + 1}`}
                 onClick={() => handleRemove(index)}
                 disabled={disabled}
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity hover:bg-red-500 group-hover:opacity-100 disabled:cursor-not-allowed"
+                className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed"
               >
                 <FiX className="h-3 w-3" />
               </button>
@@ -73,8 +74,7 @@ export function MultipleImageUpload({
                 <p className="truncate text-xs text-white">{file.name}</p>
               </div>
             </div>
-          )
-        })}
+          ))}
 
         {value.length < maxFiles && (
           <button
@@ -99,6 +99,17 @@ export function MultipleImageUpload({
       <p className="mt-2 text-xs text-muted-foreground">
         {value.length} из {maxFiles} изображений. Поддерживаются JPG, PNG, WebP. Максимум 5 MB каждый.
       </p>
+      {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   )
+}
+
+function ImagePreview({ file }: { file: File }) {
+  const ref = useRef<HTMLImageElement>(null)
+  useEffect(() => {
+    const preview = URL.createObjectURL(file)
+    if (ref.current) ref.current.src = preview
+    return () => URL.revokeObjectURL(preview)
+  }, [file])
+  return <img ref={ref} alt={file.name} className="h-full w-full object-cover" />
 }

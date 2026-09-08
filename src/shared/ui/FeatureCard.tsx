@@ -6,7 +6,7 @@ interface FeatureCardProps {
   icon: React.ReactNode
   title: string
   description: string
-  accent?: string // tailwind-градиент, напр. 'from-primary to-accent'
+  accent?: string
   className?: string
 }
 
@@ -14,20 +14,19 @@ export function FeatureCard({
   icon,
   title,
   description,
-  accent = 'from-primary to-accent',
   className,
 }: FeatureCardProps) {
   return (
     <Card className={cn('relative overflow-hidden', className)}>
-      {/* цветная полоска сверху */}
-      <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', accent)} />
+      <div className="absolute inset-x-0 top-0 h-1 bg-accent" />
       <CardContent className="p-6">
-        {/* градиентная подложка иконки */}
-        <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-3xl shadow-lg mb-4', accent)}>
+        <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-muted text-3xl mb-4">
           {icon}
         </div>
         <h3 className="font-bold text-foreground mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
       </CardContent>
     </Card>
   )

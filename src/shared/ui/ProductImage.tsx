@@ -1,4 +1,4 @@
-import { useEffect, useState, type ImgHTMLAttributes } from 'react'
+import { useState, type ImgHTMLAttributes } from 'react'
 import { MdNoPhotography } from 'react-icons/md'
 import { cn } from '../lib'
 
@@ -16,13 +16,9 @@ export function ProductImage({
   iconClassName,
   ...props
 }: ProductImageProps) {
-  const [hasError, setHasError] = useState(false)
+  const [failedSrc, setFailedSrc] = useState<string>()
 
-  useEffect(() => {
-    setHasError(false)
-  }, [src])
-
-  if (!src || hasError) {
+  if (!src || failedSrc === src) {
     return (
       <div
         className={cn(
@@ -40,7 +36,8 @@ export function ProductImage({
       src={src}
       alt={alt}
       className={className}
-      onError={() => setHasError(true)}
+      ref={(node) => { if (node?.complete && node.naturalWidth === 0) setFailedSrc(src) }}
+      onError={() => setFailedSrc(src)}
       {...props}
     />
   )

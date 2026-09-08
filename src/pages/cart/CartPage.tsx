@@ -1,3 +1,4 @@
+import { productPath } from '@/shared/seo/route-data'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { FiArrowLeft, FiTrash2, FiMinus, FiPlus, FiShoppingCart, FiCheck } from 'react-icons/fi'
@@ -361,7 +362,7 @@ export function CartPage() {
 
                     <div className="flex-1 min-w-0">
                       <Link
-                        to={`/catalog/${item.product.categorySlug}/${item.product.subcategorySlug}/product/${item.product.slug}`}
+                        to={productPath(item.product)}
                         className="font-semibold text-foreground hover:text-primary transition-colors line-clamp-2"
                       >
                         {item.product.title}

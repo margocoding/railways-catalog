@@ -11,35 +11,20 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.label,
-      item: item.href ? `https://tatrels.ru${item.href}` : undefined,
-    })),
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <nav
         aria-label="Хлебные крошки"
-        className="mb-4 flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))]"
+        className="mb-6 min-w-0 text-sm text-[hsl(var(--muted-foreground))]"
       >
-        <ol className="flex items-center gap-2" itemScope itemType="https://schema.org/BreadcrumbList">
+        <ol className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1" itemScope itemType="https://schema.org/BreadcrumbList">
           {items.map((item, index) => {
             const isLast = index === items.length - 1
 
             return (
               <li
                 key={index}
-                className="flex items-center gap-2"
+                className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1"
                 itemProp="itemListElement"
                 itemScope
                 itemType="https://schema.org/ListItem"
@@ -47,18 +32,18 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                 {item.href && !isLast ? (
                   <Link
                     to={item.href}
-                    className="hover:text-[hsl(var(--primary))] transition-colors"
+                    className="min-w-0 break-words hover:text-[hsl(var(--primary))] transition-colors"
                     itemProp="item"
                   >
                     <span itemProp="name">{item.label}</span>
                   </Link>
                 ) : (
-                  <span className="text-foreground font-medium" itemProp="name">
+                  <span className="min-w-0 break-words text-foreground font-medium" itemProp="name">
                     {item.label}
                   </span>
                 )}
                 <meta itemProp="position" content={String(index + 1)} />
-                {!isLast && <FiChevronRight className="h-4 w-4" aria-hidden="true" />}
+                {!isLast && <FiChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />}
               </li>
             )
           })}

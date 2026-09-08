@@ -6,6 +6,7 @@ import { getImageUrl } from '@/shared/lib'
 export function MaterialsServices() {
   const { services, isLoading } = useServices()
   const visibleServices = services.slice(0, 2)
+  if (!isLoading && !visibleServices.length) return null
 
   return (
     <section className="py-20 bg-[hsl(var(--muted))]">
@@ -74,8 +75,8 @@ export function MaterialsServices() {
                         </svg>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="absolute top-4 right-4 w-11 h-11 rounded-full bg-[hsl(var(--card))]/90 backdrop-blur-sm flex items-center justify-center text-[hsl(var(--foreground))] group-hover:bg-[hsl(var(--primary))] group-hover:text-white transition-all duration-300">
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="pointer-events-none absolute top-4 right-4 w-11 h-11 rounded-full bg-[hsl(var(--card))]/90 backdrop-blur-sm flex items-center justify-center text-[hsl(var(--foreground))] group-hover:bg-[hsl(var(--primary))] group-hover:text-white transition-all duration-300">
                       <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

@@ -215,11 +215,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-foreground">
-                    {(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽
+                    {item.product.price == null ? 'Цена по запросу' : `${(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽`}
                   </p>
-                  {!item.product.price && (
-                    <p className="text-xs text-muted-foreground">Цена по запросу</p>
-                  )}
                 </div>
               </div>
             ))}

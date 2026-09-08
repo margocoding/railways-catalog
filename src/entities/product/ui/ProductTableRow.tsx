@@ -1,3 +1,4 @@
+import { productPath } from '@/shared/seo/route-data'
 import { Link } from 'react-router'
 import { formatPrice, getSpecValue } from '@/shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
@@ -35,7 +36,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
       <tr className="group border-b border-border/50 hover:bg-muted/30 transition-colors max-md:hidden">
         <td className="py-4 px-4">
           <Link
-            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            to={productPath(product)}
             className="flex items-center gap-3"
           >
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted flex items-center justify-center">
@@ -54,7 +55,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
 
         <td className="py-4 px-4">
           <Link
-            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            to={productPath(product)}
             className="font-medium text-foreground hover:text-primary transition-colors line-clamp-1"
           >
             {product.title}
@@ -81,7 +82,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
         </td>
 
         <td className="py-4 px-4">
-          {!product.price ? (
+          {product.price == null ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-base font-bold text-primary">
@@ -96,6 +97,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
               <Button
                 variant="ghost"
                 size="sm"
+                aria-label={`Редактировать ${product.title}`}
                 onClick={() => onEdit(product)}
                 className="h-8 px-2"
               >
@@ -106,6 +108,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
               <Button
                 variant="ghost"
                 size="sm"
+                aria-label={`Удалить ${product.title}`}
                 onClick={() => onDelete(product.id)}
                 className="h-8 px-2 text-destructive hover:text-destructive"
               >
@@ -119,7 +122,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
       <div className="md:hidden rounded-xl border border-border bg-card p-4 space-y-3">
         <div className="flex gap-3">
           <Link
-            to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+            to={productPath(product)}
             className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted flex items-center justify-center"
           >
             {imageUrl ? (
@@ -135,7 +138,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
 
           <div className="min-w-0 flex-1">
             <Link
-              to={`/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`}
+              to={productPath(product)}
               className="block font-medium leading-5 text-foreground hover:text-primary transition-colors line-clamp-2"
             >
               {product.title}
@@ -157,7 +160,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
             <p className="text-xs text-muted-foreground">Масса: {weight}</p>
           </div>
           
-          {!product.price ? (
+          {product.price == null ? (
             <span className="text-sm font-semibold text-primary">По запросу</span>
           ) : (
             <span className="text-lg font-bold text-primary">
@@ -172,6 +175,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
               <Button
                 variant="secondary"
                 size="sm"
+                aria-label={`Редактировать ${product.title}`}
                 onClick={() => onEdit(product)}
                 className="flex-1"
               >
@@ -182,6 +186,7 @@ export function ProductTableRow({ product, onEdit, onDelete }: ProductTableRowPr
               <Button
                 variant="outline"
                 size="sm"
+                aria-label={`Удалить ${product.title}`}
                 onClick={() => onDelete(product.id)}
                 className="text-destructive hover:text-destructive"
               >

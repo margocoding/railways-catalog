@@ -1,5 +1,6 @@
 // src/app/App.tsx
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { Route, Routes } from 'react-router'
+import { NotFoundPage } from './pages/not-found/NotFoundPage'
 import { AboutPage } from './pages/about/AboutPage'
 import { CatalogPage } from './pages/catalog/ui/CatalogPage'
 import { ContactsPage } from './pages/contacts/ContactsPage'
@@ -18,7 +19,7 @@ import { PrivacyPage } from './pages/privacy/PrivacyPage'
 
 export function App() {
   return (
-    <BrowserRouter>
+    <>
       <ToastContainer
         position="top-right"
         autoClose={4000}
@@ -39,6 +40,7 @@ export function App() {
           path="/catalog/:categorySlug/:subcategorySlug/product/:productSlug"
           element={<ProductPage />}
         />
+        <Route path="/catalog/:categorySlug/product/:productSlug" element={<ProductPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:slug" element={<ServicePage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -57,8 +59,9 @@ export function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
+    </>
   )
 }
 

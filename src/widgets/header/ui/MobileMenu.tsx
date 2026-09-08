@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { Drawer } from "@/shared/ui/Drawer";
-import { FiChevronLeft, FiChevronRight, FiPhone } from "react-icons/fi";
-import { Link } from "react-router";
-import { getCategoryUrl, getSubcategoryUrl } from "@/shared/lib";
-import { MobileNavLink } from "@/widgets/header/ui/MobileNavLink";
-import { Button } from "@/shared/ui/Button";
-import { useCategories } from "@/entities/category/model/hooks/useCategories";
+import { useState } from 'react'
+import { MessengerLinks } from '@/shared/ui/MessengerLinks'
+import { Drawer } from '@/shared/ui/Drawer'
+import { FiChevronLeft, FiChevronRight, FiPhone } from 'react-icons/fi'
+import { Link } from 'react-router'
+import { getCategoryUrl, getSubcategoryUrl } from '@/shared/lib'
+import { MobileNavLink } from '@/widgets/header/ui/MobileNavLink'
+import { Button } from '@/shared/ui/Button'
+import { useCategories } from '@/entities/category/model/hooks/useCategories'
 
 interface MobileMenuProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 function MobileMenuSkeleton() {
@@ -19,46 +20,46 @@ function MobileMenuSkeleton() {
         <div key={i} className="h-12 rounded-lg bg-muted animate-pulse" />
       ))}
     </div>
-  );
+  )
 }
 
 export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
-  const { categories, isLoading } = useCategories();
+  const { categories, isLoading } = useCategories()
 
-  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false)
   const [activeCategorySlug, setActiveCategorySlug] = useState<string | null>(
     null,
-  );
+  )
 
   const selectedCategory = categories.find(
     (category) => category.slug === activeCategorySlug,
-  );
+  )
 
-  const selectedSubcategories = selectedCategory?.subcategories ?? [];
+  const selectedSubcategories = selectedCategory?.subcategories ?? []
 
   const closeMenu = () => {
-    onOpenChange(false);
+    onOpenChange(false)
 
     window.setTimeout(() => {
-      setCatalogOpen(false);
-      setActiveCategorySlug(null);
-    }, 200);
-  };
+      setCatalogOpen(false)
+      setActiveCategorySlug(null)
+    }, 200)
+  }
 
   const handleDrawerChange = (value: boolean) => {
-    onOpenChange(value);
+    onOpenChange(value)
 
     if (!value) {
-      setCatalogOpen(false);
-      setActiveCategorySlug(null);
+      setCatalogOpen(false)
+      setActiveCategorySlug(null)
     }
-  };
+  }
 
   return (
     <Drawer
       open={open}
       onOpenChange={handleDrawerChange}
-      title={catalogOpen ? "Каталог" : "Меню"}
+      title={catalogOpen ? 'Каталог' : 'Меню'}
       side="right"
     >
       <div className="flex h-full min-h-0 flex-col">
@@ -77,9 +78,9 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
               "
               onClick={() => {
                 if (selectedCategory) {
-                  setActiveCategorySlug(null);
+                  setActiveCategorySlug(null)
                 } else {
-                  setCatalogOpen(false);
+                  setCatalogOpen(false)
                 }
               }}
             >
@@ -234,6 +235,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             </div>
 
             <div className="mt-auto border-t border-border pt-5">
+              <div className="mb-3"><MessengerLinks /></div>
               <a
                 href="tel:+78432597300"
                 className="
@@ -249,18 +251,24 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                   <div>+7 (843) 259-73-00</div>
 
                   <div className="mt-0.5 text-xs font-normal text-muted-foreground">
-                    Бесплатно по России
+                    Отдел продаж
                   </div>
                 </div>
               </a>
 
-              <Link to="/contacts" onClick={closeMenu}>
-                <Button className="w-full">Получить КП</Button>
-              </Link>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  closeMenu()
+                  window.dispatchEvent(new CustomEvent('open-request-form'))
+                }}
+              >
+                Запросить спецификацию
+              </Button>
             </div>
           </>
         )}
       </div>
     </Drawer>
-  );
+  )
 }

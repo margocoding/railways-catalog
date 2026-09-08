@@ -14,7 +14,7 @@ export interface Product {
   title: string;
   slug: string;
   gost: string;
-  price: number;
+  price: number | null;
   stock: number;
   condition: ProductCondition;
   images: string[];
@@ -30,7 +30,7 @@ export interface CreateProductDto {
   title: string;
   slug: string;
   gost: string;
-  price?: number;
+  price?: number | null;
   stock: number;
   condition: ProductCondition;
   categorySlug: string;
@@ -40,7 +40,7 @@ export interface CreateProductDto {
   analogues?: string[];
 }
 
-export type UpdateProductDto = Partial<CreateProductDto>;
+export type UpdateProductDto = Partial<CreateProductDto> & { retainedImages?: string[] };
 
 export type SortOption = 'name' | 'price-asc' | 'price-desc' | 'popular' | 'newest';
 export type StockFilter = 'all' | 'in-stock' | 'on-order';
@@ -51,6 +51,9 @@ export interface GetProductsParams {
   category?: string;
   subcategory?: string;
   search?: string;
+  gost?: string;
+  priceMin?: number;
+  priceMax?: number;
   condition?: ProductCondition | 'all';
   stock?: StockFilter;
   sort?: SortOption;

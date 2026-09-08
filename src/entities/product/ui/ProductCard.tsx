@@ -1,126 +1,92 @@
+import { productPath } from '@/shared/seo/route-data'
+import { plainText } from '@/shared/lib/plain-text'
+import { useState } from 'react'
 import { Link } from 'react-router'
-import { MdNoPhotography } from 'react-icons/md'
-
-import { formatPrice, getSpecValue } from '../../../shared/lib/catalog-helpers'
 import type { Product } from '../model/types'
-import { AddToCartButton } from '../../../features/cart/ui/AddToCartButton'
-import { getImageUrl } from '@/shared/lib/product-helpers'
+import { formatPrice, getConditionLabel } from '@/shared/lib/catalog-helpers'
+import { CatalogImage } from '@/shared/ui/CatalogImage'
+import { Button } from '@/shared/ui/Button'
+import { RequestFormModal } from '@/shared/ui/RequestFormModal'
+import { AddToCartButton } from '@/features/cart/ui/AddToCartButton'
 
-interface ProductCardProps {
-    product: Product
-}
-
-export function ProductCard({ product }: ProductCardProps) {
-    const productUrl = `/catalog/${product.categorySlug}/${product.subcategorySlug}/product/${product.slug}`
-
-    const weight = getSpecValue(product, "Масса")
-
-    const firstImage = product.images[0]
-    const imageUrl = firstImage ? getImageUrl(firstImage) : null
-
-    return (
-        <div className="group border-t border-border">
-            <div className="hidden min-h-25 grid-cols-[80px_minmax(220px,1.8fr)_minmax(180px,1.2fr)_120px_120px_56px] items-center gap-4 md:grid">
-                <Link
-                    to={productUrl}
-                    className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg bg-muted"
-                >
-                    {imageUrl ? (
-                        <img
-                            src={imageUrl}
-                            alt={product.title}
-                            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                        />
-                    ) : (
-                        <MdNoPhotography className="h-10 w-10 text-muted-foreground" />
-                    )}
-                </Link>
-
-                <Link
-                    to={productUrl}
-                    className="min-w-0 font-semibold text-foreground transition-colors hover:text-primary"
-                >
-                    {product.title}
-                </Link>
-
-                <Link
-                    to={productUrl}
-                    className="text-sm leading-5 text-muted-foreground"
-                >
-                    {product.gost || '—'}
-                </Link>
-
-                <div className="text-sm text-muted-foreground">
-                    {weight}
-                </div>
-
-                <div>
-                    {!product.price ? (
-                        <span className="font-semibold text-primary">
-                            По запросу
-                        </span>
-                    ) : (
-                        <span className="text-lg font-bold text-primary">
-                            {formatPrice(product.price)} ₽
-                        </span>
-                    )}
-                </div>
-
-                <AddToCartButton product={product} />
-            </div>
-
-            <div className="flex gap-4 py-4 md:hidden">
-                <Link
-                    to={productUrl}
-                    className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted"
-                >
-                    {imageUrl ? (
-                        <img
-                            src={imageUrl}
-                            alt={product.title}
-                            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                        />
-                    ) : (
-                        <MdNoPhotography className="h-12 w-12 text-muted-foreground" />
-                    )}
-                </Link>
-
-                <div className="min-w-0 flex-1">
-                    <Link
-                        to={productUrl}
-                        className="block font-semibold leading-5 text-foreground transition-colors hover:text-primary"
-                    >
-                        {product.title}
-                    </Link>
-
-                    <Link
-                        to={productUrl}
-                        className="mt-1 block text-xs leading-4 text-muted-foreground"
-                    >
-                        {product.gost || '—'}
-                    </Link>
-
-                    <div className="mt-2 text-xs text-muted-foreground">
-                        Масса: {weight}
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between gap-3">
-                        <div>
-                            {!product.price ? (
-                                <span className="text-sm font-semibold text-primary">
-                                    По запросу
-                                </span>
-                            ) : (
-                                <span className="text-base font-bold text-primary">
-                                    {formatPrice(product.price)} ₽
-                                </span>
-                            )}
-                        </div>
-
-                        <AddToCartButton product={product} />
-                    </div>
-                </div>
-            </div>
+export function ProductCard({ product }: { product: Product }) {
+  const [requestOpen, setRequestOpen] = useState(false)
+  const url = productPath(product)
+  const unitSpec = product.specs?.find((spec) =>
+    spec.label.toLowerCase().includes('единица'),
+  )
+  const unit = unitSpec ? plainText(unitSpec.value).replace(/[;.]$/, '') : ''
+  return (
+    <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-lg border border-border bg-white transition duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-sm">
+      <Link
+        to={url}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="block aspect-[4/3] overflow-hidden border-b border-border"
+      >
+        <CatalogImage
+          src={product.images[0]}
+          alt={product.title}
+          className="p-4"
+        />
+      </Link>
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-[13px]">
+          <span className="rounded bg-muted px-2 py-1 text-muted-foreground">
+            {getConditionLabel(product.condition)}
+          </span>
+          <span className="flex items-center gap-1.5 font-bold">
+            <span
+              className={`h-2 w-2 rounded-full ${product.stock > 0 ? 'bg-success' : 'bg-muted-foreground'}`}
+            />
+            {product.stock > 0 ? 'В наличии' : 'Под заказ'}
+          </span>
         </div>
-    )
+        <h3 className="mb-3 text-2xl font-bold leading-tight">
+          <Link to={url} className="hover:text-primary">
+            {product.title}
+          </Link>
+        </h3>
+        <dl className="mb-5 space-y-1 text-[13px] text-muted-foreground">
+          <div>
+            <dt className="inline">Артикул: </dt>
+            <dd className="inline">{product.sku}</dd>
+          </div>
+          <div>
+            <dt className="inline">ГОСТ: </dt>
+            <dd className="inline">{product.gost || 'Не указан'}</dd>
+          </div>
+        </dl>
+        <div className="mt-auto">
+          <p className="mb-4 text-xl font-bold">
+            {product.price == null
+              ? 'Цена по запросу'
+              : `${formatPrice(product.price)} ₽`}
+            {product.price != null && unit && (
+              <span className="text-sm font-normal text-muted-foreground">
+                {' '}
+                / {unit}
+              </span>
+            )}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              className="min-w-0 flex-1 px-3"
+              onClick={() => setRequestOpen(true)}
+            >
+              Запросить
+            </Button>
+            <AddToCartButton product={product} />
+          </div>
+        </div>
+      </div>
+      <RequestFormModal
+        open={requestOpen}
+        onOpenChange={setRequestOpen}
+        productId={product.id}
+        title="Запросить цену и спецификацию"
+        description={product.title}
+      />
+    </article>
+  )
 }

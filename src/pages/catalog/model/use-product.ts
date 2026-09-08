@@ -1,49 +1,15 @@
-import { useState, useEffect, useMemo } from 'react'
-import { productApi } from '@/entities/product'
-import type { ProductDetailed } from '@/entities/product/api/product.api'
+import { useState, useMemo } from 'react'
+import { usePageData } from '@/shared/seo/page-context'
 
 export function useProduct(slug: string | undefined) {
-  const [product, setProduct] = useState<ProductDetailed | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedImage, setSelectedImage] = useState(0)
+  const data = usePageData()
+  const product = data.product?.slug === slug ? data.product : null
+  const loading = data.status === 0
+  const error = data.status === 404 ? 'Товар не найден' : data.status >= 500 ? 'Не удалось загрузить товар. Повторите попытку позже.' : null
+  const [selection, setSelection] = useState({ slug, index: 0 })
+  const selectedImage = selection.slug === slug ? selection.index : 0
+  const setSelectedImage = (index: number) => setSelection({ slug, index })
   const [railLength, setRailLength] = useState('12.5')
-
-  useEffect(() => {
-    if (!slug) {
-      setProduct(null)
-      setLoading(false)
-      return
-    }
-
-    let cancelled = false
-
-    async function load() {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await productApi.getBySlug(slug!)
-        if (!cancelled) {
-          setProduct(data)
-          setSelectedImage(0)
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError('Товар не найден')
-          setProduct(null)
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false)
-        }
-      }
-    }
-
-    load()
-    return () => {
-      cancelled = true
-    }
-  }, [slug])
 
   const weightSpec = product?.specs?.find((s) => s.id === 'weight')
   const lengthSpec = product?.specs?.find((s) => s.id === 'length')
