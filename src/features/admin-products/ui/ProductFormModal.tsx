@@ -57,7 +57,7 @@ function ProductFormModalContent({
   const [slugTouched, setSlugTouched] = useState(!!product)
   const [gost, setGost] = useState(product?.gost ?? '')
   const [price, setPrice] = useState(product?.price == null ? '' : String(product.price))
-  const [priceOnRequest, setPriceOnRequest] = useState(!!product && product.price == null)
+  const [priceOnRequest, setPriceOnRequest] = useState(!!product && !product.price)
   const [stock, setStock] = useState(String(product?.stock ?? 1))
   const [condition, setCondition] = useState<Product['condition']>(product?.condition ?? 'new')
   const [categorySlug, setCategorySlug] = useState(product?.categorySlug ?? '')

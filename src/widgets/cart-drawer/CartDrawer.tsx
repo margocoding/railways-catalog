@@ -215,7 +215,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-foreground">
-                    {item.product.price == null ? 'Цена по запросу' : `${(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽`}
+                    {!item.product.price ? 'Цена по запросу' : `${(item.product.price * item.quantity).toLocaleString('ru-RU')} ₽`}
                   </p>
                 </div>
               </div>
