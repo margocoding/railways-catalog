@@ -15,7 +15,7 @@ const STORAGE_KEY = 'cart_items'
 
 function calculateTotals(items: CartItem[]): Pick<CartState, 'totalItems' | 'totalPrice'> {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-    const totalPrice = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+    const totalPrice = items.reduce((sum, item) => sum + ((item.product.price ?? 0) * item.quantity), 0)
     return {totalItems, totalPrice}
 }
 

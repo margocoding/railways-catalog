@@ -72,7 +72,7 @@ export const productApi = {
     formData.append('title', dto.title);
     formData.append('slug', dto.slug);
     formData.append('gost', dto.gost);
-    formData.append('price', String(dto.price));
+    formData.append('price', String(dto.price ?? null));
     formData.append('stock', String(dto.stock));
     formData.append('condition', dto.condition);
     formData.append('categorySlug', dto.categorySlug);
@@ -109,7 +109,6 @@ export const productApi = {
     id: string,
     dto: UpdateProductDto,
     newImages: File[] = [],
-    existingImages: string[] = [],
   ): Promise<Product> {
     const formData = new FormData();
 
@@ -126,9 +125,9 @@ export const productApi = {
     if (dto.specs !== undefined) formData.append('specs', JSON.stringify(dto.specs));
     if (dto.analogues !== undefined) formData.append('analogues', JSON.stringify(dto.analogues));
 
-    existingImages.forEach((img) => {
-      formData.append('images', img);
-    });
+    if (dto.retainedImages !== undefined) {
+      formData.append('retainedImages', JSON.stringify(dto.retainedImages));
+    }
 
     newImages.forEach((image) => {
       formData.append('images', image);
