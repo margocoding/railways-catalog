@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FiMenu, FiPhone, FiShoppingCart } from 'react-icons/fi'
 import { Link, NavLink } from 'react-router'
 import { Button } from '@/shared/ui/Button'
@@ -18,23 +18,37 @@ const links = [
 ]
 
 export function Header() {
+  const headerRef = useRef<HTMLElement>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [requestOpen, setRequestOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { totalItems } = useCart()
   useEffect(() => {
-    const scroll = () => setScrolled(window.scrollY > 48)
+    const scroll = () => {
+      const scrollY = Math.max(0, window.scrollY)
+      const headerHeight = headerRef.current?.offsetHeight
+      if (headerHeight === undefined) return
+
+      // Keep the thresholds apart so scroll anchoring during the height
+      // transition cannot immediately trigger the opposite state.
+      setScrolled((wasScrolled) =>
+        wasScrolled ? scrollY > 8 : scrollY > headerHeight,
+      )
+    }
     const request = () => setRequestOpen(true)
     scroll()
     window.addEventListener('scroll', scroll, { passive: true })
+    window.addEventListener('resize', scroll)
     window.addEventListener('open-request-form', request)
     return () => {
       window.removeEventListener('scroll', scroll)
+      window.removeEventListener('resize', scroll)
       window.removeEventListener('open-request-form', request)
     }
   }, [])
   return (
     <header
+      ref={headerRef}
       className={`site-header sticky top-0 z-40 border-b border-border bg-white ${scrolled ? 'is-scrolled' : ''}`}
     >
       <a
