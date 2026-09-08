@@ -5,11 +5,7 @@ export function Hero() {
   return (
     <section className="hero-section relative flex min-h-[560px] items-center overflow-hidden bg-foreground text-white lg:min-h-[680px]">
       <div
-        className="hero-photo absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1920&q=80')",
-        }}
+        className="hero-photo absolute inset-0 bg-cover bg-center bg-[url('/hero_background.png')]"
         aria-hidden="true"
       />
       <div
