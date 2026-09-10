@@ -42,8 +42,8 @@ const CONTACTS = [
     id: 'email',
     icon: FiMail,
     title: 'Email',
-    value: 'zakaz@ttr2.ru',
-    href: 'mailto:zakaz@ttr2.ru',
+    value: 'zakaz@tatrels.ru',
+    href: 'mailto:zakaz@tatrels.ru',
   },
   {
     id: 'work-hours',

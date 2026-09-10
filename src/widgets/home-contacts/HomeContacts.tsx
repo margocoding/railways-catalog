@@ -20,11 +20,11 @@ export function HomeContacts() {
             +7 (843) 259-73-00
           </a>
           <a
-            href="mailto:zakaz@ttr2.ru"
+            href="mailto:zakaz@tatrels.ru"
             className="flex items-center gap-3 text-lg hover:text-primary"
           >
             <FiMail className="text-primary" />
-            zakaz@ttr2.ru
+            zakaz@tatrels.ru
           </a>
           <p className="text-sm text-muted-foreground">
             Зеленодольск, ул. Московская, зд. 4, помещ. 1<br />
