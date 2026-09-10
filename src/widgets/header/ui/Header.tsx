@@ -102,7 +102,9 @@ export function Header() {
           <div className="hidden xl:block">
             <CatalogMegaMenu />
           </div>
-          <div className="hidden min-w-0 flex-1 md:block">
+          {/* Поиск не растягивается на всю свободную ширину: иначе на экранах
+              уже xl он отжимает номер телефона и тот остаётся одной иконкой. */}
+          <div className="hidden min-w-0 max-w-xl flex-1 md:block">
             <CatalogSearch />
           </div>
           <a
@@ -111,7 +113,7 @@ export function Header() {
             aria-label="Позвонить: +7 (843) 259-73-00"
           >
             <FiPhone className="h-5 w-5" />
-            <span className="hidden xl:inline">+7 (843) 259-73-00</span>
+            <span className="hidden md:inline">+7 (843) 259-73-00</span>
           </a>
           <Link
             to="/cart"
