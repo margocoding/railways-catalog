@@ -6,6 +6,24 @@ import { getMetadata } from '@/shared/seo/metadata'
 import type { PageData } from '@/shared/seo/route-data'
 import { siteUrl } from '@/renderer/server-config'
 import { jsonForHtml } from '@/shared/lib/plain-text'
+import { metrikaId } from '@/shared/analytics/metrika'
+
+const metrikaTag = metrikaId
+  ? `<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}', 'ym');
+
+    ym(${metrikaId}, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>`
+  : ''
+
+const metrikaNoscript = metrikaId
+  ? `<noscript><div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>`
+  : ''
 
 export function onRenderHtml(pageContext: PageContextServer) {
   const data = (pageContext.data ?? pageContext.abortReason ?? { url: pageContext.urlOriginal, siteUrl, status: pageContext.is404 ? 404 : 500, ssr: true }) as PageData
@@ -22,7 +40,8 @@ export function onRenderHtml(pageContext: PageContextServer) {
       <meta property="og:title" content="${meta.title}" /><meta property="og:description" content="${meta.description}" /><meta property="og:url" content="${meta.canonical}" /><meta property="og:image" content="${meta.image}" />
       <meta name="twitter:card" content="summary" /><meta name="twitter:title" content="${meta.title}" /><meta name="twitter:description" content="${meta.description}" /><meta name="twitter:image" content="${meta.image}" />
       ${meta.jsonLd.length ? escapeInject`<script id="seo-json-ld" type="application/ld+json">${dangerouslySkipEscape(jsonForHtml(meta.jsonLd))}</script>` : ''}
-      </head><body><div id="root">${dangerouslySkipEscape(html)}</div></body></html>`,
+      ${dangerouslySkipEscape(metrikaTag)}
+      </head><body><div id="root">${dangerouslySkipEscape(html)}</div>${dangerouslySkipEscape(metrikaNoscript)}</body></html>`,
     pageContext: { data },
   }
 }
