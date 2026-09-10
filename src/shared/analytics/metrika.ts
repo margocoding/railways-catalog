@@ -28,3 +28,16 @@ export function metrikaHit(url: string, referrer: string): void {
   if (!metrikaId || typeof window.ym !== 'function') return
   window.ym(Number(metrikaId), 'hit', url, { referer: referrer })
 }
+
+/**
+ * Цель «Отправка формы» в Метрике. Вызывать только после успешной отправки:
+ * сервер ответил успехом и пользователь видит подтверждение. На ошибках
+ * валидации, ошибках отправки и открытии формы цель не засчитывается.
+ */
+export const FORM_GOAL = 'forma'
+
+/** Засчитывает цель в Метрике. */
+export function metrikaReachGoal(goal: string): void {
+  if (!metrikaId || typeof window.ym !== 'function') return
+  window.ym(Number(metrikaId), 'reachGoal', goal)
+}

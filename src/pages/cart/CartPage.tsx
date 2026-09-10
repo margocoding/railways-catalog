@@ -15,6 +15,7 @@ import type { CartItem } from '@/entities/cart/model/types'
 import type { CreateOrderDto } from '@/entities/order/model/types'
 import { getImageUrl } from '@/shared/lib/product-helpers'
 import { orderApi } from '@/entities/order/api/order.api'
+import { FORM_GOAL, metrikaReachGoal } from '@/shared/analytics/metrika'
 
 export function CartPage() {
   const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
@@ -83,6 +84,7 @@ export function CartPage() {
 
       const order = await orderApi.create(dto)
 
+      metrikaReachGoal(FORM_GOAL)
       toast.success(`Заказ ${order.orderNumber} успешно оформлен!`)
       setOrderNumber(order.orderNumber)
       clearCart()

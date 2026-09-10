@@ -8,6 +8,7 @@ import { PhoneInput } from '@/shared/ui/PhoneInput'
 import { Checkbox } from '@/shared/ui/Checkbox'
 import type { CreateRequestDto } from '@/entities/request/model/types'
 import { requestApi } from '@/entities/request/api/request.api'
+import { FORM_GOAL, metrikaReachGoal } from '@/shared/analytics/metrika'
 
 interface ServiceRequestFormProps {
   serviceId?: string | null
@@ -78,6 +79,7 @@ export function ServiceRequestForm({
         partnerMapFile: null,
       })
 
+      metrikaReachGoal(FORM_GOAL)
       toast.success('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время')
       setSubmitted(true)
       setFormData({
