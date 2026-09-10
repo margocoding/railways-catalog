@@ -53,6 +53,12 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            set -e
             cd ${{ secrets.DEPLOY_PATH }}
-            docker compose pull
-            docker compose up -d
+            # Тянем только образ фронтенда. Раньше здесь стоял `docker compose pull`,
+            # который заодно тянул postgres с Docker Hub. Тот упирался в лимит
+            # обращений (429) и обрывал загрузку до того, как скачивался нужный
+            # образ. Контейнер оставался на старой сборке, а шаг рапортовал успех.
+            # `set -e` гарантирует, что неудачная загрузка теперь роняет выкатку.
+            docker compose pull app
+            docker compose up -d --no-deps app
