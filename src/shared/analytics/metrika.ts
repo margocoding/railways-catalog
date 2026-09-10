@@ -1,7 +1,21 @@
-const rawId = import.meta.env.VITE_METRIKA_ID
+/**
+ * Номер счётчика Яндекс.Метрики. Не является секретом: он виден в исходном
+ * коде каждой страницы. Хранится в коде, потому что настройки боевой сборки
+ * лежат в секрете VITE_ENV, прочитать который нельзя, а значит нельзя и
+ * дописать в него ключ, не потеряв остальные значения.
+ */
+const DEFAULT_METRIKA_ID = '112450496'
 
-/** Номер счётчика Яндекс.Метрики. Пустая строка отключает счётчик целиком. */
-export const metrikaId = /^\d+$/.test(rawId ?? '') ? (rawId as string) : ''
+const configured = (import.meta.env.VITE_METRIKA_ID ?? '').trim()
+
+/**
+ * В сборке для боевого сервера счётчик включён по умолчанию, при разработке —
+ * выключен, чтобы не искажать статистику. VITE_METRIKA_ID переопределяет
+ * номер, любое нечисловое значение (например off) отключает счётчик совсем.
+ */
+const resolved = configured === '' ? (import.meta.env.PROD ? DEFAULT_METRIKA_ID : '') : configured
+
+export const metrikaId = /^\d+$/.test(resolved) ? resolved : ''
 
 declare global {
   interface Window {
