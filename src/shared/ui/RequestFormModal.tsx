@@ -11,6 +11,7 @@ import { Checkbox } from './Checkbox'
 import { PhoneInput } from './PhoneInput'
 import type { CreateRequestDto } from '@/entities/request/model/types'
 import { requestApi } from '@/entities/request/api/request.api'
+import { FORM_GOAL, metrikaReachGoal } from '@/shared/analytics/metrika'
 
 interface UploadedFile {
   name: string
@@ -125,6 +126,7 @@ export function RequestFormModal({
         partnerMapFile: partnerMapFile?.file,
       })
 
+      metrikaReachGoal(FORM_GOAL)
       toast.success('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время')
       resetForm()
       onOpenChange(false)
