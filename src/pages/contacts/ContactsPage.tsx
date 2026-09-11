@@ -49,7 +49,7 @@ const CONTACTS = [
     id: 'work-hours',
     icon: FiClock,
     title: 'Режим работы',
-    value: 'Пн-Пт 9:00 - 18:00',
+    value: 'Пн-Пт 8:00 - 17:00',
     subvalue: 'Сб-Вс выходные',
   },
   {

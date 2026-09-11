@@ -28,7 +28,7 @@ export function HomeContacts() {
           </a>
           <p className="text-sm text-muted-foreground">
             Зеленодольск, ул. Московская, зд. 4, помещ. 1<br />
-            Пн–Пт, 9:00–18:00
+            Пн–Пт, 8:00–17:00
           </p>
           <div className="flex flex-wrap gap-4">
             <a
