@@ -1,0 +1,34 @@
+.hero-catalog-list {
+  max-height: min(60dvh, 480px);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-color: rgb(255 255 255 / 0.3) transparent;
+  scrollbar-width: thin;
+}
+
+.hero-section .hero-catalog :focus-visible {
+  outline-color: hsl(var(--accent));
+  outline-offset: -2px;
+}
+
+.hero-catalog-link:focus-visible {
+  border-left-color: hsl(var(--accent));
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+}
+
+@media (min-width: 64rem) {
+  .hero-catalog-list {
+    max-height: min(60dvh, 528px);
+  }
+
+  .hero-copy .hero-title {
+    font-size: 2.75rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .hero-copy .hero-title {
+    font-size: 3rem;
+  }
+}

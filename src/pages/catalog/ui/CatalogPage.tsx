@@ -3,7 +3,8 @@ import { useCatalog } from '../model/use-catalog'
 import { ProductFilter } from '@/features/product-filter/ProductFilter'
 import type { SortOption } from '@/entities/product/model/types'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { CatalogGrid } from '@/widgets/catalog-grid/CatalogGrid'
+import { CatalogList } from '@/widgets/catalog-list/CatalogList'
+import { CatalogCategories } from '@/widgets/catalog-categories/CatalogCategories'
 import { Layout } from '@/widgets/Layout'
 import { Pagination } from '@/shared/ui/Pagination'
 
@@ -58,17 +59,18 @@ export function CatalogPage() {
           </p>
         </div>
         <div className="grid items-start gap-6 lg:grid-cols-[252px_minmax(0,1fr)]">
-          <aside aria-label="Фильтры каталога">
+          <CatalogCategories key={category} categories={categories} />
+          <div className="min-w-0">
             <ProductFilter
-              key={JSON.stringify([category, filterValue])}
+              key={JSON.stringify([
+                category,
+                currentSubcategory?.slug,
+                filterValue,
+              ])}
               value={filterValue}
               onFilterChange={handleFilterChange}
-              categories={categories}
-              category={category}
               filters={currentSubcategory?.filters ?? currentCategory?.filters}
             />
-          </aside>
-          <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-muted-foreground">
                 {!loading && pagination.total > 0
@@ -86,7 +88,7 @@ export function CatalogPage() {
                       sort: e.target.value as SortOption,
                     })
                   }
-                  className="min-h-11 min-w-0 max-w-full rounded-lg border border-border bg-white px-2"
+                  className="min-h-11 min-w-0 max-w-full rounded-md border border-border bg-white px-2"
                 >
                   <option value="name">По названию</option>
                   <option value="popular">По популярности</option>
@@ -100,13 +102,16 @@ export function CatalogPage() {
               {loading ? (
                 <div
                   role="status"
-                  className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                  className="divide-y divide-border border-y border-border"
                 >
                   {Array.from({ length: 6 }, (_, i) => (
                     <div
                       key={i}
-                      className="h-96 animate-pulse rounded-lg bg-muted"
-                    />
+                      className="flex h-28 animate-pulse items-center gap-4 px-3"
+                    >
+                      <div className="h-16 w-16 shrink-0 rounded-md bg-muted" />
+                      <div className="h-5 w-1/2 rounded bg-muted" />
+                    </div>
                   ))}
                   <span className="sr-only">Загрузка товаров</span>
                 </div>
@@ -118,7 +123,7 @@ export function CatalogPage() {
                   {error}. Обновите страницу или измените фильтры.
                 </p>
               ) : (
-                <CatalogGrid products={products} />
+                <CatalogList products={products} />
               )}
             </div>
             {!loading && pagination.totalPages > 1 && (
@@ -133,9 +138,16 @@ export function CatalogPage() {
           </div>
         </div>
         {currentCategory?.description && !currentSubcategory && (
-          <section className="mt-12 max-w-4xl border-t border-border pt-8" aria-label={`О категории ${currentCategory.name}`}>
-            <h2 className="mb-4 text-2xl font-bold">{currentCategory.name}: подбор материалов</h2>
-            <p className="whitespace-pre-line leading-relaxed text-muted-foreground">{currentCategory.description}</p>
+          <section
+            className="mt-12 max-w-4xl border-t border-border pt-8"
+            aria-label={`О категории ${currentCategory.name}`}
+          >
+            <h2 className="mb-4 text-2xl font-bold">
+              {currentCategory.name}: подбор материалов
+            </h2>
+            <p className="whitespace-pre-line leading-relaxed text-muted-foreground">
+              {currentCategory.description}
+            </p>
           </section>
         )}
       </div>
