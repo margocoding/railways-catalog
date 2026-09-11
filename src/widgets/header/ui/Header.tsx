@@ -84,7 +84,7 @@ export function Header() {
               <a href="mailto:zakaz@tatrels.ru" className="hover:text-primary">
                 zakaz@tatrels.ru
               </a>
-              <span>Пн–Пт, 9:00–18:00</span>
+              <span>Пн–Пт, 8:00–17:00</span>
               <MessengerLinks compact />
             </div>
           </div>
