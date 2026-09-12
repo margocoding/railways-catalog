@@ -1,5 +1,5 @@
 // src/features/admin-products/ui/ProductFormModal.tsx
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import type { Category } from '@/entities/category'
 import type { Subcategory } from '@/entities/subcategory'
@@ -63,6 +63,10 @@ function ProductFormModalContent({
   const [categorySlug, setCategorySlug] = useState(product?.categorySlug ?? '')
   const [subcategorySlug, setSubcategorySlug] = useState(product?.subcategorySlug ?? '')
   const [description, setDescription] = useState(product?.description ?? '')
+  const [descriptionTags, setDescriptionTags] = useState(product?.descriptionTags ?? '')
+  const formId = useId()
+  const descriptionId = `${formId}-description`
+  const descriptionTagsId = `${formId}-description-tags`
   const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? [])
   const [newImages, setNewImages] = useState<File[]>([])
   const [specs, setSpecs] = useState<SpecDraft[]>(() => (product?.specs ?? []).map(spec => ({ id: crypto.randomUUID(), label: spec.label, value: String(spec.value), unit: spec.unit ?? '' })))
@@ -171,6 +175,7 @@ function ProductFormModalContent({
         categorySlug,
         subcategorySlug,
         description: description.trim(),
+        descriptionTags: descriptionTags.trim(),
         specs: productSpecs,
       }
 
@@ -210,6 +215,7 @@ function ProductFormModalContent({
     setCategorySlug('')
     setSubcategorySlug('')
     setDescription('')
+    setDescriptionTags('')
     setExistingImages([])
     setNewImages([])
     setSpecs([])
@@ -231,12 +237,30 @@ function ProductFormModalContent({
           ? 'Измените информацию о продукте'
           : 'Заполните информацию о новом продукте'
       }
+      className="sm:max-w-3xl"
+      footer={
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
+          <Button type="button" variant="secondary" onClick={handleClose} disabled={isSubmitting}>
+            Отмена
+          </Button>
+          <Button type="submit" form={formId} disabled={isSubmitting}>
+            {isSubmitting
+              ? isEditMode
+                ? 'Сохранение...'
+                : 'Создание...'
+              : isEditMode
+                ? 'Сохранить'
+                : 'Создать'}
+          </Button>
+        </div>
+      }
     >
       <form
+        id={formId}
         onSubmit={handleSubmit}
-        className="max-h-[70vh] space-y-4 overflow-y-auto pr-2"
+        className="space-y-5"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-foreground">
               SKU *
@@ -289,7 +313,7 @@ function ProductFormModalContent({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-foreground">
               Цена
@@ -307,8 +331,8 @@ function ProductFormModalContent({
             />
           </div>
 
-          <div className="flex items-center pt-6">
-            <label className="flex cursor-pointer items-center gap-2">
+          <div className="flex items-end">
+            <label className="flex min-h-11 cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={priceOnRequest}
@@ -356,7 +380,7 @@ function ProductFormModalContent({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-foreground">
               Категория *
@@ -404,7 +428,7 @@ function ProductFormModalContent({
             <label className="mb-2 block text-sm font-medium text-foreground">
               Текущие изображения
             </label>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {existingImages.map((image, index) => (
                 <div
                   key={`${image}-${index}`}
@@ -438,8 +462,8 @@ function ProductFormModalContent({
           maxFiles={Math.max(0, 10 - existingImages.length)}
         />
 
-        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-4">
-          <div className="flex items-center justify-between">
+        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-3 sm:p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-semibold text-foreground">
                 Характеристики
@@ -467,12 +491,14 @@ function ProductFormModalContent({
 
           {specs.length > 0 && (
             <div className="space-y-2">
-              {specs.map((spec) => (
+              {specs.map((spec, index) => (
                 <div
                   key={spec.id}
-                  className="grid grid-cols-[1.5fr_1fr_0.7fr_auto] items-center gap-2 rounded-lg border border-border bg-card p-2"
+                  className="grid grid-cols-[minmax(0,1fr)_2.75rem] items-center gap-2 rounded-lg border border-border bg-card p-2 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)_2.75rem]"
                 >
                   <Input
+                    aria-label={`Название характеристики ${index + 1}`}
+                    className="min-w-0"
                     value={spec.label}
                     onChange={(e) =>
                       handleSpecChange(spec.id, 'label', e.target.value)
@@ -480,27 +506,34 @@ function ProductFormModalContent({
                     placeholder="Название (Масса)"
                     disabled={isSubmitting}
                   />
-                  <Input
-                    value={spec.value}
-                    onChange={(e) =>
-                      handleSpecChange(spec.id, 'value', e.target.value)
-                    }
-                    placeholder="Значение (65)"
-                    disabled={isSubmitting}
-                  />
-                  <Input
-                    value={spec.unit}
-                    onChange={(e) =>
-                      handleSpecChange(spec.id, 'unit', e.target.value)
-                    }
-                    placeholder="кг/м"
-                    disabled={isSubmitting}
-                  />
+                  <div className="col-span-2 row-start-2 grid min-w-0 grid-cols-2 gap-2 sm:col-span-1 sm:row-start-auto sm:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)]">
+                    <Input
+                      aria-label={`Значение характеристики ${index + 1}`}
+                      className="min-w-0"
+                      value={spec.value}
+                      onChange={(e) =>
+                        handleSpecChange(spec.id, 'value', e.target.value)
+                      }
+                      placeholder="Значение (65)"
+                      disabled={isSubmitting}
+                    />
+                    <Input
+                      aria-label={`Единица измерения характеристики ${index + 1}`}
+                      className="min-w-0"
+                      value={spec.unit}
+                      onChange={(e) =>
+                        handleSpecChange(spec.id, 'unit', e.target.value)
+                      }
+                      placeholder="Ед. изм."
+                      disabled={isSubmitting}
+                    />
+                  </div>
                   <button
                     type="button"
+                    aria-label={`Удалить характеристику ${index + 1}`}
                     onClick={() => handleRemoveSpec(spec.id)}
                     disabled={isSubmitting}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="col-start-2 row-start-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50 sm:col-start-3"
                   >
                     <FiTrash2 className="h-4 w-4" />
                   </button>
@@ -517,39 +550,40 @@ function ProductFormModalContent({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-foreground">
+          <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-foreground">
             Описание
           </label>
           <textarea
+            id={descriptionId}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Краткое описание продукта"
             disabled={isSubmitting}
-            className="min-h-[100px] w-full rounded-lg border border-border bg-muted/50 p-3 text-foreground placeholder:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
+            rows={5}
+            className="block min-h-40 w-full resize-y rounded-lg border border-border bg-muted/50 p-3 text-base leading-6 text-foreground placeholder:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
           />
         </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
-
-        <div className="sticky bottom-0 flex justify-end gap-3 bg-background pt-4">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleClose}
+        <div>
+          <label htmlFor={descriptionTagsId} className="mb-2 block text-sm font-medium text-foreground">
+            Тэги для поиска
+          </label>
+          <textarea
+            id={descriptionTagsId}
+            value={descriptionTags}
+            onChange={(e) => setDescriptionTags(e.target.value)}
+            aria-describedby={`${descriptionTagsId}-hint`}
+            placeholder="Описание товара для поисковых систем"
             disabled={isSubmitting}
-          >
-            Отмена
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting
-              ? isEditMode
-                ? 'Сохранение...'
-                : 'Создание...'
-              : isEditMode
-                ? 'Сохранить'
-                : 'Создать'}
-          </Button>
+            rows={3}
+            className="block min-h-28 w-full resize-y rounded-lg border border-border bg-muted/50 p-3 text-base leading-6 text-foreground placeholder:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
+          />
+          <p id={`${descriptionTagsId}-hint`} className="mt-2 text-xs leading-5 text-muted-foreground">
+            Не отображается в карточке товара. Если оставить поле пустым, описание для поиска сформируется автоматически.
+          </p>
         </div>
+
+        {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
       </form>
     </Dialog>
   )
