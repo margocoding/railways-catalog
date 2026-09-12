@@ -1,0 +1,110 @@
+.catalog-list {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.catalog-list th {
+  padding: 16px 12px;
+  border-block: 1px solid hsl(var(--border));
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+}
+.catalog-list th:first-child {
+  width: auto;
+}
+.catalog-list th:nth-child(2) {
+  width: 20%;
+}
+.catalog-list th:nth-child(3) {
+  width: 11%;
+}
+.catalog-list th:nth-child(4) {
+  width: 17%;
+}
+.catalog-list th:last-child {
+  width: 56px;
+}
+.catalog-list td {
+  padding: 18px 12px;
+  border-bottom: 1px solid hsl(var(--border));
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+.catalog-list tbody tr {
+  transition: background-color 150ms;
+}
+.catalog-list tbody tr:hover {
+  background: hsl(var(--muted) / 0.65);
+}
+.catalog-list-image {
+  display: block;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  padding: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: white;
+}
+.catalog-list-gost,
+.catalog-list-weight {
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  line-height: 1.6;
+}
+.catalog-list-price {
+  font-size: 16px;
+}
+.catalog-list .catalog-list-cart {
+  padding-right: 4px;
+  padding-left: 4px;
+}
+
+@media (max-width: 47.99rem) {
+  .catalog-list,
+  .catalog-list tbody {
+    display: block;
+  }
+  .catalog-list thead {
+    display: none;
+  }
+  .catalog-list tbody {
+    border-top: 1px solid hsl(var(--border));
+  }
+  .catalog-list tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .catalog-list td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+  .catalog-list .catalog-list-name {
+    grid-column: 1 / -1;
+    margin-bottom: 3px;
+  }
+  .catalog-list-image {
+    width: 64px;
+    height: 64px;
+  }
+  .catalog-list-gost {
+    grid-column: 1 / -1;
+  }
+  .catalog-list-weight {
+    grid-column: 1 / -1;
+  }
+  .catalog-list .catalog-list-price {
+    align-self: center;
+    padding-top: 4px;
+  }
+  .catalog-list .catalog-list-cart {
+    justify-self: end;
+    padding: 4px 0 0;
+  }
+}
