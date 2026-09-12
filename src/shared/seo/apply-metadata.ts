@@ -5,8 +5,8 @@ export function applyMetadata(meta: Metadata) {
   document.title = meta.title
   const tags: [string, string, string][] = [
     ['name', 'description', meta.description], ['name', 'robots', meta.robots],
-    ['property', 'og:title', meta.title], ['property', 'og:description', meta.description], ['property', 'og:url', meta.canonical], ['property', 'og:image', meta.image],
-    ['name', 'twitter:title', meta.title], ['name', 'twitter:description', meta.description], ['name', 'twitter:image', meta.image],
+    ['property', 'og:title', meta.title], ['property', 'og:description', meta.socialDescription], ['property', 'og:url', meta.canonical], ['property', 'og:image', meta.image],
+    ['name', 'twitter:title', meta.title], ['name', 'twitter:description', meta.socialDescription], ['name', 'twitter:image', meta.image],
   ]
   for (const [attribute, name, content] of tags) {
     let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${name}"]`)

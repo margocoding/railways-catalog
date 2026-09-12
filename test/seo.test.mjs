@@ -34,6 +34,33 @@ test('public navigation clears noindex and stale service metadata', () => {
   assert.notEqual(getMetadata('/about', data).title, getMetadata('/contacts', data).title)
   assert.deepEqual(getMetadata('/about', data).jsonLd, [])
 })
+
+test('product search text only overrides the search description, without truncation', () => {
+  const searchText = 'Поставка крепежа М22 для железнодорожного пути. '.repeat(5).trim()
+  const product = { slug: 'bolt', title: 'Болт М22', gost: 'ГОСТ 16017', images: [], categorySlug: 'fasteners', description: 'Описание на странице', descriptionTags: searchText }
+  const url = productPath(product)
+  const data = { url, siteUrl: 'https://catalog.example', status: 200, ssr: true, product }
+  const meta = getMetadata(url, data)
+  assert.equal(meta.description, searchText)
+  assert.match(meta.socialDescription, /Описание на странице/)
+  assert.ok(!meta.socialDescription.includes('Поставка крепежа'))
+  assert.ok(!JSON.stringify(meta.jsonLd).includes('Поставка крепежа'))
+  assert.equal(product.description, 'Описание на странице')
+  assert.ok(!getMetadata('/about', { ...data, url: '/about' }).description.includes('Поставка крепежа'))
+})
+
+test('empty search text falls back to generated metadata and markup becomes plain text', () => {
+  const product = { slug: 'bolt', title: 'Болт М22', images: [], categorySlug: 'fasteners', description: 'Описание товара' }
+  const url = productPath(product)
+  const data = { url, siteUrl: 'https://catalog.example', status: 200, ssr: true, product }
+  for (const descriptionTags of [undefined, null, '', '  \n ', '<b></b>']) {
+    const meta = getMetadata(url, { ...data, product: { ...product, descriptionTags } })
+    assert.equal(meta.description, meta.socialDescription)
+    assert.match(meta.description, /Описание товара/)
+  }
+  const meta = getMetadata(url, { ...data, product: { ...product, descriptionTags: '<b>М22</b> &quot;ГОСТ&quot; &amp; доставка<script>alert(1)</script>' } })
+  assert.equal(meta.description, 'М22 "ГОСТ" & доставка')
+})
 test('category pagination has its own canonical; filter variants remain out of the index', () => {
   const data = { url: '/catalog', siteUrl: 'https://catalog.example', status: 200, ssr: false, categories: [{ slug: 'rails', name: 'Рельсы', description: 'Железнодорожные рельсы разных профилей', subcategories: [] }] }
   const meta = getMetadata('/catalog?category=rails&page=2', data)
