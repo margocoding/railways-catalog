@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { plainText, formatSpec, jsonForHtml } from '../src/shared/lib/plain-text.ts'
+import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/lib/plain-text.ts'
 import { getMetadata } from '../src/shared/seo/metadata.ts'
 import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
 
@@ -67,4 +67,11 @@ test('category pagination has its own canonical; filter variants remain out of t
   assert.equal(meta.canonical, 'https://catalog.example/catalog?category=rails&page=2')
   assert.match(meta.title, /страница 2/)
   assert.match(getMetadata('/catalog?search=rails', data).robots, /noindex/)
+})
+test('product descriptions keep their paragraphs', () => {
+  assert.deepEqual(paragraphs('Первый абзац.\r\n\r\nВторой абзац.\n\n\nТретий'), ['Первый абзац.', 'Второй абзац.', 'Третий'])
+  assert.deepEqual(paragraphs('Одна строка\nс переносом'), ['Одна строка с переносом'])
+  assert.deepEqual(paragraphs('  \n\n  '), [])
+  assert.deepEqual(paragraphs(null), [])
+  assert.deepEqual(paragraphs('<b>15</b>&nbsp;мм\n\nдалее'), ['15 мм', 'далее'])
 })

@@ -1,4 +1,4 @@
-import { formatSpec, plainText } from '@/shared/lib/plain-text'
+import { formatSpec, paragraphs, plainText } from '@/shared/lib/plain-text'
 import { useCart } from '@/entities/cart'
 import { ProductCard } from '@/entities/product/ui/ProductCard'
 import {
@@ -285,10 +285,13 @@ export function ProductPage() {
           </div>
 
           <div className="max-w-4xl text-base leading-7 text-muted-foreground">
-            <p className="mb-4">
-              {product.description ||
-                `${product.title} — высококачественная продукция, соответствующая всем требованиям ГОСТ и техническим условиям. Изделие прошло обязательную сертификацию и готово к отгрузке.`}
-            </p>
+            {(
+              paragraphs(product.description || `${product.title} — высококачественная продукция, соответствующая всем требованиям ГОСТ и техническим условиям. Изделие прошло обязательную сертификацию и готово к отгрузке.`)
+            ).map((paragraph, index) => (
+              <p key={index} className="mb-4">
+                {paragraph}
+              </p>
+            ))}
 
             <p className="mb-4">
               Наша компания осуществляет поставку данной продукции по всей
