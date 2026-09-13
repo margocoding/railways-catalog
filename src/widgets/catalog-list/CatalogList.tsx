@@ -71,8 +71,8 @@ export function CatalogList({ products }: { products: Product[] }) {
                         src={getImageUrl(product.images[0] ?? '')}
                         alt={product.title}
                         loading="lazy"
-                        width={80}
-                        height={80}
+                        width={88}
+                        height={88}
                         className="h-full w-full object-contain"
                         fallbackClassName="h-full w-full rounded-md"
                         iconClassName="h-6 w-6"
