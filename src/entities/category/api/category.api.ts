@@ -66,4 +66,13 @@ export const categoryApi = {
   async delete(id: string): Promise<void> {
     await baseApi.delete(`/product-category/${id}`);
   },
+
+  /** Раскладывает категории в переданном порядке: первый id — первая категория каталога. */
+  async reorder(ids: string[]): Promise<PaginatedResponse<Category>> {
+    const { data } = await baseApi.patch<PaginatedResponse<Category>>(
+      '/product-category/order',
+      { ids },
+    );
+    return data;
+  },
 };

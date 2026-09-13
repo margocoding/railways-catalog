@@ -18,6 +18,8 @@ export interface Category {
   slug: string;
   description: string;
   image: string;
+  /** Порядковый номер в каталоге: чем меньше, тем выше категория. */
+  position?: number;
   productCount?: number;
   subcategories: Subcategory[];
   filters?: FilterOption[];
