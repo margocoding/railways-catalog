@@ -19,6 +19,18 @@ import { FORM_GOAL, metrikaReachGoal } from '@/shared/analytics/metrika'
 
 export function CartPage() {
   const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } = useCart()
+  // Товары «по запросу» в сумму не входят: без этого корзина из таких товаров показывает «0 ₽».
+  const hasPriceOnRequest = items.some((item) => !item.product.price)
+  const totalLabel = !hasPriceOnRequest
+    ? `${totalPrice.toLocaleString('ru-RU')} ₽`
+    : totalPrice > 0
+      ? `${totalPrice.toLocaleString('ru-RU')} ₽ + по запросу`
+      : 'По запросу'
+  const priceOnRequestNote = hasPriceOnRequest && (
+    <p className="text-xs text-muted-foreground">
+      Стоимость позиций «по запросу» менеджер сообщит после оформления заказа.
+    </p>
+  )
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'form' | 'success'>('cart')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderNumber, setOrderNumber] = useState<string>('')
@@ -325,12 +337,13 @@ export function CartPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Товары ({totalItems})</span>
-                    <span className="font-medium">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                    <span className="font-medium">{totalLabel}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold">
                     <span className="text-foreground">Итого</span>
-                    <span className="text-primary">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                    <span className="text-primary">{totalLabel}</span>
                   </div>
+                  {priceOnRequestNote}
                 </div>
               </div>
             </div>
@@ -446,15 +459,16 @@ export function CartPage() {
                   </div>
                   <div className="flex justify-between text-base">
                     <span className="text-muted-foreground">Стоимость товаров</span>
-                    <span className="font-semibold">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                    <span className="font-semibold">{totalLabel}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2 mb-6">
-                  <div className="flex justify-between text-lg font-bold">
+                  <div className="flex justify-between gap-4 text-lg font-bold">
                     <span className="text-foreground">Общая сумма</span>
-                    <span className="text-primary">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                    <span className="text-right text-primary">{totalLabel}</span>
                   </div>
+                  {priceOnRequestNote}
                 </div>
 
                 <div className="space-y-3">
