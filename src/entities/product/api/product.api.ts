@@ -85,6 +85,10 @@ export const productApi = {
       formData.append('description', dto.description);
     }
 
+    if (dto.descriptionTags !== undefined) {
+      formData.append('descriptionTags', dto.descriptionTags);
+    }
+
     if (dto.specs && dto.specs.length > 0) {
       formData.append('specs', JSON.stringify(dto.specs));
     }
@@ -122,6 +126,7 @@ export const productApi = {
     if (dto.categorySlug !== undefined) formData.append('categorySlug', dto.categorySlug);
     if (dto.subcategorySlug !== undefined) formData.append('subcategorySlug', dto.subcategorySlug);
     if (dto.description !== undefined) formData.append('description', dto.description);
+    if (dto.descriptionTags !== undefined) formData.append('descriptionTags', dto.descriptionTags);
     if (dto.specs !== undefined) formData.append('specs', JSON.stringify(dto.specs));
     if (dto.analogues !== undefined) formData.append('analogues', JSON.stringify(dto.analogues));
 

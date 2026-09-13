@@ -10,6 +10,7 @@ export interface DialogProps {
   title?: string
   description?: string
   children: ReactNode
+  footer?: ReactNode
   className?: string
 }
 
@@ -19,6 +20,7 @@ export function Dialog({
   title,
   description,
   children,
+  footer,
   className,
 }: DialogProps) {
   const titleId = useId()
@@ -61,7 +63,7 @@ export function Dialog({
               exit={{ scale: 0.96, y: 8 }}
               transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
               className={cn(
-                'relative w-full max-w-lg overflow-hidden rounded-xl border border-border bg-background shadow-lg',
+                'relative flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-background shadow-lg',
                 className,
               )}
               onClick={(event: any) => event.stopPropagation()}
@@ -88,33 +90,36 @@ export function Dialog({
                 </svg>
               </button>
 
-              <div className="max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain">
-                {(title || description) && (
-                  <div className="sticky top-0 z-10 border-b border-border bg-background px-6 pb-4 pr-14 pt-6">
-                    {title && (
-                      <h2 id={titleId} className="text-lg font-semibold">
-                        {title}
-                      </h2>
-                    )}
-                    {description && (
-                      <p
-                        id={descriptionId}
-                        className="mt-1 text-sm text-muted-foreground"
-                      >
-                        {description}
-                      </p>
-                    )}
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    'px-6 pb-6',
-                    title || description ? 'pt-4' : 'pt-14',
+              {(title || description) && (
+                <div className="shrink-0 border-b border-border bg-background px-4 py-5 pr-16 sm:px-6 sm:pr-16">
+                  {title && (
+                    <h2 id={titleId} className="text-lg font-semibold">
+                      {title}
+                    </h2>
                   )}
-                >
-                  {children}
+                  {description && (
+                    <p
+                      id={descriptionId}
+                      className="mt-1 text-sm text-muted-foreground"
+                    >
+                      {description}
+                    </p>
+                  )}
                 </div>
+              )}
+              <div
+                className={cn(
+                  'min-h-0 overflow-y-auto overscroll-contain px-4 pb-6 sm:px-6',
+                  title || description ? 'pt-5' : 'pt-14',
+                )}
+              >
+                {children}
               </div>
+              {footer && (
+                <div className="shrink-0 border-t border-border bg-background px-4 py-4 sm:px-6">
+                  {footer}
+                </div>
+              )}
             </motion.div>
           </div>
         </motion.div>

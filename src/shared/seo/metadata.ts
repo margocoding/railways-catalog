@@ -1,7 +1,7 @@
 import { plainText } from '../lib/plain-text.ts'
 import { detailRoute, isKnownPath, productPath, type PageData } from './route-data.ts'
 
-export type Metadata = { title: string; description: string; canonical: string; robots: string; image: string; jsonLd: Record<string, unknown>[] }
+export type Metadata = { title: string; description: string; socialDescription: string; canonical: string; robots: string; image: string; jsonLd: Record<string, unknown>[] }
 const pages: Record<string, [string, string]> = {
   '/': ['ИНВИА — железнодорожные материалы и ВСП', 'Рельсы, шпалы, крепёж и другие материалы верхнего строения пути. Каталог ИНВИА: характеристики товаров, подбор и запрос стоимости.'],
   '/catalog': ['Каталог железнодорожных материалов | ИНВИА', 'Материалы верхнего строения пути: железнодорожные и крановые рельсы, шпалы, крепёж, накладки и прокладки. Подбор по категории, ГОСТ и характеристикам.'],
@@ -24,6 +24,7 @@ export function getMetadata(urlValue: string, data: PageData): Metadata {
   let noindex = data.status >= 400 || path === '/cart' || path.startsWith('/admin') || !isKnownPath(path)
   const jsonLd: Record<string, unknown>[] = []
   let image = `${data.siteUrl}/logo.png`
+  let searchDescription = ''
   if (path.startsWith('/admin')) [title, description] = ['Управление сайтом | ИНВИА', 'Вход в панель управления ИНВИА.']
   if (path === '/catalog') {
     const category = data.categories?.find((item) => item.slug === url.searchParams.get('category'))
@@ -51,6 +52,7 @@ export function getMetadata(urlValue: string, data: PageData): Metadata {
     const product = data.product
     title = `${plainText(product.title)} — характеристики и заказ | ИНВИА`
     description = `${plainText(product.title)}${product.gost ? `. ${plainText(product.gost)}` : ''}. ${plainText(product.description) || 'Характеристики и комплектация в каталоге ИНВИА.'} Запросите стоимость и условия поставки.`
+    searchDescription = plainText(product.descriptionTags)
     canonicalPath = productPath(product)
     if (product.images[0]) image = new URL(product.images[0], data.siteUrl).href
   } else if (route?.kind === 'service' && data.service?.slug === route.slug) {
@@ -66,5 +68,6 @@ export function getMetadata(urlValue: string, data: PageData): Metadata {
   }
   if (data.status >= 500) title = 'Страница временно недоступна | ИНВИА'
   if (path === '/') jsonLd.push({ '@context': 'https://schema.org', '@type': 'Organization', name: 'ООО «ИНВИА»', url: data.siteUrl, logo: `${data.siteUrl}/logo.png`, telephone: '+7-843-259-73-00', email: 'zakaz@tatrels.ru' })
-  return { title, description: summary(description), canonical: data.siteUrl + canonicalPath, robots: noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large', image, jsonLd }
+  const socialDescription = summary(description)
+  return { title, description: searchDescription || socialDescription, socialDescription, canonical: data.siteUrl + canonicalPath, robots: noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large', image, jsonLd }
 }

@@ -21,6 +21,7 @@ export interface Product {
   categorySlug: string;
   subcategorySlug?: string;
   description?: string;
+  descriptionTags?: string | null;
   specs?: ProductSpec[];
   analogues?: string[];
 }
@@ -36,6 +37,7 @@ export interface CreateProductDto {
   categorySlug: string;
   subcategorySlug?: string;
   description?: string;
+  descriptionTags?: string;
   specs?: Omit<ProductSpec, "id">[];
   analogues?: string[];
 }
