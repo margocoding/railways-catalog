@@ -25,6 +25,8 @@ interface RequestFormModalProps {
   description?: string
   serviceId?: string
   productId?: string
+  /** Короткая форма обратного звонка: без email и вложений */
+  callback?: boolean
 }
 
 export function RequestFormModal({
@@ -34,6 +36,7 @@ export function RequestFormModal({
   description = 'Получите консультацию или коммерческое предложение',
   serviceId,
   productId,
+  callback = false,
 }: RequestFormModalProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -173,6 +176,7 @@ export function RequestFormModal({
           />
         </FormField>
 
+        {!callback && (
         <FormField>
           <Input
             type="email"
@@ -182,10 +186,15 @@ export function RequestFormModal({
             disabled={isSubmitting}
           />
         </FormField>
+        )}
 
         <FormField>
           <Textarea
-            placeholder="Комментарий (адрес доставки)"
+            placeholder={
+              callback
+                ? 'Комментарий (удобное время для звонка)'
+                : 'Комментарий (адрес доставки)'
+            }
             rows={3}
             value={formData.comment}
             onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
@@ -193,6 +202,7 @@ export function RequestFormModal({
           />
         </FormField>
 
+        {!callback && (
         <div className="space-y-3">
           <label className="flex-1 block">
             <input
@@ -252,6 +262,7 @@ export function RequestFormModal({
             </div>
           )}
         </div>
+        )}
 
         <div className="flex items-start gap-2">
           <Checkbox
@@ -284,7 +295,11 @@ export function RequestFormModal({
           className="w-full"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
+          {isSubmitting
+            ? 'Отправка...'
+            : callback
+              ? 'Заказать звонок'
+              : 'Отправить заявку'}
         </Button>
       </form>
     </Dialog>
