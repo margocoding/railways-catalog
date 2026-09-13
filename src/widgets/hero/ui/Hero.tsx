@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
-import { FiArrowRight, FiFileText } from 'react-icons/fi'
+import { FiArrowRight } from 'react-icons/fi'
 import { HomeCategoriesSidebar } from '@/widgets/home-categories-sidebar/HomeCategoriesSidebar'
 
 export function Hero() {
@@ -53,16 +53,6 @@ export function Hero() {
               Открыть каталог
               <FiArrowRight />
             </Link>
-            <button
-              type="button"
-              onClick={() =>
-                window.dispatchEvent(new CustomEvent('open-request-form'))
-              }
-              className="inline-flex min-h-14 items-center justify-center gap-3 rounded-lg border border-white/70 px-6 py-3 font-bold transition-colors hover:bg-white/10"
-            >
-              <FiFileText />
-              Запросить спецификацию
-            </button>
           </div>
           <dl className="hero-enter hero-delay-3 mt-10 grid max-w-3xl grid-cols-3 gap-4 border-t border-white/25 pt-7 md:gap-10">
             {[
