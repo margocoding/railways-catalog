@@ -71,11 +71,11 @@ export function CatalogList({ products }: { products: Product[] }) {
                         src={getImageUrl(product.images[0] ?? '')}
                         alt={product.title}
                         loading="lazy"
-                        width={120}
-                        height={120}
-                        className="h-full w-auto max-w-full object-contain"
+                        width={80}
+                        height={80}
+                        className="h-full w-full object-contain"
                         fallbackClassName="h-full w-full rounded-md"
-                        iconClassName="h-8 w-8"
+                        iconClassName="h-6 w-6"
                       />
                     </Link>
                     <div className="min-w-0">
