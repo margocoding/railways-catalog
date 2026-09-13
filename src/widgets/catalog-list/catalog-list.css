@@ -37,10 +37,11 @@
 .catalog-list tbody tr:hover {
   background: hsl(var(--muted) / 0.65);
 }
+/* Плюс 2 мм к прежним 80 px по обеим сторонам (2 мм ≈ 7,6 px на экране). */
 .catalog-list-image {
   display: block;
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   flex-shrink: 0;
   padding: 4px;
   overflow: hidden;
@@ -90,8 +91,8 @@
     margin-bottom: 3px;
   }
   .catalog-list-image {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
   }
   .catalog-list-gost {
     grid-column: 1 / -1;
