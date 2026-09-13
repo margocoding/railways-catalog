@@ -11,7 +11,16 @@ export interface PaginationProps {
 export function Pagination({ currentPage, totalPages, onPageChange, className }: PaginationProps) {
   if (totalPages <= 1) return null
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+  // Все номера подряд не помещаются, когда страниц много (весь каталог — 26):
+  // показываем первую, последнюю и соседние с текущей, пропуски — многоточием.
+  const pages: Array<number | 'gap'> = []
+  for (let page = 1; page <= totalPages; page++) {
+    const near = Math.abs(page - currentPage) <= 1
+    const edge = page === 1 || page === totalPages
+    const nearEdge = (currentPage <= 3 && page <= 4) || (currentPage >= totalPages - 2 && page >= totalPages - 3)
+    if (near || edge || nearEdge) pages.push(page)
+    else if (pages.at(-1) !== 'gap') pages.push('gap')
+  }
 
   return (
     <nav aria-label="Pagination" className={cn('flex items-center justify-center gap-1', className)}>
@@ -24,7 +33,9 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
         <FiChevronLeft className="h-5 w-5" />
       </button>
 
-      {pages.map((page) => (
+      {pages.map((page, index) => page === 'gap' ? (
+        <span key={`gap-${index}`} className="px-1 text-muted-foreground" aria-hidden="true">…</span>
+      ) : (
         <button
           key={page}
           onClick={() => onPageChange(page)}
