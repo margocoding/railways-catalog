@@ -129,10 +129,10 @@ export function Header() {
           </Link>
           <div className="hidden shrink-0 xl:block">
             <Button
-              className="whitespace-nowrap"
+              className="whitespace-nowrap px-4!"
               onClick={() => setRequestOpen(true)}
             >
-              Запросить спецификацию
+              Заказать звонок
             </Button>
           </div>
           <button
@@ -157,7 +157,9 @@ export function Header() {
       <RequestFormModal
         open={requestOpen}
         onOpenChange={setRequestOpen}
-        title="Запросить спецификацию"
+        title="Заказать звонок"
+        description="Оставьте контакты — перезвоним в течение 15 минут"
+        callback
       />
     </header>
   )
