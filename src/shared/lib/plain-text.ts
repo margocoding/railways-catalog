@@ -20,6 +20,12 @@ export function plainText(value: unknown): string {
     .trim()
 }
 
+// Paragraphs are separated by a blank line; single line breaks inside one collapse to spaces.
+export function paragraphs(value: unknown): string[] {
+  const text = value == null ? '' : String(value)
+  return text.split(/\r?\n[ \t]*\r?\n/).map(plainText).filter(Boolean)
+}
+
 export function formatSpec(value: unknown, unit?: string): string {
   return [plainText(value), plainText(unit)].filter(Boolean).join(' ')
 }
