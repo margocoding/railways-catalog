@@ -31,8 +31,6 @@ export function Hero() {
         className="absolute inset-0 bg-linear-to-r from-[#1C1F22]/95 via-[#1C1F22]/80 to-[#1C1F22]/25"
         aria-hidden="true"
       />
-      <div className="hero-fade-top" aria-hidden="true" />
-      <div className="hero-fade-bottom" aria-hidden="true" />
       <div className="hero-content container relative mx-auto grid content-center gap-6 px-6 pt-6 lg:grid-cols-[264px_minmax(0,1fr)] lg:items-center lg:gap-10 lg:pt-8 xl:gap-12 xl:px-8">
         <HomeCategoriesSidebar />
         <div className="hero-copy min-w-0 lg:self-center">
