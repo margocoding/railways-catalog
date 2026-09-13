@@ -1,10 +1,28 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import { FiArrowRight, FiFileText } from 'react-icons/fi'
 import { HomeCategoriesSidebar } from '@/widgets/home-categories-sidebar/HomeCategoriesSidebar'
 
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    // The hero fills the first screen below the header. Measure only at the
+    // top of the page, where the header still has its full height.
+    const measure = () => {
+      const section = sectionRef.current
+      if (!section || window.scrollY > 0) return
+      const top = Math.round(section.getBoundingClientRect().top)
+      section.style.setProperty('--hero-top', `${top}px`)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
   return (
-    <section className="hero-section relative flex min-h-[560px] items-center overflow-hidden bg-foreground text-white lg:min-h-[680px]">
+    <section
+      ref={sectionRef}
+      className="hero-section relative flex overflow-hidden bg-foreground text-white"
+    >
       <div
         className="hero-photo absolute inset-0 bg-cover bg-center bg-[url('/hero_background.png')]"
         aria-hidden="true"
@@ -13,7 +31,9 @@ export function Hero() {
         className="absolute inset-0 bg-linear-to-r from-[#1C1F22]/95 via-[#1C1F22]/80 to-[#1C1F22]/25"
         aria-hidden="true"
       />
-      <div className="container relative mx-auto grid gap-6 px-6 py-6 lg:min-h-[680px] lg:grid-cols-[264px_minmax(0,1fr)] lg:items-center lg:gap-10 lg:py-8 xl:gap-12 xl:px-8">
+      <div className="hero-fade-top" aria-hidden="true" />
+      <div className="hero-fade-bottom" aria-hidden="true" />
+      <div className="hero-content container relative mx-auto grid content-center gap-6 px-6 pt-6 lg:grid-cols-[264px_minmax(0,1fr)] lg:items-center lg:gap-10 lg:pt-8 xl:gap-12 xl:px-8">
         <HomeCategoriesSidebar />
         <div className="hero-copy min-w-0 lg:self-center">
           <p className="hero-enter mb-5 text-sm font-bold tracking-[.05em] text-white/85">

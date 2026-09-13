@@ -132,8 +132,56 @@ button:disabled {
   letter-spacing: -0.03em;
   font-weight: 700;
 }
+.hero-section {
+  --hero-fade: 140px;
+  /* Half of the fade stays below the fold: the first screen ends in photo, not white. */
+  min-height: max(
+    560px,
+    calc(100svh - var(--hero-top, 137px) + var(--hero-fade) / 2)
+  );
+}
 .hero-photo {
   animation: hero-photo-in 1.2s ease-out both;
+}
+/* Soft light edge under the white header. */
+.hero-fade-top {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.5),
+    rgb(255 255 255 / 0.24) 30%,
+    rgb(255 255 255 / 0.08) 65%,
+    rgb(255 255 255 / 0)
+  );
+  pointer-events: none;
+}
+/* The photo melts into the white section that follows. */
+.hero-fade-bottom {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--hero-fade);
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0),
+    rgb(255 255 255 / 0.03) 15%,
+    rgb(255 255 255 / 0.12) 32%,
+    rgb(255 255 255 / 0.3) 50%,
+    rgb(255 255 255 / 0.55) 66%,
+    rgb(255 255 255 / 0.8) 82%,
+    rgb(255 255 255 / 0.94) 93%,
+    #fff
+  );
+  pointer-events: none;
+}
+.hero-content {
+  padding-bottom: calc(var(--hero-fade) - 1.5rem);
+}
+@media (min-width: 64rem) {
+  .hero-section {
+    --hero-fade: 180px;
+  }
 }
 .hero-enter {
   animation: hero-content-in 0.6s ease-out both;
