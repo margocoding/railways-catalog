@@ -278,6 +278,11 @@ input[type='number']::-webkit-inner-spin-button {
     font-size: 2rem;
   }
 }
+@media (max-width: 359px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
