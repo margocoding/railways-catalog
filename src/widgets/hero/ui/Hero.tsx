@@ -20,11 +20,12 @@ export function Hero() {
             ИНВИА · МАТЕРИАЛЫ ВСП
           </p>
           <h1 className="hero-title hero-enter hero-delay-1">
-            Материалы верхнего строения пути со склада в Татарстане
+            Материалы верхнего строения железнодорожного пути
           </h1>
           <p className="hero-enter hero-delay-2 mt-6 max-w-2xl text-base leading-relaxed text-white/90 md:text-lg">
-            Рельсы, шпалы, накладки и скрепления. Новые и б/у. Поставки по
-            Поволжью, России и СНГ.
+            Рельсы, шпалы, накладки и скрепления.
+            <br />
+            Производство, комплексные поставки.
           </p>
           <div className="hero-enter hero-delay-2 mt-8 flex flex-wrap gap-3">
             <Link
