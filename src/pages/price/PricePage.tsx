@@ -2,6 +2,7 @@ import { Breadcrumbs } from '../../shared/ui/Breadcrumbs'
 import { Layout } from '../../widgets/Layout'
 import { PriceActions } from '../../widgets/price-actions/PriceActions'
 import { PriceTable } from '../../widgets/price-table/PriceTable'
+import { PriceRequestForm } from '../../widgets/price-request-form/PriceRequestForm'
 
 export function PricePage() {
   return (
@@ -35,7 +36,8 @@ export function PricePage() {
           </div>
         </section>
 
-        {/* <PriceRequestForm /> */}
+        {/* Форма запроса прайса */}
+        <PriceRequestForm />
       </div>
     </Layout>
   )
