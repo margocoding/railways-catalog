@@ -2,8 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/lib/plain-text.ts'
 import { getMetadata } from '../src/shared/seo/metadata.ts'
-import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
-import { siteOrigin } from '../src/renderer/site-origin.ts'
+import { detailRoute, productPath, rendersOnServer } from '../src/shared/seo/route-data.ts'
+import { siteOrigin, hostRedirect, publicRequestUrl } from '../src/renderer/site-origin.ts'
 import { apiOriginList, fetchFromApi } from '../src/renderer/api-fetch.ts'
 
 test('legacy HTML units become safe readable text without changing units', () => {
@@ -140,4 +140,44 @@ test('product snippet does not repeat the title when the description starts with
 
   const distinct = meta({ ...base, description: 'Предупреждающий знак для пешеходов.' })
   assert.ok(distinct.startsWith('Берегись поезда. Предупреждающий знак'), distinct)
+})
+test('public pages are rendered on the server; cart and admin stay in the browser', () => {
+  for (const path of ['/', '/catalog', '/services', '/about', '/contacts', '/delivery', '/price', '/privacy', '/catalog/rails/product/r65', '/services/rezka', '/missing']) assert.equal(rendersOnServer(path), true, path)
+  for (const path of ['/cart', '/admin', '/admin/login', '/admin/products']) assert.equal(rendersOnServer(path), false, path)
+  assert.equal(rendersOnServer('/administration'), true)
+})
+test('product page carries Product markup without an offer until a price is set', () => {
+  const product = { sku: 'TM-0033', slug: 'bolt', title: 'Болт закладной М22х175', gost: 'ГОСТ 16017-79', condition: 'new', price: null, stock: 0, images: ['/uploads/bolt.jpg'], categorySlug: 'zhd-krepezh', subcategorySlug: 'bolty', category: { name: 'ЖД крепеж' }, subcategory: { name: 'Болты' }, description: 'Закладной болт крепит подкладку к шпале.', specs: [{ label: 'ГОСТ', value: '16017-79.' }, { label: 'Масса', value: '0,65', unit: 'кг' }, { label: 'Пусто', value: '' }] }
+  const url = productPath(product)
+  const markup = (value) => getMetadata(url, { url, siteUrl: 'https://traer.ru', status: 200, ssr: true, product: value }).jsonLd.find((item) => item['@type'] === 'Product')
+  const item = markup(product)
+  assert.equal(item.name, 'Болт закладной М22х175')
+  assert.equal(item.sku, 'TM-0033')
+  assert.equal(item.url, 'https://traer.ru/catalog/zhd-krepezh/bolty/product/bolt')
+  assert.deepEqual(item.image, ['https://traer.ru/uploads/bolt.jpg'])
+  assert.equal(item.category, 'ЖД крепеж / Болты')
+  assert.equal(item.itemCondition, 'https://schema.org/NewCondition')
+  assert.deepEqual(item.additionalProperty.map((property) => [property.name, property.value, property.unitText]), [['ГОСТ', 'ГОСТ 16017-79', undefined], ['Масса', '0,65', 'кг']])
+  assert.equal(item.offers, undefined)
+  assert.equal(getMetadata(url, { url, siteUrl: 'https://traer.ru', status: 200, ssr: true, product }).jsonLd.filter((entry) => entry['@type'] === 'BreadcrumbList').length, 0, 'breadcrumbs are already microdata in the page')
+
+  const priced = markup({ ...product, price: 1250, stock: 40, images: [] })
+  assert.deepEqual(priced.offers, { '@type': 'Offer', price: 1250, priceCurrency: 'RUB', availability: 'https://schema.org/InStock', url: item.url, itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'ООО «ИНВИА»' } })
+  assert.equal(priced.image, undefined)
+  assert.equal(markup({ ...product, price: 900, stock: 0 }).offers.availability, 'https://schema.org/BackOrder')
+})
+test('www and the retired domain redirect to the same page on traer.ru; the main host keeps https in redirects', () => {
+  const site = 'https://traer.ru'
+  assert.equal(hostRedirect('http://www.traer.ru/catalog?category=rails&page=2', 'GET', site), 'https://traer.ru/catalog?category=rails&page=2')
+  assert.equal(hostRedirect('http://tatrels.ru/catalog/zhd/product/bolt', 'HEAD', site), 'https://traer.ru/catalog/zhd/product/bolt')
+  assert.equal(hostRedirect('http://www.tatrels.ru/', 'GET', site), 'https://traer.ru/')
+  assert.equal(hostRedirect('http://traer.ru/catalog', 'GET', site), null)
+  assert.equal(hostRedirect('http://www.traer.ru/api/request', 'POST', site), null, 'form posts are never redirected')
+  assert.equal(hostRedirect('http://app:3000/catalog', 'GET', site), null, 'internal requests pass through')
+  assert.equal(hostRedirect('http://tatrels.ru/', 'GET', 'http://localhost:3000'), null, 'old domain maps only to the real site')
+  assert.equal(hostRedirect('http://www.localhost:3000/', 'GET', 'http://localhost:3000'), 'http://localhost:3000/')
+
+  assert.equal(publicRequestUrl('http://traer.ru/catalog/?page=2', site), 'https://traer.ru/catalog/?page=2')
+  assert.equal(publicRequestUrl('http://127.0.0.1:3011/catalog/', site), 'http://127.0.0.1:3011/catalog/')
+  assert.equal(publicRequestUrl('http://localhost:3000/x', 'http://localhost:3000'), 'http://localhost:3000/x')
 })

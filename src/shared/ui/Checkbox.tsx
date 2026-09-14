@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { cn } from '@/shared/lib/cn'
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -6,7 +7,9 @@ export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElemen
 }
 
 export function Checkbox({ label, error, className, id, ...props }: CheckboxProps) {
-  const checkboxId = id || `checkbox-${Math.random().toString(36).slice(2)}`
+  // useId одинаков на сервере и в браузере: страницы с формами теперь приходят готовым HTML.
+  const generatedId = useId()
+  const checkboxId = id || generatedId
   
   return (
     <div className="flex items-center gap-2">

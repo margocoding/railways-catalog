@@ -25,6 +25,15 @@ export function productPath(product: { categorySlug: string; subcategorySlug?: s
   return '/catalog/' + [product.categorySlug, ...(product.subcategorySlug ? [product.subcategorySlug] : []), 'product', product.slug].map(encodeURIComponent).join('/')
 }
 
+/**
+ * Какие страницы сервер отдаёт готовым HTML. Раньше — только карточки товаров и услуг, остальные
+ * приходили пустыми (~37 слов, без H1). Корзина живёт в localStorage, админка — за входом: их
+ * содержимое на сервере не собрать и в индекс оно не нужно, поэтому они рисуются в браузере.
+ */
+export function rendersOnServer(pathname: string): boolean {
+  return !(pathname === '/cart' || pathname === '/admin' || pathname.startsWith('/admin/'))
+}
+
 export function isKnownPath(pathname: string): boolean {
   return !!detailRoute(pathname) || ['/', '/catalog', '/services', '/about', '/contacts', '/delivery', '/price', '/privacy', '/cart', '/admin'].includes(pathname) || pathname.startsWith('/admin/')
 }
