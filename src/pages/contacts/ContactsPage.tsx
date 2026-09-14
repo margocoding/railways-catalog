@@ -21,22 +21,15 @@ const CONTACTS = [
     id: 'phone-1',
     icon: FiPhone,
     title: 'Телефон',
-    value: '+7 (843) 259-73-00',
-    href: 'tel:+78432597300',
+    value: '+7 (962) 527-00-05',
+    href: 'tel:+79625270005',
   },
   {
     id: 'phone-2',
     icon: FiPhone,
     title: 'Телефон',
-    value: '+7 (962) 559-73-00',
-    href: 'tel:+79625597300',
-  },
-  {
-    id: 'phone-3',
-    icon: FiPhone,
-    title: 'Телефон',
-    value: '+7 (960) 039-01-01',
-    href: 'tel:+79600390101',
+    value: '+7 (843) 227-00-05',
+    href: 'tel:+78432270005',
   },
   {
     id: 'email',
@@ -57,6 +50,8 @@ const CONTACTS = [
     icon: FiMessageCircle,
     title: 'Мессенджеры',
     value: <MessengerLinks showPhone />,
+    // Карточек пять: мессенджеры занимают две колонки, чтобы в сетке из трёх не было пустой ячейки.
+    wide: true,
   },
 ]
 
@@ -157,15 +152,17 @@ function ContactCard({
   value,
   subvalue,
   href,
+  wide,
 }: {
   icon: React.ElementType
   title: string
   value: React.ReactNode
   subvalue?: string
   href?: string
+  wide?: boolean
 }) {
   const content = (
-    <div className="h-full rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50">
+    <div className={`h-full rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50 ${wide ? 'sm:col-span-2 xl:col-span-2' : ''}`}>
       <div className="mb-3 text-primary">
         <Icon className="h-6 w-6" />
       </div>

@@ -3,9 +3,17 @@ import { FiMessageCircle, FiSend } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import { Dialog } from './Dialog'
 
-const phone = import.meta.env.VITE_MESSENGER_PHONE || '+7 (000) 000-00-00'
+// Номер мессенджеров отдела продаж. В секрете боевой сборки VITE_MESSENGER_PHONE может
+// оставаться заглушка из нулей — прочитать и поправить секрет нельзя, поэтому заглушку
+// считаем незаданной и берём этот номер.
+const DEFAULT_MESSENGER_PHONE = '+7 (962) 559-73-00'
+const isRealPhone = (value: string | undefined) => {
+  const valueDigits = (value ?? '').replace(/\D/g, '')
+  return /^\d{10,15}$/.test(valueDigits) && !/^7?0+$/.test(valueDigits)
+}
+const phone = isRealPhone(import.meta.env.VITE_MESSENGER_PHONE) ? import.meta.env.VITE_MESSENGER_PHONE : DEFAULT_MESSENGER_PHONE
 const digits = phone.replace(/\D/g, '')
-const configuredPhone = /^\d{10,15}$/.test(digits) && !/^7?0+$/.test(digits)
+const configuredPhone = isRealPhone(phone)
 const safeUrl = (value: string | undefined) => {
   try { const url = new URL(value ?? ''); return url.protocol === 'https:' ? url.href : '' } catch { return '' }
 }
@@ -28,7 +36,7 @@ export function MessengerLinks({ compact = false, showPhone = false }: { compact
     {showPhone && <p className="mt-2 text-sm font-normal text-muted-foreground">{phone}</p>}
     <Dialog open={!!placeholder} onOpenChange={() => setPlaceholder('')} title={placeholder} description="Контакт для связи">
       <p className="text-xl font-bold">{phone}</p>
-      <p className="mt-3 text-sm text-muted-foreground">Контакт мессенджера будет добавлен позже.</p>
+      <p className="mt-3 text-sm text-muted-foreground">Найдите нас в {placeholder} по этому номеру.</p>
     </Dialog>
   </div>
 }
