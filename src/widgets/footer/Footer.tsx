@@ -59,8 +59,8 @@ export function Footer() {
               <a href="tel:+79600390101" className="footer-muted block">
                 +7 (960) 039-01-01
               </a>
-              <a href="mailto:zakaz@tatrels.ru" className="footer-muted block">
-                zakaz@tatrels.ru
+              <a href="mailto:zakaz@traer.ru" className="footer-muted block">
+                zakaz@traer.ru
               </a>
               <div className="pt-3"><MessengerLinks /></div>
               <p className="footer-muted pt-2">

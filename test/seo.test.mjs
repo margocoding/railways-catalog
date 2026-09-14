@@ -92,4 +92,10 @@ test('the retired tatrels.ru origin becomes traer.ru in canonical and social lin
   assert.equal(meta.canonical, 'https://traer.ru/services/rezka-rels')
   assert.equal(meta.image, 'https://traer.ru/uploads/rezka.jpg')
   assert.ok(!JSON.stringify(meta).includes('tatrels.ru/'))
+
+  const home = getMetadata('/', { url: '/', siteUrl: siteOrigin('https://tatrels.ru'), status: 200, ssr: true })
+  const organization = home.jsonLd.find((item) => item['@type'] === 'Organization')
+  assert.equal(organization.url, 'https://traer.ru')
+  assert.equal(organization.email, 'zakaz@traer.ru')
+  assert.ok(!JSON.stringify(home).includes('tatrels'))
 })
