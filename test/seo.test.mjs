@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/lib/plain-text.ts'
 import { getMetadata } from '../src/shared/seo/metadata.ts'
 import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
-import { siteOrigin } from '../src/renderer/site-origin.ts'
+import { siteOrigin, hostRedirect, publicRequestUrl } from '../src/renderer/site-origin.ts'
 import { apiOriginList, fetchFromApi } from '../src/renderer/api-fetch.ts'
 
 test('legacy HTML units become safe readable text without changing units', () => {
@@ -140,4 +140,19 @@ test('product snippet does not repeat the title when the description starts with
 
   const distinct = meta({ ...base, description: 'Предупреждающий знак для пешеходов.' })
   assert.ok(distinct.startsWith('Берегись поезда. Предупреждающий знак'), distinct)
+})
+test('www and the retired domain redirect to the same page on traer.ru; the main host keeps https in redirects', () => {
+  const site = 'https://traer.ru'
+  assert.equal(hostRedirect('http://www.traer.ru/catalog?category=rails&page=2', 'GET', site), 'https://traer.ru/catalog?category=rails&page=2')
+  assert.equal(hostRedirect('http://tatrels.ru/catalog/zhd/product/bolt', 'HEAD', site), 'https://traer.ru/catalog/zhd/product/bolt')
+  assert.equal(hostRedirect('http://www.tatrels.ru/', 'GET', site), 'https://traer.ru/')
+  assert.equal(hostRedirect('http://traer.ru/catalog', 'GET', site), null)
+  assert.equal(hostRedirect('http://www.traer.ru/api/request', 'POST', site), null, 'form posts are never redirected')
+  assert.equal(hostRedirect('http://app:3000/catalog', 'GET', site), null, 'internal requests pass through')
+  assert.equal(hostRedirect('http://tatrels.ru/', 'GET', 'http://localhost:3000'), null, 'old domain maps only to the real site')
+  assert.equal(hostRedirect('http://www.localhost:3000/', 'GET', 'http://localhost:3000'), 'http://localhost:3000/')
+
+  assert.equal(publicRequestUrl('http://traer.ru/catalog/?page=2', site), 'https://traer.ru/catalog/?page=2')
+  assert.equal(publicRequestUrl('http://127.0.0.1:3011/catalog/', site), 'http://127.0.0.1:3011/catalog/')
+  assert.equal(publicRequestUrl('http://localhost:3000/x', 'http://localhost:3000'), 'http://localhost:3000/x')
 })
