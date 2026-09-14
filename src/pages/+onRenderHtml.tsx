@@ -7,6 +7,7 @@ import type { PageData } from '@/shared/seo/route-data'
 import { siteUrl } from '@/renderer/server-config'
 import { jsonForHtml } from '@/shared/lib/plain-text'
 import { metrikaId } from '@/shared/analytics/metrika'
+import { gudokTag } from '@/shared/analytics/gudok'
 
 const metrikaTag = metrikaId
   ? `<script type="text/javascript">
@@ -41,6 +42,7 @@ export function onRenderHtml(pageContext: PageContextServer) {
       <meta name="twitter:card" content="summary" /><meta name="twitter:title" content="${meta.title}" /><meta name="twitter:description" content="${meta.socialDescription}" /><meta name="twitter:image" content="${meta.image}" />
       ${meta.jsonLd.length ? escapeInject`<script id="seo-json-ld" type="application/ld+json">${dangerouslySkipEscape(jsonForHtml(meta.jsonLd))}</script>` : ''}
       ${dangerouslySkipEscape(metrikaTag)}
+      ${dangerouslySkipEscape(gudokTag)}
       </head><body><div id="root">${dangerouslySkipEscape(html)}</div>${dangerouslySkipEscape(metrikaNoscript)}</body></html>`,
     pageContext: { data },
   }
