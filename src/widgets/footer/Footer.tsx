@@ -48,16 +48,13 @@ export function Footer() {
             <h2 className="mb-4 text-base font-bold">Контакты</h2>
             <div className="space-y-2 text-sm">
               <a
-                href="tel:+78432597300"
+                href="tel:+79625270005"
                 className="block whitespace-nowrap text-base font-bold"
               >
-                +7 (843) 259-73-00
+                +7 (962) 527-00-05
               </a>
-              <a href="tel:+79625597300" className="footer-muted block">
-                +7 (962) 559-73-00
-              </a>
-              <a href="tel:+79600390101" className="footer-muted block">
-                +7 (960) 039-01-01
+              <a href="tel:+78432270005" className="footer-muted block">
+                +7 (843) 227-00-05
               </a>
               <a href="mailto:zakaz@traer.ru" className="footer-muted block">
                 zakaz@traer.ru

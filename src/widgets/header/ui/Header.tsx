@@ -108,12 +108,12 @@ export function Header() {
             <CatalogSearch />
           </div>
           <a
-            href="tel:+78432597300"
+            href="tel:+79625270005"
             className="ml-auto flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2 font-bold hover:opacity-75"
-            aria-label="Позвонить: +7 (843) 259-73-00"
+            aria-label="Позвонить: +7 (962) 527-00-05"
           >
             <FiPhone className="h-5 w-5" />
-            <span className="hidden md:inline">+7 (843) 259-73-00</span>
+            <span className="hidden md:inline">+7 (962) 527-00-05</span>
           </a>
           <Link
             to="/cart"

@@ -13,11 +13,18 @@ export function HomeContacts() {
         </div>
         <div className="space-y-4">
           <a
-            href="tel:+78432597300"
+            href="tel:+79625270005"
             className="flex items-center gap-3 text-2xl font-bold tracking-tight hover:text-primary sm:text-3xl"
           >
             <FiPhone className="h-6 w-6 shrink-0 text-primary" />
-            +7 (843) 259-73-00
+            +7 (962) 527-00-05
+          </a>
+          <a
+            href="tel:+78432270005"
+            className="flex items-center gap-3 text-lg font-bold hover:text-primary"
+          >
+            <FiPhone className="text-primary" />
+            +7 (843) 227-00-05
           </a>
           <a
             href="mailto:zakaz@traer.ru"
@@ -32,7 +39,7 @@ export function HomeContacts() {
           </p>
           <div className="flex flex-wrap gap-4">
             <a
-              href="tel:+78432597300"
+              href="tel:+79625270005"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-accent px-5 font-bold text-accent-foreground md:hidden"
             >
               <FiPhone />
