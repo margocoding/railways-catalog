@@ -146,3 +146,23 @@ test('public pages are rendered on the server; cart and admin stay in the browse
   for (const path of ['/cart', '/admin', '/admin/login', '/admin/products']) assert.equal(rendersOnServer(path), false, path)
   assert.equal(rendersOnServer('/administration'), true)
 })
+test('product page carries Product markup without an offer until a price is set', () => {
+  const product = { sku: 'TM-0033', slug: 'bolt', title: 'Болт закладной М22х175', gost: 'ГОСТ 16017-79', condition: 'new', price: null, stock: 0, images: ['/uploads/bolt.jpg'], categorySlug: 'zhd-krepezh', subcategorySlug: 'bolty', category: { name: 'ЖД крепеж' }, subcategory: { name: 'Болты' }, description: 'Закладной болт крепит подкладку к шпале.', specs: [{ label: 'ГОСТ', value: '16017-79.' }, { label: 'Масса', value: '0,65', unit: 'кг' }, { label: 'Пусто', value: '' }] }
+  const url = productPath(product)
+  const markup = (value) => getMetadata(url, { url, siteUrl: 'https://traer.ru', status: 200, ssr: true, product: value }).jsonLd.find((item) => item['@type'] === 'Product')
+  const item = markup(product)
+  assert.equal(item.name, 'Болт закладной М22х175')
+  assert.equal(item.sku, 'TM-0033')
+  assert.equal(item.url, 'https://traer.ru/catalog/zhd-krepezh/bolty/product/bolt')
+  assert.deepEqual(item.image, ['https://traer.ru/uploads/bolt.jpg'])
+  assert.equal(item.category, 'ЖД крепеж / Болты')
+  assert.equal(item.itemCondition, 'https://schema.org/NewCondition')
+  assert.deepEqual(item.additionalProperty.map((property) => [property.name, property.value, property.unitText]), [['ГОСТ', 'ГОСТ 16017-79', undefined], ['Масса', '0,65', 'кг']])
+  assert.equal(item.offers, undefined)
+  assert.equal(getMetadata(url, { url, siteUrl: 'https://traer.ru', status: 200, ssr: true, product }).jsonLd.filter((entry) => entry['@type'] === 'BreadcrumbList').length, 0, 'breadcrumbs are already microdata in the page')
+
+  const priced = markup({ ...product, price: 1250, stock: 40, images: [] })
+  assert.deepEqual(priced.offers, { '@type': 'Offer', price: 1250, priceCurrency: 'RUB', availability: 'https://schema.org/InStock', url: item.url, itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'ООО «ИНВИА»' } })
+  assert.equal(priced.image, undefined)
+  assert.equal(markup({ ...product, price: 900, stock: 0 }).offers.availability, 'https://schema.org/BackOrder')
+})
