@@ -127,3 +127,17 @@ test('SSR falls back to the public API origin when the configured one fails', as
   assert.equal((await fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([500, 503]))).status, 503)
   await assert.rejects(fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([new Error('a'), new Error('b')])), /b/)
 })
+
+test('product snippet does not repeat the title when the description starts with it', () => {
+  const meta = (product) => getMetadata(productPath(product), { url: productPath(product), siteUrl: 'https://traer.ru', status: 200, ssr: true, product }).socialDescription
+  const base = { slug: 'znak', images: [], categorySlug: 'znaki', title: 'Берегись поезда', gost: '' }
+  const repeated = meta({ ...base, description: 'Берегись поезда — предупреждающий знак для пешеходов у путей.' })
+  assert.ok(repeated.startsWith('Берегись поезда — предупреждающий знак'), repeated)
+  assert.equal(repeated.match(/Берегись поезда/g).length, 1)
+
+  const withGost = meta({ ...base, gost: 'ГОСТ 12.4.026', description: 'берегись поезда — знак.' })
+  assert.ok(withGost.startsWith('ГОСТ 12.4.026. берегись поезда — знак.'), withGost)
+
+  const distinct = meta({ ...base, description: 'Предупреждающий знак для пешеходов.' })
+  assert.ok(distinct.startsWith('Берегись поезда. Предупреждающий знак'), distinct)
+})

@@ -51,7 +51,12 @@ export function getMetadata(urlValue: string, data: PageData): Metadata {
   if (route?.kind === 'product' && data.product?.slug === route.slug) {
     const product = data.product
     title = `${plainText(product.title)} — характеристики и заказ | ИНВИА`
-    description = `${plainText(product.title)}${product.gost ? `. ${plainText(product.gost)}` : ''}. ${plainText(product.description) || 'Характеристики и комплектация в каталоге ИНВИА.'} Запросите стоимость и условия поставки.`
+    const productTitle = plainText(product.title)
+    const productText = plainText(product.description)
+    // Описание обычно начинается с названия товара — в сниппете не повторяем его дважды подряд.
+    const repeatsTitle = productText.toLocaleLowerCase('ru').startsWith(productTitle.toLocaleLowerCase('ru'))
+    const lead = [repeatsTitle ? '' : productTitle, plainText(product.gost)].filter(Boolean).join('. ')
+    description = `${lead ? `${lead}. ` : ''}${productText || 'Характеристики и комплектация в каталоге ИНВИА.'} Запросите стоимость и условия поставки.`
     searchDescription = plainText(product.descriptionTags)
     canonicalPath = productPath(product)
     if (product.images[0]) image = new URL(product.images[0], data.siteUrl).href
