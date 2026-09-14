@@ -81,8 +81,8 @@ export function Header() {
               ))}
             </nav>
             <div className="hidden items-center gap-5 md:flex">
-              <a href="mailto:zakaz@tatrels.ru" className="hover:text-primary">
-                zakaz@tatrels.ru
+              <a href="mailto:zakaz@traer.ru" className="hover:text-primary">
+                zakaz@traer.ru
               </a>
               <span>Пн–Пт, 8:00–17:00</span>
               <MessengerLinks compact />

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/lib/plain-text.ts'
 import { getMetadata } from '../src/shared/seo/metadata.ts'
 import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
+import { siteOrigin } from '../src/renderer/site-origin.ts'
 
 test('legacy HTML units become safe readable text without changing units', () => {
   assert.equal(formatSpec('0,25', 'м<sup>3</sup>'), '0,25 м³')
@@ -74,4 +75,27 @@ test('product descriptions keep their paragraphs', () => {
   assert.deepEqual(paragraphs('  \n\n  '), [])
   assert.deepEqual(paragraphs(null), [])
   assert.deepEqual(paragraphs('<b>15</b>&nbsp;мм\n\nдалее'), ['15 мм', 'далее'])
+})
+
+test('the retired tatrels.ru origin becomes traer.ru in canonical and social links', () => {
+  for (const old of ['https://tatrels.ru', 'https://tatrels.ru/', 'http://tatrels.ru', 'https://www.tatrels.ru', 'https://www.traer.ru']) {
+    assert.equal(siteOrigin(old), 'https://traer.ru')
+  }
+  assert.equal(siteOrigin('https://traer.ru'), 'https://traer.ru')
+  assert.equal(siteOrigin('http://localhost:3000'), 'http://localhost:3000')
+  assert.throws(() => siteOrigin('https://tatrels.ru/catalog'), /must be an HTTP\(S\) origin/)
+  assert.throws(() => siteOrigin(undefined), /SITE_URL is required/)
+
+  const service = { slug: 'rezka-rels', title: 'Резка рельсов', description: 'Режем рельсы.', image: '/uploads/rezka.jpg' }
+  const url = '/services/rezka-rels'
+  const meta = getMetadata(url, { url, siteUrl: siteOrigin('https://tatrels.ru'), status: 200, ssr: true, service })
+  assert.equal(meta.canonical, 'https://traer.ru/services/rezka-rels')
+  assert.equal(meta.image, 'https://traer.ru/uploads/rezka.jpg')
+  assert.ok(!JSON.stringify(meta).includes('tatrels.ru/'))
+
+  const home = getMetadata('/', { url: '/', siteUrl: siteOrigin('https://tatrels.ru'), status: 200, ssr: true })
+  const organization = home.jsonLd.find((item) => item['@type'] === 'Organization')
+  assert.equal(organization.url, 'https://traer.ru')
+  assert.equal(organization.email, 'zakaz@traer.ru')
+  assert.ok(!JSON.stringify(home).includes('tatrels'))
 })
