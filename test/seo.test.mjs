@@ -4,6 +4,7 @@ import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/li
 import { getMetadata } from '../src/shared/seo/metadata.ts'
 import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
 import { siteOrigin } from '../src/renderer/site-origin.ts'
+import { apiOriginList, fetchFromApi } from '../src/renderer/api-fetch.ts'
 
 test('legacy HTML units become safe readable text without changing units', () => {
   assert.equal(formatSpec('0,25', 'м<sup>3</sup>'), '0,25 м³')
@@ -98,4 +99,31 @@ test('the retired tatrels.ru origin becomes traer.ru in canonical and social lin
   assert.equal(organization.url, 'https://traer.ru')
   assert.equal(organization.email, 'zakaz@traer.ru')
   assert.ok(!JSON.stringify(home).includes('tatrels'))
+})
+
+test('SSR falls back to the public API origin when the configured one fails', async () => {
+  assert.deepEqual(apiOriginList('http://api:3001', 'https://traer.ru', 'https://traer.ru'), ['http://api:3001', 'https://traer.ru'])
+  const calls = []
+  const fakeFetch = (responses) => async (url) => {
+    calls.push(url)
+    const next = responses.shift()
+    if (next instanceof Error) throw next
+    return new Response('{}', { status: next })
+  }
+  const origins = ['http://dead', 'https://traer.ru']
+
+  const recovered = await fetchFromApi(origins, '/api/product/bolt', 1000, fakeFetch([new Error('ECONNREFUSED'), 200]))
+  assert.equal(recovered.status, 200)
+  assert.deepEqual(calls, ['http://dead/api/product/bolt', 'https://traer.ru/api/product/bolt'])
+
+  calls.length = 0
+  assert.equal((await fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([502, 200]))).status, 200)
+  assert.equal(calls.length, 2)
+
+  calls.length = 0
+  assert.equal((await fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([404]))).status, 404)
+  assert.equal(calls.length, 1, 'a real 404 must not be retried')
+
+  assert.equal((await fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([500, 503]))).status, 503)
+  await assert.rejects(fetchFromApi(origins, '/api/product/x', 1000, fakeFetch([new Error('a'), new Error('b')])), /b/)
 })
