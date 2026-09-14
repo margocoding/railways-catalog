@@ -20,7 +20,7 @@ const inlineButton = `${baseButton} h-10 w-10 border border-border bg-card text-
 // Полупрозрачные оранжевые кнопки в цвет основных кнопок сайта: на телефоне обычного размера,
 // с планшета — крупные. Выступают за край карточек только
 // на широких экранах, где у контейнера есть поля, — иначе ушли бы за край окна.
-const sideButton = `${baseButton} absolute top-[38%] z-10 h-10 w-10 -translate-y-1/2 bg-accent/60 text-accent-foreground shadow-lg backdrop-blur-sm hover:bg-accent disabled:opacity-0 sm:h-24 sm:w-24`
+const sideButton = `${baseButton} absolute top-[38%] z-10 h-10 w-10 -translate-y-1/2 bg-accent/35 text-accent-foreground shadow-md backdrop-blur-[2px] hover:bg-accent disabled:opacity-0 sm:h-24 sm:w-24`
 
 function Chevron({ d, large = false }: { d: string; large?: boolean }) {
   return (
