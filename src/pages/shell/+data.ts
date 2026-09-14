@@ -2,14 +2,14 @@ import type { PageContextServer } from 'vike/types'
 import { redirect, render } from 'vike/abort'
 import { apiOrigins, siteUrl } from '@/renderer/server-config'
 import { fetchFromApi } from '@/renderer/api-fetch'
-import { detailRoute, isKnownPath, productPath, type PageData } from '@/shared/seo/route-data'
+import { detailRoute, isKnownPath, productPath, rendersOnServer, type PageData } from '@/shared/seo/route-data'
 
 export async function data(pageContext: PageContextServer): Promise<PageData> {
   const url = new URL(pageContext.urlOriginal, siteUrl)
   const pathname = url.pathname.replace(/\/$/, '') || '/'
   if (pathname !== url.pathname) throw redirect(pathname + url.search, 301)
   const route = detailRoute(pathname)
-  const result: PageData = { url: pathname + url.search, siteUrl, status: isKnownPath(pathname) ? 200 : 404, ssr: !!route || !isKnownPath(pathname) }
+  const result: PageData = { url: pathname + url.search, siteUrl, status: isKnownPath(pathname) ? 200 : 404, ssr: rendersOnServer(pathname) }
   const categories = route || pathname === '/catalog'
     ? fetchFromApi(apiOrigins, '/api/product-category?limit=100', 8000).then(async (response) => response.ok ? (await response.json()).items : undefined).catch(() => undefined)
     : Promise.resolve(undefined)

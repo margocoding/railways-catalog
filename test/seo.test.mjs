@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { plainText, formatSpec, jsonForHtml, paragraphs } from '../src/shared/lib/plain-text.ts'
 import { getMetadata } from '../src/shared/seo/metadata.ts'
-import { detailRoute, productPath } from '../src/shared/seo/route-data.ts'
+import { detailRoute, productPath, rendersOnServer } from '../src/shared/seo/route-data.ts'
 import { siteOrigin } from '../src/renderer/site-origin.ts'
 import { apiOriginList, fetchFromApi } from '../src/renderer/api-fetch.ts'
 
@@ -140,4 +140,9 @@ test('product snippet does not repeat the title when the description starts with
 
   const distinct = meta({ ...base, description: 'Предупреждающий знак для пешеходов.' })
   assert.ok(distinct.startsWith('Берегись поезда. Предупреждающий знак'), distinct)
+})
+test('public pages are rendered on the server; cart and admin stay in the browser', () => {
+  for (const path of ['/', '/catalog', '/services', '/about', '/contacts', '/delivery', '/price', '/privacy', '/catalog/rails/product/r65', '/services/rezka', '/missing']) assert.equal(rendersOnServer(path), true, path)
+  for (const path of ['/cart', '/admin', '/admin/login', '/admin/products']) assert.equal(rendersOnServer(path), false, path)
+  assert.equal(rendersOnServer('/administration'), true)
 })

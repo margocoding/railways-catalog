@@ -8,6 +8,7 @@ import type { SortOption } from '@/entities/product/model/types'
 import type { PaginationMeta } from '@/shared/api'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
+import { useCategoryData } from '@/shared/seo/page-context'
 
 type FilterCondition = 'new' | 'used' | 'service' | 'all'
 type FilterStock = 'all' | 'in-stock' | 'on-order'
@@ -33,8 +34,11 @@ export interface UseCatalogReturn {
 export function useCatalog(): UseCatalogReturn {
   const [searchParams, setSearchParams] = useSearchParams()
 
+  // Категории, которые сервер уже загрузил для /catalog: с ними H1, описание и хлебные крошки
+  // категории есть в исходном HTML, а первая отрисовка в браузере совпадает с серверной.
+  const { categories: preloadedCategories } = useCategoryData()
   const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<Category[]>(preloadedCategories)
   const [pagination, setPagination] = useState<PaginationMeta>({
     total: 0,
     page: 1,
