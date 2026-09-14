@@ -8,22 +8,23 @@ interface CarouselArrowsProps {
   className?: string
   /**
    * inline — пара кнопок рядом, в шапке блока.
-   * sides — кнопки по краям карусели на уровне картинок (на телефоне — внутри карточек,
-   * шире — выступают за край наполовину); родитель
+   * sides — кнопки по краям карусели на уровне картинок (до широких экранов — внутри карточек,
+   * на широких — выступают за край на треть); родитель
    * должен быть relative. Недоступная стрелка скрывается, а не бледнеет.
    */
   placement?: 'inline' | 'sides'
 }
 
-const baseButton =
-  'flex items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none'
-const inlineButton = `${baseButton} h-10 w-10 shadow-sm disabled:opacity-30`
-const sideButton = `${baseButton} absolute top-[38%] z-10 h-10 w-10 -translate-y-1/2 shadow-md disabled:opacity-0 sm:h-12 sm:w-12`
+const baseButton = 'flex items-center justify-center rounded-full transition-colors disabled:pointer-events-none'
+const inlineButton = `${baseButton} h-10 w-10 border border-border bg-card text-foreground shadow-sm hover:border-primary hover:text-primary disabled:opacity-30`
+// Крупные оранжевые кнопки в цвет основных кнопок сайта. Выступают за край карточек только
+// на широких экранах, где у контейнера есть поля, — иначе ушли бы за край окна.
+const sideButton = `${baseButton} absolute top-[38%] z-10 h-20 w-20 -translate-y-1/2 bg-accent text-accent-foreground shadow-lg hover:bg-[#E85E14] disabled:opacity-0 sm:h-24 sm:w-24`
 
-function Chevron({ d }: { d: string }) {
+function Chevron({ d, large = false }: { d: string; large?: boolean }) {
   return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path d={d} strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+    <svg className={large ? "h-10 w-10" : "h-5 w-5"} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d={d} strokeLinecap="round" strokeLinejoin="round" strokeWidth={large ? 2.5 : 2} />
     </svg>
   )
 }
@@ -46,9 +47,9 @@ export function CarouselArrows({
         onClick={onPrev}
         disabled={!canScrollPrev}
         aria-label="Предыдущие"
-        className={sides ? `${sideButton} left-2 sm:left-0 sm:-translate-x-1/2 ${className}` : inlineButton}
+        className={sides ? `${sideButton} left-2 xl:left-0 xl:-translate-x-1/3 ${className}` : inlineButton}
       >
-        <Chevron d="M15 18l-6-6 6-6" />
+        <Chevron d="M15 18l-6-6 6-6" large={sides} />
       </motion.button>
 
       <motion.button
@@ -58,9 +59,9 @@ export function CarouselArrows({
         onClick={onNext}
         disabled={!canScrollNext}
         aria-label="Следующие"
-        className={sides ? `${sideButton} right-2 sm:right-0 sm:translate-x-1/2 ${className}` : inlineButton}
+        className={sides ? `${sideButton} right-2 xl:right-0 xl:translate-x-1/3 ${className}` : inlineButton}
       >
-        <Chevron d="M9 18l6-6-6-6" />
+        <Chevron d="M9 18l6-6-6-6" large={sides} />
       </motion.button>
     </>
   )
