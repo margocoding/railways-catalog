@@ -54,23 +54,13 @@ export function CategoriesCarousel() {
           <h2 id="categories-title" className="section-title">
             Каталог материалов
           </h2>
-          <div className="flex w-full items-center justify-between gap-6 sm:w-auto">
-            <Link
-              to="/catalog"
-              className="inline-flex min-h-11 items-center gap-2 font-bold text-primary"
-            >
-              Весь каталог
-              <FiArrowUpRight />
-            </Link>
-            {(loading || categories.length > 1) && (
-              <CarouselArrows
-                onPrev={scrollPrev}
-                onNext={scrollNext}
-                canScrollPrev={!loading && canScrollPrev}
-                canScrollNext={!loading && canScrollNext}
-              />
-            )}
-          </div>
+          <Link
+            to="/catalog"
+            className="inline-flex min-h-11 items-center gap-2 font-bold text-primary"
+          >
+            Весь каталог
+            <FiArrowUpRight />
+          </Link>
         </div>
         {loading ? (
           <div role="status" className="overflow-hidden">
@@ -84,38 +74,51 @@ export function CategoriesCarousel() {
             <span className="sr-only">Загрузка категорий</span>
           </div>
         ) : categories.length ? (
-          <div ref={emblaRef} className="overflow-hidden">
-            <ul className="-ml-4 flex touch-pan-y touch-pinch-zoom">
-              {categories.map((category) => (
-                <li key={category.slug} className={slideClassName}>
-                  <Link
-                    to={`/catalog?category=${category.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-border transition-colors duration-200 hover:border-accent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
-                  >
-                    <div className="aspect-[3/2] shrink-0 overflow-hidden border-b border-border bg-muted p-3">
-                      <CatalogImage
-                        src={category.image}
-                        alt={category.name}
-                        className="mix-blend-darken"
-                      />
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <h3 className="mb-4 text-xl font-bold leading-tight xl:text-2xl">
-                        {category.name}
-                      </h3>
-                      <div className="mt-auto flex items-center justify-between gap-3">
-                        <span className="text-sm text-muted-foreground">
-                          {category.productCount === undefined
-                            ? 'Посмотреть товары'
-                            : countLabel(category.productCount)}
-                        </span>
-                        <FiArrowUpRight className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
+          // Стрелки по бокам карусели: relative-обёртка вне overflow-hidden, чтобы кнопки
+          // могли выступать за край карточек наполовину.
+          <div className="relative">
+            {categories.length > 1 && (
+              <CarouselArrows
+                placement="sides"
+                onPrev={scrollPrev}
+                onNext={scrollNext}
+                canScrollPrev={canScrollPrev}
+                canScrollNext={canScrollNext}
+              />
+            )}
+            <div ref={emblaRef} className="overflow-hidden">
+              <ul className="-ml-4 flex touch-pan-y touch-pinch-zoom">
+                {categories.map((category) => (
+                  <li key={category.slug} className={slideClassName}>
+                    <Link
+                      to={`/catalog?category=${category.slug}`}
+                      className="group flex h-full flex-col overflow-hidden rounded-lg border border-border transition-colors duration-200 hover:border-accent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                    >
+                      <div className="aspect-[3/2] shrink-0 overflow-hidden border-b border-border bg-muted p-3">
+                        <CatalogImage
+                          src={category.image}
+                          alt={category.name}
+                          className="mix-blend-darken"
+                        />
                       </div>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <div className="flex flex-1 flex-col p-5">
+                        <h3 className="mb-4 text-xl font-bold leading-tight xl:text-2xl">
+                          {category.name}
+                        </h3>
+                        <div className="mt-auto flex items-center justify-between gap-3">
+                          <span className="text-sm text-muted-foreground">
+                            {category.productCount === undefined
+                              ? 'Посмотреть товары'
+                              : countLabel(category.productCount)}
+                          </span>
+                          <FiArrowUpRight className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         ) : (
           <p className="rounded-lg border border-border p-6 text-muted-foreground">
