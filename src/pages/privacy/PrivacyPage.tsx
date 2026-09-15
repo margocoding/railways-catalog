@@ -206,10 +206,10 @@ export function PrivacyPage() {
                         Контактный телефон
                       </p>
                       <a
-                        href="tel:+79625270005"
+                        href="tel:+78432270005"
                         className="text-sm text-primary hover:underline"
                       >
-                        +7 (962) 527-00-05
+                        +7 (843) 227-00-05
                       </a>
                     </div>
                   </div>
@@ -873,14 +873,14 @@ export function PrivacyPage() {
                 </a>
 
                 <a
-                  href="tel:+79625270005"
+                  href="tel:+78432270005"
                   className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/50 transition-colors"
                 >
                   <FiPhone className="h-5 w-5 text-primary shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Телефон</p>
                     <p className="text-sm font-semibold text-foreground">
-                      +7 (962) 527-00-05
+                      +7 (843) 227-00-05
                     </p>
                   </div>
                 </a>

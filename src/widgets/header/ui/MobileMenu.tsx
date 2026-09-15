@@ -237,7 +237,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             <div className="mt-auto border-t border-border pt-5">
               <div className="mb-3"><MessengerLinks /></div>
               <a
-                href="tel:+79625270005"
+                href="tel:+78432270005"
                 className="
                   mb-3 flex min-h-12 items-center
                   gap-3 rounded-lg
@@ -248,7 +248,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                 <FiPhone className="h-5 w-5 text-primary" />
 
                 <div>
-                  <div>+7 (962) 527-00-05</div>
+                  <div>+7 (843) 227-00-05</div>
 
                   <div className="mt-0.5 text-xs font-normal text-muted-foreground">
                     Отдел продаж
@@ -257,7 +257,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
               </a>
 
               <a
-                href="tel:+78432270005"
+                href="tel:+79625270005"
                 className="
                   mb-3 flex min-h-12 items-center
                   gap-3 rounded-lg
@@ -266,7 +266,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                 "
               >
                 <FiPhone className="h-5 w-5 text-primary" />
-                <div>+7 (843) 227-00-05</div>
+                <div>+7 (962) 527-00-05</div>
               </a>
 
               <Button
