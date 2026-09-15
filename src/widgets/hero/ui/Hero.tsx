@@ -24,7 +24,7 @@ export function Hero() {
       className="hero-section relative flex overflow-hidden bg-foreground text-white"
     >
       <div
-        className="hero-photo absolute inset-0 bg-cover bg-center bg-[url('/hero_background.png')]"
+        className="hero-photo absolute inset-0 bg-cover bg-center bg-[url('/hero-fon.jpg')]"
         aria-hidden="true"
       />
       <div
